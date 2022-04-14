@@ -18,7 +18,6 @@ package org.gradle.api.provider;
 
 import org.gradle.api.NonExtensible;
 import org.gradle.api.Transformer;
-import org.gradle.internal.HasInternalProtocol;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
@@ -48,24 +47,12 @@ import java.util.function.BiFunction;
  *
  * <p>There are a number of ways to create a {@link Provider} instance. Some common methods:</p>
  *
- * <ul>
- *     <li>A number of Gradle types, such as {@link Property}, extend {@link Provider} and can be used directly as a provider.</li>
- *     <li>Calling {@link #map(Transformer)} to create a new provider from an existing provider.</li>
- *     <li>Using the return value of {@link org.gradle.api.tasks.TaskContainer#register(String)}, which is a provider that represents the task instance.</li>
- *     <li>Using the methods on {@link org.gradle.api.file.Directory} and {@link org.gradle.api.file.DirectoryProperty} to produce file providers.</li>
- *     <li>By calling {@link ProviderFactory#provider(Callable)} or {@link org.gradle.api.Project#provider(Callable)} to create a new provider from a {@link Callable}.</li>
- * </ul>
- *
- * <p>
- *  For a provider whose value can be mutated, see {@link Property} and the methods on {@link org.gradle.api.model.ObjectFactory}.
- * </p>
  *
  * <p><b>Note:</b> This interface is not intended for implementation by build script or plugin authors.</p>
  *
  * @param <T> Type of value represented by provider
  * @since 4.0
  */
-@HasInternalProtocol
 @NonExtensible
 public interface Provider<T> {
 

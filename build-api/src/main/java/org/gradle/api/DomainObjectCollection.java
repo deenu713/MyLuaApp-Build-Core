@@ -15,7 +15,7 @@
  */
 package org.gradle.api;
 
-import groovy.lang.Closure;
+
 import org.gradle.api.provider.Provider;
 import org.gradle.api.specs.Spec;
 
@@ -73,15 +73,6 @@ public interface DomainObjectCollection<T> extends Collection<T> {
      */
     <S extends T> DomainObjectCollection<S> withType(Class<S> type, Action<? super S> configureAction);
 
-    /**
-     * Returns a collection containing the objects in this collection of the given type. Equivalent to calling
-     * {@code withType(type).all(configureClosure)}.
-     *
-     * @param type The type of objects to find.
-     * @param configureClosure The closure to execute for each object in the resulting collection.
-     * @return The matching objects. Returns an empty collection if there are no such objects in this collection.
-     */
-    <S extends T> DomainObjectCollection<S> withType(Class<S> type, Closure configureClosure);
 
     /**
      * Returns a collection which contains the objects in this collection which meet the given specification. The
@@ -94,16 +85,6 @@ public interface DomainObjectCollection<T> extends Collection<T> {
      */
     DomainObjectCollection<T> matching(Spec<? super T> spec);
 
-    /**
-     * Returns a collection which contains the objects in this collection which meet the given closure specification. The
-     * returned collection is live, so that when matching objects are added to this collection, they are also visible in
-     * the filtered collection.
-     *
-     * @param spec The specification to use. The closure gets a collection element as an argument.
-     * @return The collection of matching objects. Returns an empty collection if there are no such objects in this
-     *         collection.
-     */
-    DomainObjectCollection<T> matching(Closure spec);
 
     /**
      * Adds an {@code Action} to be executed when an object is added to this collection.
@@ -115,14 +96,6 @@ public interface DomainObjectCollection<T> extends Collection<T> {
      */
     Action<? super T> whenObjectAdded(Action<? super T> action);
 
-    /**
-     * Adds a closure to be called when an object is added to this collection. The newly added object is passed to the
-     * closure as the parameter.
-     *
-     * @param action The closure to be called
-     * @see #whenObjectAdded(Action)
-     */
-    void whenObjectAdded(Closure action);
 
     /**
      * Adds an {@code Action} to be executed when an object is removed from this collection.
@@ -132,13 +105,6 @@ public interface DomainObjectCollection<T> extends Collection<T> {
      */
     Action<? super T> whenObjectRemoved(Action<? super T> action);
 
-    /**
-     * Adds a closure to be called when an object is removed from this collection. The removed object is passed to the
-     * closure as the parameter.
-     *
-     * @param action The closure to be called
-     */
-    void whenObjectRemoved(Closure action);
 
     /**
      * Executes the given action against all objects in this collection, and any objects subsequently added to this
@@ -148,13 +114,7 @@ public interface DomainObjectCollection<T> extends Collection<T> {
      */
     void all(Action<? super T> action);
 
-    /**
-     * Executes the given closure against all objects in this collection, and any objects subsequently added to this collection. The object is passed to the closure as the closure
-     * delegate. Alternatively, it is also passed as a parameter.
-     *
-     * @param action The action to be executed
-     */
-    void all(Closure action);
+
 
     /**
      * Configures each element in this collection using the given action, as each element is required. Actions are run in the order added.
@@ -164,13 +124,5 @@ public interface DomainObjectCollection<T> extends Collection<T> {
      */
     void configureEach(Action<? super T> action);
 
-    // note: this is here to override the default Groovy Collection.findAll { } method.
-    /**
-     * Returns a collection which contains the objects in this collection which meet the given closure specification.
-     *
-     * @param spec The specification to use. The closure gets a collection element as an argument.
-     * @return The collection of matching objects. Returns an empty collection if there are no such objects in this
-     *         collection.
-     */
-    Collection<T> findAll(Closure spec);
+
 }

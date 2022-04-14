@@ -15,10 +15,10 @@
  */
 package org.gradle.api;
 
-import groovy.lang.Closure;
+
 import org.gradle.api.provider.Provider;
 import org.gradle.api.specs.Spec;
-import org.gradle.api.tasks.Internal;
+
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -136,16 +136,6 @@ public interface NamedDomainObjectCollection<T> extends DomainObjectCollection<T
      */
     T getByName(String name) throws UnknownDomainObjectException;
 
-    /**
-     * Locates an object by name, failing if there is no such object. The given configure closure is executed against
-     * the object before it is returned from this method. The object is passed to the closure as its delegate.
-     *
-     * @param name The object name
-     * @param configureClosure The closure to use to configure the object.
-     * @return The object with the given name, after the configure closure has been applied to it. Never returns null.
-     * @throws UnknownDomainObjectException when there is no such object in this collection.
-     */
-    T getByName(String name, Closure configureClosure) throws UnknownDomainObjectException;
 
     /**
      * Locates an object by name, failing if there is no such object. The given configure action is executed against
@@ -177,15 +167,6 @@ public interface NamedDomainObjectCollection<T> extends DomainObjectCollection<T
      */
     Rule addRule(Rule rule);
 
-    /**
-     * Adds a rule to this collection. The given closure is executed when an unknown object is requested by name. The
-     * requested name is passed to the closure as a parameter.
-     *
-     * @param description The description of the rule.
-     * @param ruleAction The closure to execute to apply the rule.
-     * @return The added rule.
-     */
-    Rule addRule(String description, Closure ruleAction);
 
     /**
      * Adds a rule to this collection. The given action is executed when an unknown object is requested by name. The
@@ -217,11 +198,6 @@ public interface NamedDomainObjectCollection<T> extends DomainObjectCollection<T
     @Override
     NamedDomainObjectCollection<T> matching(Spec<? super T> spec);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    NamedDomainObjectCollection<T> matching(Closure spec);
 
     /**
      * Locates a object by name, without triggering its creation or configuration, failing if there is no such object.
@@ -273,6 +249,6 @@ public interface NamedDomainObjectCollection<T> extends DomainObjectCollection<T
      *
      * @since 4.10
      */
-    @Internal
+
     NamedDomainObjectCollectionSchema getCollectionSchema();
 }

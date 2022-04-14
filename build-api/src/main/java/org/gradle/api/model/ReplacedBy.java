@@ -16,7 +16,7 @@
 
 package org.gradle.api.model;
 
-import org.gradle.api.tasks.Internal;
+
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>Attached to a task property to indicate that the property has been replaced by another. Like {@link Internal}, the property is ignored during up-to-date checks.</p>
+ * <p>Attached to a task property to indicate that the property has been replaced by another. Like , the property is ignored during up-to-date checks.</p>
  *
  * <p>This annotation should be attached to the getter method in Java or the property field in Groovy. You should also consider adding {@link Deprecated} to any replaced property.</p>
  *

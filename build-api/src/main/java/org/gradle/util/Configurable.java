@@ -16,7 +16,8 @@
 
 package org.gradle.util;
 
-import groovy.lang.Closure;
+import org.gradle.api.Action;
+
 
 /**
  * An object that can be configured with a Groovy closure.
@@ -24,5 +25,5 @@ import groovy.lang.Closure;
  * @param <T> the closure return type.
  */
 public interface Configurable<T> {
-    T configure(Closure cl);
+    T configure(Action<T> cl);
 }

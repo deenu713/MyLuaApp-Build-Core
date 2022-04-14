@@ -16,14 +16,13 @@
 
 package org.gradle.api;
 
-import org.gradle.internal.HasInternalProtocol;
 
 import javax.annotation.Nullable;
 
 /**
  * {@code ProjectState} provides information about the execution state of a project.
  */
-@HasInternalProtocol
+
 public interface ProjectState {
     /**
      * <p>Returns true if this project has been evaluated.</p>

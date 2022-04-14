@@ -15,7 +15,7 @@
  */
 package org.gradle.api;
 
-import groovy.lang.Closure;
+
 import org.gradle.api.specs.Spec;
 
 import java.util.Set;
@@ -45,15 +45,5 @@ public interface NamedDomainObjectSet<T> extends NamedDomainObjectCollection<T>,
     @Override
     NamedDomainObjectSet<T> matching(Spec<? super T> spec);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    NamedDomainObjectSet<T> matching(Closure spec);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Set<T> findAll(Closure spec);
 }
