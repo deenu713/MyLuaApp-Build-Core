@@ -1,5 +1,6 @@
 package org.gradle.api;
 
+import org.gradle.api.invocation.Gradle;
 import org.gradle.api.tasks.TaskContainer;
 
 import java.io.File;
@@ -21,4 +22,11 @@ public interface Project extends  Comparable<Project> {
      * @return the tasks of this project.
      */
     TaskContainer getTasks();
+
+    /**
+     * <p>Returns the {@link org.gradle.api.invocation.Gradle} invocation which this project belongs to.</p>
+     *
+     * @return The Gradle object. Never returns null.
+     */
+    Gradle getGradle();
 }

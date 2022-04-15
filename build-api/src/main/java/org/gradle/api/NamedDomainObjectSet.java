@@ -18,6 +18,7 @@ package org.gradle.api;
 
 import org.gradle.api.specs.Spec;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -44,6 +45,12 @@ public interface NamedDomainObjectSet<T> extends NamedDomainObjectCollection<T>,
      */
     @Override
     NamedDomainObjectSet<T> matching(Spec<? super T> spec);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Set<T> findAll(Spec<? super T> spec);
 
 
 }

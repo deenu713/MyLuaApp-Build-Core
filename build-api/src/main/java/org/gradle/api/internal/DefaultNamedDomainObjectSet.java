@@ -74,7 +74,7 @@ public class DefaultNamedDomainObjectSet<T> extends DefaultNamedDomainObjectColl
 
 
     @Override
-    public Set<T> findAll(Spec<T> cl) {
+    public Set<T> findAll(Spec<? super T> cl) {
         return findAll(cl, new LinkedHashSet<T>());
     }
 

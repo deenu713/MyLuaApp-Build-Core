@@ -15,7 +15,7 @@
  */
 package org.gradle.api.internal;
 
-import groovy.lang.Closure;
+
 import org.gradle.api.NamedDomainObjectList;
 import org.gradle.api.Namer;
 import org.gradle.api.internal.collections.CollectionFilter;
@@ -133,10 +133,7 @@ public class DefaultNamedDomainObjectList<T> extends DefaultNamedDomainObjectCol
         return new FilteredList<T, S>(elementSource, filter);
     }
 
-    @Override
-    public NamedDomainObjectList<T> matching(Closure spec) {
-        return matching(Specs.<T>convertClosureToSpec(spec));
-    }
+
 
     @Override
     public NamedDomainObjectList<T> matching(Spec<? super T> spec) {
@@ -149,7 +146,7 @@ public class DefaultNamedDomainObjectList<T> extends DefaultNamedDomainObjectCol
     }
 
     @Override
-    public List<T> findAll(Closure cl) {
+    public List<T> findAll(Spec<? super T> cl) {
         return findAll(cl, new ArrayList<T>());
     }
 

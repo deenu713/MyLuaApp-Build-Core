@@ -403,11 +403,11 @@ public class DefaultDomainObjectCollection<T> extends AbstractCollection<T> impl
     }
 
     @Override
-    public Collection<T> findAll(Spec<T> cl) {
+    public Collection<T> findAll(Spec<? super T> cl) {
         return findAll(cl, new ArrayList<T>());
     }
 
-    protected <S extends Collection<? super T>> S findAll(Spec<T> cl, S matches) {
+    protected <S extends Collection<? super T>> S findAll(Spec<? super T> cl, S matches) {
         if (store.constantTimeIsEmpty()) {
             return matches;
         }

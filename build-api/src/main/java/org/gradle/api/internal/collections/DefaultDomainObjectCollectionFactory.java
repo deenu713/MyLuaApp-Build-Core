@@ -16,7 +16,7 @@
 
 package org.gradle.api.internal.collections;
 
-import groovy.lang.Closure;
+
 import org.gradle.api.DomainObjectCollection;
 import org.gradle.api.DomainObjectSet;
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
@@ -30,7 +30,6 @@ import org.gradle.api.internal.DefaultDomainObjectSet;
 import org.gradle.api.internal.DefaultNamedDomainObjectList;
 import org.gradle.api.internal.DefaultNamedDomainObjectSet;
 import org.gradle.api.internal.DefaultPolymorphicDomainObjectContainer;
-import org.gradle.api.internal.DynamicPropertyNamer;
 import org.gradle.api.internal.FactoryNamedDomainObjectContainer;
 import org.gradle.api.internal.MutationGuard;
 import org.gradle.api.internal.ReflectiveNamedDomainObjectFactory;
@@ -40,6 +39,12 @@ import org.gradle.internal.instantiation.InstantiatorFactory;
 import org.gradle.internal.reflect.Instantiator;
 import org.gradle.internal.service.ServiceRegistry;
 
+import java.util.function.Function;
+
+/**
+ * Creates instances of {@link DomainObjectCollection}s.
+ * A Simple implementation of {@link DomainObjectCollectionFactory} that uses the {@link Instantiator} to create instances of {@link DomainObjectCollection}s.
+ */
 public class DefaultDomainObjectCollectionFactory implements DomainObjectCollectionFactory {
     private final InstantiatorFactory instantiatorFactory;
     private final ServiceRegistry servicesToInject;
@@ -67,19 +72,19 @@ public class DefaultDomainObjectCollectionFactory implements DomainObjectCollect
     private <T> NamedDomainObjectContainer<T> container(Class<T> elementType, InstanceGenerator elementInstantiator) {
         ReflectiveNamedDomainObjectFactory<T> objectFactory = new ReflectiveNamedDomainObjectFactory<T>(elementType, elementInstantiator);
         Instantiator instantiator = instantiatorFactory.decorateLenient();
-        return Cast.uncheckedCast(instantiator.newInstance(FactoryNamedDomainObjectContainer.class, elementType, instantiator, new DynamicPropertyNamer(), objectFactory, mutationGuard, collectionCallbackActionDecorator));
+        return Cast.uncheckedCast(instantiator.newInstance(FactoryNamedDomainObjectContainer.class, elementType, instantiator,  objectFactory, mutationGuard, collectionCallbackActionDecorator));
     }
 
     @Override
     public <T> NamedDomainObjectContainer<T> newNamedDomainObjectContainer(Class<T> elementType, NamedDomainObjectFactory<T> factory) {
         Instantiator instantiator = instantiatorFactory.decorateLenient();
-        return Cast.uncheckedCast(instantiator.newInstance(FactoryNamedDomainObjectContainer.class, elementType, instantiator, new DynamicPropertyNamer(), factory, mutationGuard, collectionCallbackActionDecorator));
+        return Cast.uncheckedCast(instantiator.newInstance(FactoryNamedDomainObjectContainer.class, elementType, instantiator,  factory, mutationGuard, collectionCallbackActionDecorator));
     }
 
     @Override
-    public <T> NamedDomainObjectContainer<T> newNamedDomainObjectContainer(Class<T> type, Closure factoryClosure) {
+    public <T> NamedDomainObjectContainer<T> newNamedDomainObjectContainer(Class<T> type, Function<String,Object> factoryClosure) {
         Instantiator instantiator = instantiatorFactory.decorateLenient();
-        return Cast.uncheckedCast(instantiator.newInstance(FactoryNamedDomainObjectContainer.class, type, instantiator, new DynamicPropertyNamer(), factoryClosure, mutationGuard, collectionCallbackActionDecorator));
+        return Cast.uncheckedCast(instantiator.newInstance(FactoryNamedDomainObjectContainer.class, type, instantiator,  factoryClosure, mutationGuard, collectionCallbackActionDecorator));
     }
 
     @Override
@@ -97,13 +102,13 @@ public class DefaultDomainObjectCollectionFactory implements DomainObjectCollect
     @Override
     public <T> NamedDomainObjectSet<T> newNamedDomainObjectSet(Class<T> elementType) {
         Instantiator instantiator = instantiatorFactory.decorateLenient();
-        return Cast.uncheckedCast(instantiator.newInstance(DefaultNamedDomainObjectSet.class, elementType, instantiator, new DynamicPropertyNamer(), collectionCallbackActionDecorator));
+        return Cast.uncheckedCast(instantiator.newInstance(DefaultNamedDomainObjectSet.class, elementType, instantiator,  collectionCallbackActionDecorator));
     }
 
     @Override
     public <T> NamedDomainObjectList<T> newNamedDomainObjectList(Class<T> elementType) {
         Instantiator instantiator = instantiatorFactory.decorateLenient();
-        return Cast.uncheckedCast(instantiator.newInstance(DefaultNamedDomainObjectList.class, elementType, instantiator, new DynamicPropertyNamer(), collectionCallbackActionDecorator));
+        return Cast.uncheckedCast(instantiator.newInstance(DefaultNamedDomainObjectList.class, elementType, instantiator,  collectionCallbackActionDecorator));
     }
 
     @Override

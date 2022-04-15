@@ -17,6 +17,7 @@ package org.gradle.api;
 
 import org.gradle.api.specs.Spec;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -40,6 +41,9 @@ public interface DomainObjectSet<T> extends DomainObjectCollection<T>, Set<T> {
     @Override
     DomainObjectSet<T> matching(Spec<? super T> spec);
 
-
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Set<T> findAll(Spec<? super T> spec);
 }

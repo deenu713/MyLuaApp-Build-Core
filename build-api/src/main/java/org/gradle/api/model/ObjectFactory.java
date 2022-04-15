@@ -17,6 +17,7 @@
 package org.gradle.api.model;
 
 import org.gradle.api.DomainObjectSet;
+import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
 import org.gradle.api.Named;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.NamedDomainObjectFactory;
@@ -202,6 +203,20 @@ public interface ObjectFactory {
      * @since 5.1
      */
     <K, V> MapProperty<K, V> mapProperty(Class<K> keyType, Class<V> valueType);
+
+
+    /**
+     * <p>Creates a new {@link ExtensiblePolymorphicDomainObjectContainer} for managing named objects of the specified type.</p>
+     *
+     * <p>The returned container will not have any factories or bindings registered.</p>
+     *
+     * @param elementType The type of objects for the container to contain.
+     * @param <T> The type of objects for the container to contain.
+     * @return The container.
+     * @since 6.1
+     */
+    <T> ExtensiblePolymorphicDomainObjectContainer<T> polymorphicDomainObjectContainer(Class<T> elementType);
+
 
 
 

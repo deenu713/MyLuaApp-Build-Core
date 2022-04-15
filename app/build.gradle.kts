@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.dingyi.myluaapp.build.api"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 32
 
         versionCode = 1

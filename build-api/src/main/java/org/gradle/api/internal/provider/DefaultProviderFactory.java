@@ -18,9 +18,7 @@ package org.gradle.api.internal.provider;
 
 import org.gradle.api.Action;
 import org.gradle.api.credentials.Credentials;
-import org.gradle.api.file.FileContents;
-import org.gradle.api.file.RegularFile;
-import org.gradle.api.file.RegularFileProperty;
+
 import org.gradle.api.internal.provider.sources.EnvironmentVariableValueSource;
 import org.gradle.api.internal.provider.sources.FileBytesValueSource;
 import org.gradle.api.internal.provider.sources.FileTextValueSource;
@@ -103,6 +101,9 @@ public class DefaultProviderFactory implements ProviderFactory {
         );
     }
 
+
+    /**
+
     @Override
     public FileContents fileContents(RegularFile file) {
         return fileContents(property -> property.set(file));
@@ -133,13 +134,8 @@ public class DefaultProviderFactory implements ProviderFactory {
         };
     }
 
-    @Override
-    public <T, P extends ValueSourceParameters> Provider<T> of(Class<? extends ValueSource<T, P>> valueSourceType, Action<? super ValueSourceSpec<P>> configuration) {
-        if (valueSourceProviderFactory == null) {
-            throw new UnsupportedOperationException();
-        }
-        return valueSourceProviderFactory.createProviderOf(valueSourceType, configuration);
-    }
+
+
 
     @Override
     public <T extends Credentials> Provider<T> credentials(Class<T> credentialsType, String identity) {
@@ -149,6 +145,14 @@ public class DefaultProviderFactory implements ProviderFactory {
     @Override
     public <T extends Credentials> Provider<T> credentials(Class<T> credentialsType, Provider<String> identity) {
         return credentialsProviderFactory.provide(credentialsType, identity);
+    } **/
+
+    @Override
+    public <T, P extends ValueSourceParameters> Provider<T> of(Class<? extends ValueSource<T, P>> valueSourceType, Action<? super ValueSourceSpec<P>> configuration) {
+        if (valueSourceProviderFactory == null) {
+            throw new UnsupportedOperationException();
+        }
+        return valueSourceProviderFactory.createProviderOf(valueSourceType, configuration);
     }
 
     @Override

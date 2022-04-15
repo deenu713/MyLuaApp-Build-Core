@@ -28,7 +28,7 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.internal.credentials.DefaultAwsCredentials;
 import org.gradle.internal.credentials.DefaultHttpHeaderCredentials;
 import org.gradle.internal.credentials.DefaultPasswordCredentials;
-import org.gradle.internal.logging.text.TreeFormatter;
+
 
 import javax.annotation.Nullable;
 import java.util.LinkedHashSet;
@@ -108,6 +108,7 @@ public class CredentialsProviderFactory implements TaskExecutionGraphListener {
 
         void assertRequiredValuesPresent() {
             if (!missingProperties.isEmpty()) {
+                /*
                 TreeFormatter errorBuilder = new TreeFormatter();
                 errorBuilder.node("The following Gradle properties are missing for '").append(identity).append("' credentials");
                 errorBuilder.startChildren();
@@ -117,6 +118,10 @@ public class CredentialsProviderFactory implements TaskExecutionGraphListener {
                 errorBuilder.endChildren();
                 missingProperties.clear();
                 throw new MissingValueException(errorBuilder.toString());
+
+                 */
+
+                throw new MissingValueException(String.format("The following Gradle properties are missing for '%s' credentials: %s", identity, missingProperties));
             }
         }
 

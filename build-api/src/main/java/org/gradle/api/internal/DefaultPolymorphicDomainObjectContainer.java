@@ -15,7 +15,8 @@
  */
 package org.gradle.api.internal;
 
-import groovy.lang.Closure;
+
+import org.gradle.api.Action;
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Named;
@@ -75,15 +76,18 @@ public class DefaultPolymorphicDomainObjectContainer<T> extends AbstractPolymorp
         namedEntityInstantiator.registerFactory(type, factory);
     }
 
+    /**
     @Override
-    public <U extends T> void registerFactory(Class<U> type, final Closure<? extends U> factory) {
+    public <U extends T> void registerFactory(Class<U> type, final Action<? extends U> factory) {
         registerFactory(type, new NamedDomainObjectFactory<U>() {
             @Override
             public U create(String name) {
-                return factory.call(name);
+                return factory.execute(name);
             }
         });
     }
+     **/
+
 
     @Override
     public <U extends T> void registerBinding(Class<U> type, final Class<? extends U> implementationType) {

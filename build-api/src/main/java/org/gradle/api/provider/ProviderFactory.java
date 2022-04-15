@@ -119,6 +119,20 @@ public interface ProviderFactory {
 
 
     /**
+     * Creates a {@link Provider} whose value is fetched from the Gradle property of the given name.
+     * The value is converted to the given type.
+     * The returned provider cannot be queried at configuration time but can produce a configuration time provider
+     * via {@link Provider#forUseAtConfigurationTime()}.
+     *
+     * @param valueSourceType
+     * @param configuration
+     * @param <T>
+     * @param <P>
+     * @return
+     */
+    <T, P extends ValueSourceParameters> Provider<T> of(Class<? extends ValueSource<T, P>> valueSourceType, Action<? super ValueSourceSpec<P>> configuration);
+
+    /**
      * Returns a provider which value will be computed by combining a provider value with another
      * provider value using the supplied combiner function.
      *

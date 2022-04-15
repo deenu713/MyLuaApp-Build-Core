@@ -15,7 +15,7 @@
  */
 package org.gradle.api.internal;
 
-import groovy.lang.Closure;
+
 import org.gradle.api.Action;
 import org.gradle.api.DomainObjectSet;
 import org.gradle.api.internal.collections.CollectionEventRegister;
@@ -25,7 +25,7 @@ import org.gradle.api.internal.collections.IterationOrderRetainingSetElementSour
 import org.gradle.api.specs.Spec;
 import org.gradle.api.specs.Specs;
 import org.gradle.internal.ImmutableActionSet;
-import org.gradle.internal.deprecation.DeprecationLogger;
+
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -40,11 +40,12 @@ public class DefaultDomainObjectSet<T> extends DefaultDomainObjectCollection<T> 
     @Deprecated
     public DefaultDomainObjectSet(Class<? extends T> type) {
         super(type, new IterationOrderRetainingSetElementSource<T>(), CollectionCallbackActionDecorator.NOOP);
-        DeprecationLogger.deprecateInternalApi("constructor DefaultDomainObjectSet(Class<T>)")
+        /** DeprecationLogger.deprecateInternalApi("constructor DefaultDomainObjectSet(Class<T>)")
             .replaceWith("ObjectFactory.domainObjectSet(Class<T>)")
             .willBeRemovedInGradle8()
             .withUserManual("custom_gradle_types", "domainobjectset")
             .nagUser();
+         **/
     }
 
     public DefaultDomainObjectSet(Class<? extends T> type, CollectionCallbackActionDecorator decorator) {
@@ -98,13 +99,10 @@ public class DefaultDomainObjectSet<T> extends DefaultDomainObjectCollection<T> 
         return filtered(createFilter(spec));
     }
 
-    @Override
-    public DomainObjectSet<T> matching(Closure spec) {
-        return matching(Specs.<T>convertClosureToSpec(spec));
-    }
+
 
     @Override
-    public Set<T> findAll(Closure cl) {
+    public Set<T> findAll(Spec<? super T> cl) {
         return findAll(cl, new LinkedHashSet<T>());
     }
 }
