@@ -33,8 +33,9 @@ dependencies {
     implementation("javax.inject:javax.inject:1")
     implementation("com.google.guava:guava:24.0-android")
     implementation ("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
-    implementation("com.google.code.findbugs:jsr305:3.0.1")
-    implementation("org.apache.commons:commons-lang:2.6")
+    implementation("com.google.code.findbugs:jsr305:3.0.2")
+    implementation("commons-lang:commons-lang:2.6")
+
 }
 
 tasks.create("TestForGradleTask") {
