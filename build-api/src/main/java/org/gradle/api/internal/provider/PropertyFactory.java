@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-/**
- * Utility classes used by the standard task implementations.
- */
-@org.gradle.api.NonNullApi
-package org.gradle.api.tasks.util;
+package org.gradle.api.internal.provider;
+
+public interface PropertyFactory {
+    <T> DefaultProperty<T> property(Class<T> type);
+
+    <T> DefaultListProperty<T> listProperty(Class<T> elementType);
+
+    <T> DefaultSetProperty<T> setProperty(Class<T> elementType);
+
+    <V, K> DefaultMapProperty<K, V> mapProperty(Class<K> keyType, Class<V> valueType);
+}
