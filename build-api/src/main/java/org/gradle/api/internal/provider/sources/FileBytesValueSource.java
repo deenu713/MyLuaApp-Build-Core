@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
-/**
- * Utility classes used by the standard task implementations.
- */
-@org.gradle.api.NonNullApi
-package org.gradle.api.tasks.util;
+package org.gradle.api.internal.provider.sources;
+
+import org.gradle.api.UncheckedIOException;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
+public abstract class FileBytesValueSource extends FileContentValueSource<byte[]> {
+
+    @Override
+    protected byte[] obtainFrom(File file) {
+        try {
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+}
