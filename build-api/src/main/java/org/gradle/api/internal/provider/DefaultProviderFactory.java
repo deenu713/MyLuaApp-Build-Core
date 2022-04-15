@@ -20,8 +20,6 @@ import org.gradle.api.Action;
 import org.gradle.api.credentials.Credentials;
 
 import org.gradle.api.internal.provider.sources.EnvironmentVariableValueSource;
-import org.gradle.api.internal.provider.sources.FileBytesValueSource;
-import org.gradle.api.internal.provider.sources.FileTextValueSource;
 import org.gradle.api.internal.provider.sources.GradlePropertyValueSource;
 import org.gradle.api.internal.provider.sources.SystemPropertyValueSource;
 import org.gradle.api.provider.Provider;

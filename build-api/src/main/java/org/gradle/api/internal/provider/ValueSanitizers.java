@@ -17,7 +17,6 @@
 package org.gradle.api.internal.provider;
 
 import com.google.common.collect.ImmutableCollection;
-import groovy.lang.GString;
 import org.gradle.internal.Cast;
 
 import javax.annotation.Nullable;
@@ -27,11 +26,8 @@ public class ValueSanitizers {
         @Override
         @Nullable
         public Object sanitize(@Nullable Object value) {
-            if (value instanceof GString) {
-                return value.toString();
-            } else {
                 return value;
-            }
+
         }
     };
     private static final ValueSanitizer<Object> IDENTITY_SANITIZER = new ValueSanitizer<Object>() {

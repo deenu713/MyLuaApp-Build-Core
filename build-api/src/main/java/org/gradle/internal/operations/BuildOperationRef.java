@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 the original author or authors.
+ * Copyright 2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package org.gradle.api.internal.provider.sources;
+package org.gradle.internal.operations;
 
-import org.gradle.api.UncheckedIOException;
+import javax.annotation.Nullable;
+import java.io.Serializable;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+public interface BuildOperationRef extends Serializable {
 
-public abstract class FileBytesValueSource extends FileContentValueSource<byte[]> {
+    @Nullable
+    OperationIdentifier getId();
 
-    @Override
-    protected byte[] obtainFrom(File file) {
-        try {
-            return Files.readAllBytes(file.toPath());
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
+    @Nullable
+    OperationIdentifier getParentId();
+
 }
