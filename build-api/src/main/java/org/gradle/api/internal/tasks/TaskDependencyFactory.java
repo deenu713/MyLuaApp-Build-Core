@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-/**
- * Classes and API for the reflection and types.
- *
- * @since 3.5
- */
-package org.gradle.api.reflect;
+package org.gradle.api.internal.tasks;
+
+public interface TaskDependencyFactory {
+    DefaultTaskDependency configurableDependency();
+}

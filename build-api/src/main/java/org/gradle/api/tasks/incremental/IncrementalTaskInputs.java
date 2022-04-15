@@ -59,7 +59,7 @@ import org.gradle.api.NonExtensible;
  * Cases where this occurs include:
  * <ul>
  *     <li>There is no history available from a previous execution.</li>
- *     <li>An {@link org.gradle.api.tasks.TaskOutputs#upToDateWhen(groovy.lang.Closure)} criteria added to the task returns <code>false</code>.</li>
+ *     <li>An  criteria added to the task returns <code>false</code>.</li>
  *     <li>An {@link org.gradle.api.tasks.Input} property has changed since the previous execution.</li>
  *     <li>One or more output files have changed since the previous execution.</li>
  * </ul>
@@ -70,7 +70,7 @@ import org.gradle.api.NonExtensible;
  *     <li>{@link #outOfDate} must be executed before {@link #removed} is called.</li>
  * </ul>
  *
- * @deprecated Use {@link org.gradle.work.InputChanges} instead.
+ *
  */
 @NonExtensible
 @Deprecated
@@ -96,7 +96,7 @@ public interface IncrementalTaskInputs {
     boolean isIncremental();
 
     /**
-     * Executes the action for all of the input files that are out-of-date since the previous task execution. The action may also be supplied as a {@link groovy.lang.Closure}.
+     * Executes the action for all of the input files that are out-of-date since the previous task execution. The action may also be supplied as a .
      * <ul>
      *     <li>When {@link #isIncremental()} == <code>true</code>, the action will be executed for any added or modified input file.</li>
      *     <li>When {@link #isIncremental()} == <code>false</code>, the action will be executed for every input file for the task.</li>
@@ -109,7 +109,7 @@ public interface IncrementalTaskInputs {
     void outOfDate(Action<? super InputFileDetails> outOfDateAction);
 
     /**
-     * Executes the action for all of the input files that were removed since the previous task execution. The action may also be supplied as a {@link groovy.lang.Closure}.
+     * Executes the action for all of the input files that were removed since the previous task execution. The action may also be supplied as a .
      * <ul>
      *     <li>When {@link #isIncremental()} == <code>true</code>, the action will be executed for any removed input file.</li>
      *     <li>When {@link #isIncremental()} == <code>false</code>, the action will not be executed.</li>

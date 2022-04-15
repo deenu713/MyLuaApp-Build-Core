@@ -17,8 +17,6 @@
 package org.gradle.api;
 
 
-import org.gradle.api.provider.Provider;
-
 import org.gradle.api.specs.Spec;
 
 import org.gradle.api.tasks.TaskDependency;
@@ -30,7 +28,6 @@ import org.gradle.api.tasks.TaskState;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 
