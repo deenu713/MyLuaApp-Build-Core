@@ -18,7 +18,6 @@ package org.gradle.api.provider;
 
 import org.gradle.api.Action;
 import org.gradle.api.Incubating;
-import org.gradle.api.file.RegularFile;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -61,7 +60,6 @@ import javax.inject.Inject;
  * @param <P> The source specific parameter type.
  * @see ProviderFactory#environmentVariable(String)
  * @see ProviderFactory#systemProperty(String)
- * @see ProviderFactory#fileContents(RegularFile)
  * @see ProviderFactory#of(Class, Action)
  * @see <a href="https://docs.gradle.org/current/userguide/configuration_cache.html">Configuration Cache</a>
  * @since 6.1

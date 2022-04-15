@@ -17,7 +17,7 @@ package org.gradle.api.internal.tasks;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import groovy.lang.Closure;
+
 import org.gradle.api.Action;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.NamedDomainObjectCollectionSchema;
@@ -27,7 +27,7 @@ import org.gradle.api.internal.CollectionCallbackActionDecorator;
 import org.gradle.api.internal.DefaultNamedDomainObjectSet;
 import org.gradle.api.internal.MutationGuard;
 import org.gradle.api.internal.collections.CollectionFilter;
-import org.gradle.api.internal.plugins.DslObject;
+
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.internal.provider.ProviderInternal;
 import org.gradle.api.reflect.TypeOf;
@@ -37,7 +37,7 @@ import org.gradle.api.tasks.TaskCollection;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.internal.Cast;
 import org.gradle.internal.reflect.Instantiator;
-import org.gradle.model.internal.core.ModelPath;
+
 
 import java.util.Map;
 
@@ -84,10 +84,6 @@ public class DefaultTaskCollection<T extends Task> extends DefaultNamedDomainObj
         return whenObjectAdded(action);
     }
 
-    @Override
-    public void whenTaskAdded(Closure closure) {
-        whenObjectAdded(closure);
-    }
 
     @Override
     public String getTypeDisplayName() {

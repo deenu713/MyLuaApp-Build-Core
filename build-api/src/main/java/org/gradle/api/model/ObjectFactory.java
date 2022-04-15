@@ -22,6 +22,10 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.NamedDomainObjectFactory;
 import org.gradle.api.NamedDomainObjectList;
 import org.gradle.api.NamedDomainObjectSet;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.MapProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.SetProperty;
 import org.gradle.api.reflect.ObjectInstantiationException;
 
 import java.util.List;
@@ -142,6 +146,63 @@ public interface ObjectFactory {
      * @since 6.1
      */
     <T> NamedDomainObjectList<T> namedDomainObjectList(Class<T> elementType);
+
+    /**
+     * Creates a {@link Property} implementation to hold values of the given type. The property has no initial value.
+     *
+     * <p>For certain types, there are more specialized property factory methods available:</p>
+     * <ul>
+     * <li>For {@link List} properties, you should use {@link #listProperty(Class)}.</li>
+     * <li>For {@link Set} properties, you should use {@link #setProperty(Class)}.</li>
+     * <li>For {@link Map} properties, you should use {@link #mapProperty(Class, Class)}.</li>
+     * <li>For {@link org.gradle.api.file.Directory} properties, you should use {@link #directoryProperty()}.</li>
+     * <li>For {@link org.gradle.api.file.RegularFile} properties, you should use {@link #fileProperty()}.</li>
+     * </ul>
+     *
+     * @param valueType The type of the property.
+     * @return The property. Never returns null.
+     * @since 4.3
+     */
+    <T> Property<T> property(Class<T> valueType);
+
+    /**
+     * Creates a {@link ListProperty} implementation to hold a {@link List} of the given element type {@code T}. The property has an empty list as its initial value.
+     *
+     * <p>The implementation will return immutable {@link List} values from its query methods.</p>
+     *
+     * @param elementType The type of element.
+     * @param <T> The type of element.
+     * @return The property. Never returns null.
+     * @since 4.3
+     */
+    <T> ListProperty<T> listProperty(Class<T> elementType);
+
+    /**
+     * Creates a {@link SetProperty} implementation to hold a {@link Set} of the given element type {@code T}. The property has an empty set as its initial value.
+     *
+     * <p>The implementation will return immutable {@link Set} values from its query methods.</p>
+     *
+     * @param elementType The type of element.
+     * @param <T> The type of element.
+     * @return The property. Never returns null.
+     * @since 4.5
+     */
+    <T> SetProperty<T> setProperty(Class<T> elementType);
+
+    /**
+     * Creates a {@link MapProperty} implementation to hold a {@link Map} of the given key type {@code K} and value type {@code V}. The property has an empty map as its initial value.
+     *
+     * <p>The implementation will return immutable {@link Map} values from its query methods.</p>
+     *
+     * @param keyType the type of key.
+     * @param valueType the type of value.
+     * @param <K> the type of key.
+     * @param <V> the type of value.
+     * @return the property. Never returns null.
+     * @since 5.1
+     */
+    <K, V> MapProperty<K, V> mapProperty(Class<K> keyType, Class<V> valueType);
+
 
 
 }

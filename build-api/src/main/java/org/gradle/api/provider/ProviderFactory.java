@@ -19,15 +19,6 @@ package org.gradle.api.provider;
 import org.gradle.api.Action;
 import org.gradle.api.Incubating;
 import org.gradle.api.NonExtensible;
-import org.gradle.api.credentials.AwsCredentials;
-import org.gradle.api.credentials.Credentials;
-import org.gradle.api.credentials.PasswordCredentials;
-import org.gradle.api.file.FileContents;
-import org.gradle.api.file.RegularFile;
-import org.gradle.api.initialization.Settings;
-import org.gradle.internal.service.scopes.Scopes;
-import org.gradle.internal.service.scopes.ServiceScope;
-
 import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
 
@@ -36,12 +27,11 @@ import java.util.function.BiFunction;
  *
  * <p>
  * An instance of the factory can be injected into a task, plugin or other object by annotating a public constructor or property getter method with {@code javax.inject.Inject}.
- * It is also available via {@link org.gradle.api.Project#getProviders()} and {@link Settings#getProviders()}.
+ * It is also available via  and .
  *
  * @since 4.0
  */
 @NonExtensible
-@ServiceScope(Scopes.Build.class)
 public interface ProviderFactory {
 
     /**
@@ -127,38 +117,6 @@ public interface ProviderFactory {
     Provider<String> gradleProperty(Provider<String> propertyName);
 
     /**
-     * Allows lazy access to the contents of the given file.
-     *
-     * When the file contents are read at configuration time the file is automatically considered
-     * as an input to the configuration model.
-     *
-     * @param file the file whose contents to read.
-     * @return an interface that allows lazy access to the contents of the given file.
-     *
-     * @see FileContents#getAsText()
-     * @see FileContents#getAsBytes()
-     *
-     * @since 6.1
-     */
-    FileContents fileContents(RegularFile file);
-
-    /**
-     * Allows lazy access to the contents of the given file.
-     *
-     * When the file contents are read at configuration time the file is automatically considered
-     * as an input to the configuration model.
-     *
-     * @param file provider of the file whose contents to read.
-     * @return an interface that allows lazy access to the contents of the given file.
-     *
-     * @see FileContents#getAsText()
-     * @see FileContents#getAsBytes()
-     *
-     * @since 6.1
-     */
-    FileContents fileContents(Provider<RegularFile> file);
-
-    /**
      * Creates a {@link Provider} whose value is obtained from the given {@link ValueSource}.
      *
      * The returned provider cannot be queried at configuration time but can produce a configuration time provider
@@ -176,57 +134,6 @@ public interface ProviderFactory {
         Action<? super ValueSourceSpec<P>> configuration
     );
 
-    /**
-     * Creates a {@link Provider} for the given {@link Credentials} type.
-     *
-     * <p>
-     * The provider returned by this method should be attached to a task's input property.
-     * This way, the presence of credentials will be validated before any of the tasks are executed if and only if the task with credentials property is to be executed.
-     *
-     * <p>
-     * Values for the requested Credentials type will be sourced from the project's properties using the pattern "identity" + credentials field.
-     * For example, {@link PasswordCredentials} provider with identity "myService" will look for properties named "myServiceUsername" and "myServicePassword".
-     *
-     * <p>
-     * The following credential types are currently supported:
-     * <ul>
-     * <li>{@link PasswordCredentials}</li>
-     * <li>{@link AwsCredentials}</li>
-     * </ul>
-     *
-     * @param credentialsType type of credentials to be provided.
-     * @param identity identity to be associated with the credentials.
-     * @return The provider. Never returns null.
-     *
-     * @since 6.6
-     */
-    <T extends Credentials> Provider<T> credentials(Class<T> credentialsType, String identity);
-
-    /**
-     * Creates a {@link Provider} for the given {@link Credentials} type.
-     *
-     * <p>
-     * The provider returned by this method should be attached to a task's input property.
-     * This way, the presence of credentials will be validated before any of the tasks are executed if and only if the task with credentials property is to be executed.
-     *
-     * <p>
-     * Values for the requested Credentials type will be sourced from the project's properties using the pattern "identity" + credentials field.
-     * For example, {@link PasswordCredentials} provider with identity "myService" will look for properties named "myServiceUsername" and "myServicePassword".
-     *
-     * <p>
-     * The following credential types are currently supported:
-     * <ul>
-     * <li>{@link PasswordCredentials}</li>
-     * <li>{@link AwsCredentials}</li>
-     * </ul>
-     *
-     * @param credentialsType type of credentials to be provided.
-     * @param identity a provider returning the identity to be associated with the credentials.
-     * @return The provider. Never returns null.
-     *
-     * @since 6.6
-     */
-    <T extends Credentials> Provider<T> credentials(Class<T> credentialsType, Provider<String> identity);
 
     /**
      * Returns a provider which value will be computed by combining a provider value with another

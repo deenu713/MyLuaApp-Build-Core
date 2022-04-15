@@ -16,7 +16,6 @@
 package org.gradle.api.internal;
 
 import com.google.common.collect.Lists;
-import groovy.lang.Closure;
 import org.gradle.api.Action;
 import org.gradle.api.DomainObjectCollection;
 import org.gradle.api.internal.collections.CollectionEventRegister;

@@ -41,6 +41,8 @@ public interface CollectionEventRegister<T> {
 
     <S extends T> CollectionEventRegister<S> filtered(CollectionFilter<S> filter);
 
-    // TODO: Migrate this away from here
+
+
     CollectionCallbackActionDecorator getDecorator();
+
 }
