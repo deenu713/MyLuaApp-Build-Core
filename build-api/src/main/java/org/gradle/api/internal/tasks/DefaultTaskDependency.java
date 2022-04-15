@@ -19,7 +19,14 @@ package org.gradle.api.internal.tasks;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import org.gradle.api.Buildable;
 import org.gradle.api.InvalidUserDataException;
+import org.gradle.api.Task;
+import org.gradle.api.internal.provider.ProviderInternal;
+import org.gradle.api.internal.provider.ValueSupplier;
+import org.gradle.api.tasks.TaskDependency;
+import org.gradle.internal.Cast;
+import org.gradle.internal.typeconversion.UnsupportedNotationException;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
@@ -35,6 +42,9 @@ import java.util.RandomAccess;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+
+import static com.google.common.collect.Iterables.toArray;
+import static org.gradle.util.internal.GUtil.uncheckedCall;
 
 /**
  * A task dependency which can have both mutable and immutable dependency values.
@@ -64,7 +74,7 @@ public class DefaultTaskDependency extends AbstractTaskDependency {
 
     @Override
     public void visitDependencies(final TaskDependencyResolveContext context) {
-        /*
+
         Set<Object> mutableValues = getMutableValues();
         if (mutableValues.isEmpty() && immutableValues.isEmpty()) {
             return;
@@ -92,12 +102,6 @@ public class DefaultTaskDependency extends AbstractTaskDependency {
                 }
             } else if (dependency instanceof TaskDependencyContainer) {
                 ((TaskDependencyContainer) dependency).visitDependencies(context);
-            } else if (dependency instanceof Closure) {
-                Closure closure = (Closure) dependency;
-                Object closureResult = closure.call(context.getTask());
-                if (closureResult != null) {
-                    queue.addFirst(closureResult);
-                }
             } else if (dependency instanceof List) {
                 List<?> list = (List) dependency;
                 if (list instanceof RandomAccess) {
@@ -147,7 +151,7 @@ public class DefaultTaskDependency extends AbstractTaskDependency {
             }
         }
 
-         */
+
     }
 
     private static void addAllFirst(Deque<Object> queue, Object[] items) {
