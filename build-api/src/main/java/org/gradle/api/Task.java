@@ -22,6 +22,11 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.specs.Spec;
 
 import org.gradle.api.tasks.TaskDependency;
+import org.gradle.api.tasks.TaskDestroyables;
+import org.gradle.api.tasks.TaskInputs;
+import org.gradle.api.tasks.TaskLocalState;
+import org.gradle.api.tasks.TaskOutputs;
+import org.gradle.api.tasks.TaskState;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -127,6 +132,48 @@ public interface Task extends Comparable<Task> {
      */
     Task dependsOn(Object... paths);
 
+
+    /**
+     * <p>Returns the inputs of this task.</p>
+     *
+     * @return The inputs. Never returns null.
+     */
+
+    TaskInputs getInputs();
+
+    /**
+     * <p>Returns the outputs of this task.</p>
+     *
+     * @return The outputs. Never returns null.
+     */
+
+    TaskOutputs getOutputs();
+
+    /**
+     * <p>Returns the destroyables of this task.</p>
+     * @return The destroyables.  Never returns null.
+     *
+     * @since 4.0
+     */
+
+    TaskDestroyables getDestroyables();
+
+    /**
+     * Returns the local state of this task.
+     *
+     * @since 4.3
+     */
+
+    TaskLocalState getLocalState();
+
+    /**
+     * <p>Returns a directory which this task can use to write temporary files to. Each task instance is provided with a
+     * separate temporary directory. There are no guarantees that the contents of this directory will be kept beyond the
+     * execution of the task.</p>
+     *
+     * @return The directory. Never returns null. The directory will already exist.
+     */
+    File getTemporaryDir();
 
     /**
      * <p>Execute the task only if the given spec is satisfied. The spec will be evaluated at task execution time, not
@@ -419,5 +466,15 @@ public interface Task extends Comparable<Task> {
 
     TaskDependency getShouldRunAfter();
 
+
+
+    /**
+     * Returns the execution state of this task. This provides information about the execution of this task, such as
+     * whether it has executed, been skipped, has failed, etc.
+     *
+     * @return The execution state of this task. Never returns null.
+     */
+
+    TaskState getState();
 
 }
