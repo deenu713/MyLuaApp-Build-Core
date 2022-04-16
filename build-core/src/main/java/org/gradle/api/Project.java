@@ -4,6 +4,7 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.FileTree;
+import org.gradle.api.invocation.Gradle;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskContainer;
@@ -344,4 +345,11 @@ public interface Project {
      */
     ObjectFactory getObjects();
 
+
+    /**
+     * <p>Returns the {@link org.gradle.api.invocation.Gradle} invocation which this project belongs to.</p>
+     *
+     * @return The Gradle object. Never returns null.
+     */
+    Gradle getGradle();
 }

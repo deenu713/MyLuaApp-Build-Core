@@ -55,7 +55,7 @@ public class JavaMethod<T, R> {
     /**
      * Locates the given method. Searches all methods, including private methods.
      */
-    public static <T, R> JavaMethod<T, R> of(Class<R> returnType, Method method) throws NoSuchMethodException {
+    public static <T, R> JavaMethod<T, R> of(Class<R> returnType, Method method)  {
         return new JavaMethod<T, R>(returnType, method);
     }
 
