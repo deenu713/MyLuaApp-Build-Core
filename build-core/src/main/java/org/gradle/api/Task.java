@@ -1,6 +1,7 @@
 package org.gradle.api;
 
 import org.gradle.api.specs.Spec;
+import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.api.tasks.TaskState;
 
 import java.util.List;
@@ -155,4 +156,11 @@ public interface Task {
 
     TaskState getState();
 
+
+    /**
+     * <p>Returns the outputs of this task.</p>
+     *
+     * @return The outputs. Never returns null.
+     */
+    TaskOutputs getOutputs();
 }
