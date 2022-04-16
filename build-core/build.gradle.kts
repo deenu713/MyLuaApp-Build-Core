@@ -29,7 +29,8 @@ android {
 
 dependencies {
 
-    testCompileOnly("org.gradle:gradle-api:7.2.0")
+    testImplementation("junit:junit:4.12")
+
     implementation("javax.inject:javax.inject:1")
     implementation("com.google.guava:guava:24.0-android")
     implementation ("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
