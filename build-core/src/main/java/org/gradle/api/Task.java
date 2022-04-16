@@ -1,6 +1,7 @@
 package org.gradle.api;
 
 import org.gradle.api.specs.Spec;
+import org.gradle.api.tasks.TaskState;
 
 import java.util.List;
 
@@ -144,5 +145,14 @@ public interface Task {
      */
     void setEnabled(boolean enabled);
 
+
+    /**
+     * Returns the execution state of this task. This provides information about the execution of this task, such as
+     * whether it has executed, been skipped, has failed, etc.
+     *
+     * @return The execution state of this task. Never returns null.
+     */
+
+    TaskState getState();
 
 }

@@ -35,7 +35,7 @@ dependencies {
     implementation ("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
     implementation("com.google.code.findbugs:jsr305:3.0.2")
     implementation("commons-lang:commons-lang:2.6")
-
+    implementation ("org.slf4j:slf4j-api:1.7.36")
 }
 
 tasks.create("TestForGradleTask") {

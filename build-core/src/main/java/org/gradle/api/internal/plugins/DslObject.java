@@ -26,6 +26,7 @@ import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.ExtensionContainer;
 
  */
+import org.gradle.api.internal.GeneratedSubclasses;
 import org.gradle.api.reflect.HasPublicType;
 import org.gradle.api.reflect.TypeOf;
 /*
