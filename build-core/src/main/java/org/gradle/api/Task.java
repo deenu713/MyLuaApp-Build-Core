@@ -1,6 +1,10 @@
 package org.gradle.api;
 
 import org.gradle.api.specs.Spec;
+import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.TaskDestroyables;
+import org.gradle.api.tasks.TaskInputs;
+import org.gradle.api.tasks.TaskLocalState;
 import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.api.tasks.TaskState;
 
@@ -163,4 +167,30 @@ public interface Task {
      * @return The outputs. Never returns null.
      */
     TaskOutputs getOutputs();
+
+    /**
+     * <p>Returns the inputs of this task.</p>
+     *
+     * @return The inputs. Never returns null.
+     */
+
+    TaskInputs getInputs();
+
+
+    /**
+     * <p>Returns the destroyables of this task.</p>
+     * @return The destroyables.  Never returns null.
+     *
+     * @since 4.0
+     */
+    @Internal
+    TaskDestroyables getDestroyables();
+
+    /**
+     * Returns the local state of this task.
+     *
+     * @since 4.3
+     */
+    @Internal
+    TaskLocalState getLocalState();
 }

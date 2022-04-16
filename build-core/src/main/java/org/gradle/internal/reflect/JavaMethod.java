@@ -32,21 +32,21 @@ public class JavaMethod<T, R> {
     /**
      * Locates the given method. Searches all methods, including private methods.
      */
-    public static <T, R> JavaMethod<T, R> of(Class<T> target, Class<R> returnType, String name, Class<?>... paramTypes) throws NoSuchMethodException {
+    public static <T, R> JavaMethod<T, R> of(Class<T> target, Class<R> returnType, String name, Class<?>... paramTypes)  {
         return new JavaMethod<T, R>(target, returnType, name, paramTypes);
     }
 
     /**
      * Locates the given static method. Searches all methods, including private methods.
      */
-    public static <T, R> JavaMethod<T, R> ofStatic(Class<T> target, Class<R> returnType, String name, Class<?>... paramTypes) throws NoSuchMethodException {
+    public static <T, R> JavaMethod<T, R> ofStatic(Class<T> target, Class<R> returnType, String name, Class<?>... paramTypes)  {
         return new JavaMethod<T, R>(target, returnType, name, true, paramTypes);
     }
 
     /**
      * Locates the given method. Searches all methods, including private methods.
      */
-    public static <T, R> JavaMethod<T, R> of(T target, Class<R> returnType, String name, Class<?>... paramTypes) throws NoSuchMethodException {
+    public static <T, R> JavaMethod<T, R> of(T target, Class<R> returnType, String name, Class<?>... paramTypes) {
         @SuppressWarnings("unchecked")
         Class<T> targetClass = (Class<T>) target.getClass();
         return of(targetClass, returnType, name, paramTypes);
@@ -59,11 +59,11 @@ public class JavaMethod<T, R> {
         return new JavaMethod<T, R>(returnType, method);
     }
 
-    public JavaMethod(Class<T> target, Class<R> returnType, String name, boolean allowStatic, Class<?>... paramTypes) throws NoSuchMethodException {
+    public JavaMethod(Class<T> target, Class<R> returnType, String name, boolean allowStatic, Class<?>... paramTypes)  {
         this(returnType, findMethod(target, target, name, allowStatic, paramTypes));
     }
 
-    public JavaMethod(Class<T> target, Class<R> returnType, String name, Class<?>... paramTypes) throws NoSuchMethodException {
+    public JavaMethod(Class<T> target, Class<R> returnType, String name, Class<?>... paramTypes)  {
         this(target, returnType, name, false, paramTypes);
     }
 
@@ -73,7 +73,7 @@ public class JavaMethod<T, R> {
         method.setAccessible(true);
     }
 
-    private static Method findMethod(Class<?> origTarget, Class<?> target, String name, boolean allowStatic, Class<?>[] paramTypes) throws NoSuchMethodException {
+    private static Method findMethod(Class<?> origTarget, Class<?> target, String name, boolean allowStatic, Class<?>[] paramTypes) {
         for (Method method : target.getDeclaredMethods()) {
             if (!allowStatic && Modifier.isStatic(method.getModifiers())) {
                 continue;
@@ -85,7 +85,7 @@ public class JavaMethod<T, R> {
 
         Class<?> parent = target.getSuperclass();
         if (parent == null) {
-            throw new NoSuchMethodException(String.format("Could not find method %s(%s) on %s.", name, StringUtils.join(paramTypes, ", "), origTarget.getSimpleName()));
+            throw new GradleException(String.format("Could not find method %s(%s) on %s.", name, StringUtils.join(paramTypes, ", "), origTarget.getSimpleName()));
         } else {
             return findMethod(origTarget, parent, name, allowStatic, paramTypes);
         }

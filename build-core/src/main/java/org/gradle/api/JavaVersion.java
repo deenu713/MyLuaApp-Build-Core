@@ -161,7 +161,8 @@ public enum JavaVersion {
      */
     public static JavaVersion current() {
         if (currentJavaVersion == null) {
-            currentJavaVersion = toVersion(System.getProperty("java.version"));
+            //always running on java8
+            currentJavaVersion = toVersion(8);//System.getProperty("java.version"));
         }
         return currentJavaVersion;
     }
