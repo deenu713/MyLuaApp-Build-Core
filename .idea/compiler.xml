@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.9">
+    <bytecodeTargetLevel target="1.7">
       <module name="MyLuaApp-Build-Api.app" target="11" />
+      <module name="MyLuaApp-Build-Api.base-services" target="11" />
+      <module name="MyLuaApp-Build-Api.build-operations" target="11" />
+      <module name="MyLuaApp-Build-Api.build-option" target="11" />
+      <module name="MyLuaApp-Build-Api.cli" target="11" />
+      <module name="MyLuaApp-Build-Api.core-api" target="11" />
+      <module name="MyLuaApp-Build-Api.file-temp" target="11" />
+      <module name="MyLuaApp-Build-Api.files" target="11" />
+      <module name="MyLuaApp-Build-Api.hashing" target="11" />
+      <module name="MyLuaApp-Build-Api.logging" target="11" />
+      <module name="MyLuaApp-Build-Api.messaging" target="11" />
+      <module name="MyLuaApp-Build-Api.native" target="11" />
+      <module name="MyLuaApp-Build-Api.persistent-cache" target="11" />
+      <module name="MyLuaApp-Build-Api.process-services" target="11" />
+      <module name="MyLuaApp-Build-Api.resources" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

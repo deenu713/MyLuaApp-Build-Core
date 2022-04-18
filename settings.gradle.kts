@@ -29,8 +29,23 @@ dependencyResolutionManagement {
 }
 
 
-include(":app", ":build-core")
+include(":app")
 
 
 rootProject.name = "MyLuaApp-Build-Api"
 
+include(":core-api")
+include(":base-annotations")
+include(":hashing")
+include(":build-operations")
+include(":base-services")
+include(":files")
+include(":messaging")
+include(":cli")
+include(":build-option")
+include(":logging")
+include(":native")
+include(":file-temp")
+include(":process-services")
+include(":resources")
+include(":persistent-cache")
