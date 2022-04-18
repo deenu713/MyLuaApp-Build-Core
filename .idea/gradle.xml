@@ -13,19 +13,27 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/base-annotations" />
             <option value="$PROJECT_DIR$/base-services" />
+            <option value="$PROJECT_DIR$/build-cache" />
+            <option value="$PROJECT_DIR$/build-cache-base" />
+            <option value="$PROJECT_DIR$/build-cache-packaging" />
             <option value="$PROJECT_DIR$/build-operations" />
             <option value="$PROJECT_DIR$/build-option" />
             <option value="$PROJECT_DIR$/cli" />
             <option value="$PROJECT_DIR$/core-api" />
+            <option value="$PROJECT_DIR$/file-collections" />
             <option value="$PROJECT_DIR$/file-temp" />
             <option value="$PROJECT_DIR$/files" />
+            <option value="$PROJECT_DIR$/functional" />
             <option value="$PROJECT_DIR$/hashing" />
             <option value="$PROJECT_DIR$/logging" />
             <option value="$PROJECT_DIR$/messaging" />
+            <option value="$PROJECT_DIR$/model-core" />
             <option value="$PROJECT_DIR$/native" />
             <option value="$PROJECT_DIR$/persistent-cache" />
+            <option value="$PROJECT_DIR$/problems" />
             <option value="$PROJECT_DIR$/process-services" />
             <option value="$PROJECT_DIR$/resources" />
+            <option value="$PROJECT_DIR$/snapshots" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
