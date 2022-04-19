@@ -32,28 +32,14 @@ dependencyResolutionManagement {
 include(":app")
 
 
-rootProject.name = "MyLuaApp-Build-Api"
+rootProject.name = "MyLuaApp-Build-Core"
 
-include(":core-api")
-include(":base-annotations")
-include(":hashing")
-include(":build-operations")
-include(":base-services")
-include(":files")
-include(":messaging")
-include(":cli")
-include(":build-option")
-include(":logging")
-include(":native")
-include(":file-temp")
-include(":process-services")
-include(":resources")
-include(":persistent-cache")
-include(":functional")
-include(":build-cache-base")
-include(":snapshots")
-include(":build-cache")
-include(":build-cache-packaging")
-include(":file-collections")
-include(":model-core")
-include(":problems")
+
+file("subprojects")
+    .listFiles()
+    ?.forEach { dir ->
+        include(dir.name)
+        project(":${dir.name}")
+            .projectDir = dir
+    }
+

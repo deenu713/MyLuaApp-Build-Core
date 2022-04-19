@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.7">
+    <bytecodeTargetLevel target="11">
+      <module name="MyLuaApp-Build-Api.android-beans" target="11" />
       <module name="MyLuaApp-Build-Api.app" target="11" />
       <module name="MyLuaApp-Build-Api.base-services" target="11" />
       <module name="MyLuaApp-Build-Api.build-cache" target="11" />
@@ -10,8 +11,12 @@
       <module name="MyLuaApp-Build-Api.build-operations" target="11" />
       <module name="MyLuaApp-Build-Api.build-option" target="11" />
       <module name="MyLuaApp-Build-Api.cli" target="11" />
+      <module name="MyLuaApp-Build-Api.core" target="11" />
       <module name="MyLuaApp-Build-Api.core-api" target="11" />
+      <module name="MyLuaApp-Build-Api.execution" target="11" />
+      <module name="MyLuaApp-Build-Api.file-collections" target="11" />
       <module name="MyLuaApp-Build-Api.file-temp" target="11" />
+      <module name="MyLuaApp-Build-Api.file-watching" target="11" />
       <module name="MyLuaApp-Build-Api.files" target="11" />
       <module name="MyLuaApp-Build-Api.functional" target="11" />
       <module name="MyLuaApp-Build-Api.hashing" target="11" />
@@ -19,11 +24,13 @@
       <module name="MyLuaApp-Build-Api.messaging" target="11" />
       <module name="MyLuaApp-Build-Api.model-core" target="11" />
       <module name="MyLuaApp-Build-Api.native" target="11" />
+      <module name="MyLuaApp-Build-Api.normalization-java" target="11" />
       <module name="MyLuaApp-Build-Api.persistent-cache" target="11" />
       <module name="MyLuaApp-Build-Api.problems" target="11" />
       <module name="MyLuaApp-Build-Api.process-services" target="11" />
       <module name="MyLuaApp-Build-Api.resources" target="11" />
       <module name="MyLuaApp-Build-Api.snapshots" target="11" />
+      <module name="MyLuaApp-Build-Api.worker-processes" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

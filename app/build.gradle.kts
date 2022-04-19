@@ -63,10 +63,10 @@ dependencies {
     androidTestImplementation ("androidx.test.ext:junit:1.1.3")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
 
+    implementation(project(":core"))
     implementation(project(":core-api"))
-    implementation(project(":model-core"))
-    implementation(project(":build-cache"))
-    implementation(project(":build-cache-packaging"))
+
+
 
 
 //    implementation ("com.esotericsoftware:kryo:5.3.0")
