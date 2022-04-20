@@ -15,7 +15,7 @@
  */
 
 package org.gradle.internal.service.scopes;
-/*
+
 
 import com.google.common.annotations.VisibleForTesting;
 import net.rubygrapefruit.platform.NativeIntegrationUnavailableException;
@@ -111,12 +111,12 @@ public class VirtualFileSystemServices extends AbstractPluginServiceRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VirtualFileSystemServices.class);
 
-    */
-/**
+
+    /**
      * When file system watching is enabled, this system property can be used to invalidate the entire VFS.
      *
      * @see org.gradle.initialization.StartParameterBuildOptions.WatchFileSystemOption
-     *//*
+     */
 
     public static final String VFS_DROP_PROPERTY = "org.gradle.vfs.drop";
 
@@ -248,19 +248,29 @@ public class VirtualFileSystemServices extends AbstractPluginServiceRegistry {
             DirectorySnapshotterStatistics.Collector statisticsCollector
         ) {
             DefaultFileSystemAccess fileSystemAccess = new DefaultFileSystemAccess(
-                hasher,
-                stringInterner,
-                stat,
-                virtualFileSystem,
-                writeListener,
-                statisticsCollector,
-                DirectoryScanner.getDefaultExcludes()
+                    hasher,
+                    stringInterner,
+                    stat,
+                    virtualFileSystem,
+                    writeListener,
+                    statisticsCollector,
+                    "**/.gradle/**",
+                    "**/.idea/**",
+                    "**/.git/**",
+                    "**/.svn/**",
+                    "**/.hg/**"
             );
             listenerManager.addListener(new DefaultExcludesBuildListener(fileSystemAccess) {
                 @Override
                 public void settingsEvaluated(Settings settings) {
                     super.settingsEvaluated(settings);
-                    String[] defaultExcludes = DirectoryScanner.getDefaultExcludes();
+                    String[] defaultExcludes = new String[]{
+                            "**/.gradle/**",
+                            "**/.idea/**",
+                            "**/.git/**",
+                            "**/.svn/**",
+                            "**/.hg/**",
+                    };
                     patternSpecFactory.setDefaultExcludesFromSettings(defaultExcludes);
                     PatternSpecFactory.INSTANCE.setDefaultExcludesFromSettings(defaultExcludes);
                 }
@@ -268,9 +278,13 @@ public class VirtualFileSystemServices extends AbstractPluginServiceRegistry {
             listenerManager.addListener(new RootBuildLifecycleListener() {
                 @Override
                 public void afterStart() {
-                    // Reset default excludes for each build
-                    DirectoryScanner.resetDefaultExcludes();
-                    String[] defaultExcludes = DirectoryScanner.getDefaultExcludes();
+                    String[] defaultExcludes = new String[]{
+                            "**/.gradle/**",
+                            "**/.idea/**",
+                            "**/.git/**",
+                            "**/.svn/**",
+                            "**/.hg/**",
+                    };
                     patternSpecFactory.setDefaultExcludesFromSettings(defaultExcludes);
                     PatternSpecFactory.INSTANCE.setDefaultExcludesFromSettings(defaultExcludes);
                 }
@@ -355,13 +369,17 @@ public class VirtualFileSystemServices extends AbstractPluginServiceRegistry {
             DirectorySnapshotterStatistics.Collector statisticsCollector
         ) {
             DefaultFileSystemAccess buildSessionsScopedVirtualFileSystem = new DefaultFileSystemAccess(
-                hasher,
-                stringInterner,
-                stat,
-                root,
-                writeListener,
-                statisticsCollector,
-                DirectoryScanner.getDefaultExcludes()
+                    hasher,
+                    stringInterner,
+                    stat,
+                    root,
+                    writeListener,
+                    statisticsCollector,
+                    "**/.gradle/**",
+                    "**/.idea/**",
+                    "**/.git/**",
+                    "**/.svn/**",
+                    "**/.hg/**"
             );
 
             listenerManager.addListener(new DefaultExcludesBuildListener(buildSessionsScopedVirtualFileSystem));
@@ -429,11 +447,16 @@ public class VirtualFileSystemServices extends AbstractPluginServiceRegistry {
 
         @Override
         public void settingsEvaluated(Settings settings) {
-            fileSystemAccess.updateDefaultExcludes(DirectoryScanner.getDefaultExcludes());
+            fileSystemAccess.updateDefaultExcludes("**/.gradle/**",
+                    "**/.idea/**",
+                    "**/.git/**",
+                    "**/.svn/**",
+                    "**/.hg/**"
+            );
         }
     }
 
     interface WatchFilter extends Predicate<String> {
     }
 }
-*/
+

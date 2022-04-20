@@ -62,6 +62,7 @@ import org.gradle.internal.resources.DefaultResourceLockCoordinationService;
 import org.gradle.internal.resources.ResourceLockCoordinationService;
 import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.ServiceRegistryBuilder;
+import org.gradle.internal.service.scopes.GlobalScopeServices;
 import org.gradle.internal.service.scopes.GradleUserHomeScopeServiceRegistry;
 import org.gradle.internal.session.BuildSessionState;
 import org.gradle.internal.session.CrossBuildSessionState;
@@ -190,7 +191,7 @@ public class ProjectBuilderImpl {
             .builder()
             .displayName("global services")
             .parent(LoggingServiceRegistry.newNestedLogging())
-            .parent(NativeServices.getInstance())
+            //.parent(NativeServices.getInstance())
             .provider(new TestGlobalScopeServices())
             .build();
     }

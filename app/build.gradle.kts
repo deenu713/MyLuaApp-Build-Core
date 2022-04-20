@@ -63,9 +63,11 @@ dependencies {
     androidTestImplementation ("androidx.test.ext:junit:1.1.3")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
 
+    implementation(project(":launcher"))
     implementation(project(":core"))
+    implementation(project(":logging"))
     implementation(project(":core-api"))
-
+    implementation(project(":base-services"))
 
 
 

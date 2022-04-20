@@ -28,6 +28,7 @@
             <option value="$PROJECT_DIR$/subprojects/files" />
             <option value="$PROJECT_DIR$/subprojects/functional" />
             <option value="$PROJECT_DIR$/subprojects/hashing" />
+            <option value="$PROJECT_DIR$/subprojects/launcher" />
             <option value="$PROJECT_DIR$/subprojects/logging" />
             <option value="$PROJECT_DIR$/subprojects/messaging" />
             <option value="$PROJECT_DIR$/subprojects/model-core" />
@@ -38,7 +39,6 @@
             <option value="$PROJECT_DIR$/subprojects/process-services" />
             <option value="$PROJECT_DIR$/subprojects/resources" />
             <option value="$PROJECT_DIR$/subprojects/snapshots" />
-            <option value="$PROJECT_DIR$/subprojects/worker-processes" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

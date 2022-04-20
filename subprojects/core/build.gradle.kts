@@ -31,7 +31,6 @@ dependencies {
     implementation(project(":snapshots"))
     implementation(project(":file-watching"))
     implementation(project(":execution"))
-    implementation(project(":worker-processes"))
     implementation(project(":normalization-java"))
 
 

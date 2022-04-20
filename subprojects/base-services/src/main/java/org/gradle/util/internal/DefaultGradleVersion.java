@@ -57,37 +57,38 @@ public final class DefaultGradleVersion extends GradleVersion {
     static {
         URL resource = DefaultGradleVersion.class.getResource(RESOURCE_NAME);
         if (resource == null) {
-            throw new GradleException(format("Resource '%s' not found.", RESOURCE_NAME));
-        }
+            CURRENT = DefaultGradleVersion.version("7.2.0");
+            //throw new GradleException(format("Resource '%s' not found.", RESOURCE_NAME));
+        } else {
+            InputStream inputStream = null;
+            try {
+                URLConnection connection = resource.openConnection();
+                connection.setUseCaches(false);
+                inputStream = connection.getInputStream();
+                Properties properties = new Properties();
+                properties.load(inputStream);
 
-        InputStream inputStream = null;
-        try {
-            URLConnection connection = resource.openConnection();
-            connection.setUseCaches(false);
-            inputStream = connection.getInputStream();
-            Properties properties = new Properties();
-            properties.load(inputStream);
+                String version = properties.get(VERSION_NUMBER_PROPERTY).toString();
 
-            String version = properties.get(VERSION_NUMBER_PROPERTY).toString();
+                // We allow the gradle version to be overridden for tests that are sensitive
+                // to the version and need to test with various different version patterns.
+                // We use an env variable because these are easy to set on daemon startup,
+                // whereas system properties are scrubbed at daemon startup.
+                String overrideVersion = System.getenv(VERSION_OVERRIDE_VAR);
+                if (overrideVersion != null) {
+                    version = overrideVersion;
+                }
 
-            // We allow the gradle version to be overridden for tests that are sensitive
-            // to the version and need to test with various different version patterns.
-            // We use an env variable because these are easy to set on daemon startup,
-            // whereas system properties are scrubbed at daemon startup.
-            String overrideVersion = System.getenv(VERSION_OVERRIDE_VAR);
-            if (overrideVersion != null) {
-                version = overrideVersion;
-            }
+                String buildTimestamp = properties.get("buildTimestampIso").toString();
+                String commitId = properties.get("commitId").toString();
 
-            String buildTimestamp = properties.get("buildTimestampIso").toString();
-            String commitId = properties.get("commitId").toString();
-
-            CURRENT = new DefaultGradleVersion(version, "unknown".equals(buildTimestamp) ? null : buildTimestamp, commitId);
-        } catch (Exception e) {
-            throw new GradleException(format("Could not load version details from resource '%s'.", resource), e);
-        } finally {
-            if (inputStream != null) {
-                uncheckedClose(inputStream);
+                CURRENT = new DefaultGradleVersion(version, "unknown".equals(buildTimestamp) ? null : buildTimestamp, commitId);
+            } catch (Exception e) {
+                throw new GradleException(format("Could not load version details from resource '%s'.", resource), e);
+            } finally {
+                if (inputStream != null) {
+                    uncheckedClose(inputStream);
+                }
             }
         }
     }
