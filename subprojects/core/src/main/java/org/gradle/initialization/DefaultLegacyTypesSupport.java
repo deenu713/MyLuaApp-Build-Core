@@ -16,6 +16,8 @@
 
 package org.gradle.initialization;
 
+import com.google.common.collect.ImmutableSet;
+
 import org.gradle.api.GradleException;
 import org.gradle.internal.classloader.ClassLoaderUtils;
 import org.objectweb.asm.ClassWriter;
@@ -36,8 +38,8 @@ import java.util.Set;
 public class DefaultLegacyTypesSupport implements LegacyTypesSupport {
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
 
-    private final Set<String> classesToMixInGroovyObject = readClassNames("converted-types.txt");
-    private final Set<String> syntheticClasses = readClassNames("removed-types.txt");
+    private final Set<String> classesToMixInGroovyObject = ImmutableSet.of();//readClassNames("converted-types.txt");
+    private final Set<String> syntheticClasses = ImmutableSet.of(); //readClassNames("removed-types.txt");
 
     @Override
     public Set<String> getClassesToMixInGroovyObject() {
@@ -78,7 +80,7 @@ public class DefaultLegacyTypesSupport implements LegacyTypesSupport {
 
     /**
      * Injects the interfaces into an arbitrary classloader via
-     * {@link ClassLoader#defineClass(String, byte[], int, int)}.
+     * .
      */
     @Override
     public void injectEmptyInterfacesIntoClassLoader(ClassLoader classLoader) {

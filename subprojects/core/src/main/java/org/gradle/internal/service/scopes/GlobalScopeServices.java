@@ -19,17 +19,10 @@ package org.gradle.internal.service.scopes;
 import com.google.common.collect.Iterables;
 import org.gradle.api.execution.internal.DefaultTaskInputsListeners;
 import org.gradle.api.execution.internal.TaskInputsListeners;
-import org.gradle.api.internal.ClassPathRegistry;
 import org.gradle.api.internal.CollectionCallbackActionDecorator;
-import org.gradle.api.internal.DefaultClassPathProvider;
-import org.gradle.api.internal.DefaultClassPathRegistry;
-import org.gradle.api.internal.DynamicModulesClassPathProvider;
 import org.gradle.api.internal.MutationGuards;
 import org.gradle.api.internal.cache.StringInterner;
-import org.gradle.api.internal.classpath.DefaultModuleRegistry;
-import org.gradle.api.internal.classpath.DefaultPluginModuleRegistry;
-import org.gradle.api.internal.classpath.ModuleRegistry;
-import org.gradle.api.internal.classpath.PluginModuleRegistry;
+
 import org.gradle.api.internal.collections.DefaultDomainObjectCollectionFactory;
 import org.gradle.api.internal.collections.DomainObjectCollectionFactory;
 import org.gradle.api.internal.file.FileCollectionFactory;
@@ -51,7 +44,6 @@ import org.gradle.configuration.DefaultImportsReader;
 import org.gradle.configuration.ImportsReader;
 import org.gradle.execution.DefaultWorkValidationWarningRecorder;
 import org.gradle.initialization.ClassLoaderRegistry;
-import org.gradle.initialization.DefaultClassLoaderRegistry;
 import org.gradle.initialization.DefaultJdkToolsInitializer;
 import org.gradle.initialization.FlatClassLoaderRegistry;
 import org.gradle.initialization.JdkToolsInitializer;
@@ -131,8 +123,11 @@ public class GlobalScopeServices extends WorkerSharedGlobalScopeServices {
         this.environment = () -> longLiving;
     }
 
-    void configure(ServiceRegistration registration, ClassLoaderRegistry classLoaderRegistry) {
-        final List<PluginServiceRegistry> pluginServiceFactories = new DefaultServiceLocator(classLoaderRegistry.getRuntimeClassLoader(), classLoaderRegistry.getPluginsClassLoader()).getAll(PluginServiceRegistry.class);
+    void configure(ServiceRegistration registration/*, ClassLoaderRegistry classLoaderRegistry*/) {
+        final List<PluginServiceRegistry> pluginServiceFactories = new DefaultServiceLocator(
+                getClass().getClassLoader())
+                .getAll(PluginServiceRegistry.class);
+
         for (PluginServiceRegistry pluginServiceRegistry : pluginServiceFactories) {
             registration.add(PluginServiceRegistry.class, pluginServiceRegistry);
             pluginServiceRegistry.registerGlobalServices(registration);
@@ -285,7 +280,7 @@ public class GlobalScopeServices extends WorkerSharedGlobalScopeServices {
         return new DefaultExecutionStateChangeDetector();
     }
 
-    ClassPathRegistry createClassPathRegistry(ModuleRegistry moduleRegistry, PluginModuleRegistry pluginModuleRegistry) {
+/*    ClassPathRegistry createClassPathRegistry(ModuleRegistry moduleRegistry, PluginModuleRegistry pluginModuleRegistry) {
         return new DefaultClassPathRegistry(
             new DefaultClassPathProvider(moduleRegistry),
             new DynamicModulesClassPathProvider(moduleRegistry,
@@ -294,17 +289,17 @@ public class GlobalScopeServices extends WorkerSharedGlobalScopeServices {
 
     DefaultModuleRegistry createModuleRegistry(CurrentGradleInstallation currentGradleInstallation) {
         return new DefaultModuleRegistry(additionalModuleClassPath, currentGradleInstallation.getInstallation());
-    }
+    }*/
 
     CurrentGradleInstallation createCurrentGradleInstallation() {
         return CurrentGradleInstallation.locate();
     }
 
-    PluginModuleRegistry createPluginModuleRegistry(ModuleRegistry moduleRegistry) {
-        return new DefaultPluginModuleRegistry(moduleRegistry);
-    }
-
-    ClassLoaderRegistry createClassLoaderRegistry(ClassPathRegistry classPathRegistry, LegacyTypesSupport legacyTypesSupport) {
+    /*   PluginModuleRegistry createPluginModuleRegistry(ModuleRegistry moduleRegistry) {
+           return new DefaultPluginModuleRegistry(moduleRegistry);
+       }
+   */
+   /* ClassLoaderRegistry createClassLoaderRegistry(ClassPathRegistry classPathRegistry, LegacyTypesSupport legacyTypesSupport) {
         if (GradleRuntimeShadedJarDetector.isLoadedFrom(getClass())) {
             return new FlatClassLoaderRegistry(getClass().getClassLoader());
         }
@@ -312,7 +307,7 @@ public class GlobalScopeServices extends WorkerSharedGlobalScopeServices {
         // Use DirectInstantiator here to avoid setting up the instantiation infrastructure early
         return new DefaultClassLoaderRegistry(classPathRegistry, legacyTypesSupport, DirectInstantiator.INSTANCE);
     }
-
+*/
     OverlappingOutputDetector createOverlappingOutputDetector() {
         return new DefaultOverlappingOutputDetector();
     }

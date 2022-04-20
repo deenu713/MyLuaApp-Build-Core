@@ -71,9 +71,11 @@ public class WorkerSharedGlobalScopeServices extends BasicGlobalScopeServices {
         return new DefaultCacheFactory(fileLockManager, executorFactory, progressLoggerFactory);
     }
 
+
     LegacyTypesSupport createLegacyTypesSupport() {
         return new DefaultLegacyTypesSupport();
     }
+
 
     BuildOperationIdFactory createBuildOperationIdProvider() {
         return new DefaultBuildOperationIdFactory();

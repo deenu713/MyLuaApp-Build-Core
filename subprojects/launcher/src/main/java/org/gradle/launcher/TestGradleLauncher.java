@@ -30,6 +30,7 @@ import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.ServiceRegistryBuilder;
 import org.gradle.internal.service.scopes.GlobalScopeServices;
 import org.gradle.internal.service.scopes.GradleUserHomeScopeServiceRegistry;
+import org.gradle.internal.service.scopes.WorkerSharedGlobalScopeServices;
 import org.gradle.internal.session.BuildSessionState;
 import org.gradle.internal.session.CrossBuildSessionState;
 import org.gradle.launcher.cli.ExecuteBuildAction;
@@ -52,23 +53,23 @@ public class TestGradleLauncher {
 
     TestGradleLauncher(StartParameterInternal startParameter) {
         this.startParameter = startParameter;
-
+        NativeServices.initializeOnClient(startParameter.getProjectDir());
         if (globalServices == null) {
             globalServices = ServiceRegistryBuilder
                     .builder()
                     .displayName("global services")
                     .parent(LoggingServiceRegistry.newCommandLineProcessLogging())
-                    //.parent(NativeServices.getInstance())
+                    .parent(NativeServices.getInstance())
                     .provider(new GlobalScopeServices(false))
                     .build();
         }
     }
 
 
-    public CompletableFuture<Gradle> create(File projectDir) {
+    public CompletableFuture<Gradle> create() {
 
         StartParameterInternal startParameter = this.startParameter;
-
+        File projectDir = startParameter.getProjectDir();
         BuildCancellationToken cancellationToken = new DefaultBuildCancellationToken();
         BuildEventConsumer consumer = System.out::println;
         BuildRequestMetaData requestMetaData = new DefaultBuildRequestMetaData(
@@ -144,9 +145,6 @@ public class TestGradleLauncher {
         }
     }
 
-    public synchronized static TestGradleLauncher createLauncher() {
-        return new TestGradleLauncher(new StartParameterInternal());
-    }
 
     public synchronized static TestGradleLauncher createLauncher(Action<StartParameter> configAction) {
         StartParameterInternal startParameterInternal = new StartParameterInternal();

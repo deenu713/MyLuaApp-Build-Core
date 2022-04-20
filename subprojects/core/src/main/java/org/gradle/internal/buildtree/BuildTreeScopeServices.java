@@ -26,6 +26,7 @@ import org.gradle.initialization.exception.DefaultExceptionAnalyser;
 import org.gradle.initialization.exception.ExceptionAnalyser;
 import org.gradle.initialization.exception.MultipleBuildFailuresExceptionAnalyser;
 import org.gradle.initialization.exception.StackTraceSanitizingExceptionAnalyser;
+import org.gradle.internal.build.BuildStateRegistry;
 import org.gradle.internal.build.DefaultBuildLifecycleControllerFactory;
 import org.gradle.internal.enterprise.core.GradleEnterprisePluginManager;
 import org.gradle.internal.event.DefaultListenerManager;
@@ -80,6 +81,9 @@ public class BuildTreeScopeServices {
     protected ConfigurationTimeBarrier createConfigurationTimeBarrier() {
         return new DefaultConfigurationTimeBarrier();
     }
+
+
+
 
     protected ProblemReporter createProblemReporter() {
         return new DeprecationsReporter();

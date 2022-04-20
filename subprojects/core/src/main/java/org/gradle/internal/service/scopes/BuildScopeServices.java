@@ -19,10 +19,10 @@ package org.gradle.internal.service.scopes;
 import org.gradle.StartParameter;
 import org.gradle.api.Project;
 import org.gradle.api.internal.BuildDefinition;
-import org.gradle.api.internal.ClassPathRegistry;
+/*import org.gradle.api.internal.ClassPathRegistry;
 import org.gradle.api.internal.DefaultClassPathProvider;
 import org.gradle.api.internal.DefaultClassPathRegistry;
-import org.gradle.api.internal.DependencyClassPathProvider;
+import org.gradle.api.internal.DependencyClassPathProvider;*/
 import org.gradle.api.internal.DocumentationRegistry;
 import org.gradle.api.internal.GradleInternal;
 import org.gradle.api.internal.StartParameterInternal;
@@ -30,8 +30,8 @@ import org.gradle.api.internal.artifacts.DefaultModule;
 import org.gradle.api.internal.artifacts.DependencyManagementServices;
 import org.gradle.api.internal.artifacts.Module;
 import org.gradle.api.internal.artifacts.configurations.DependencyMetaDataProvider;
-import org.gradle.api.internal.classpath.ModuleRegistry;
-import org.gradle.api.internal.classpath.PluginModuleRegistry;
+/*import org.gradle.api.internal.classpath.ModuleRegistry;
+import org.gradle.api.internal.classpath.PluginModuleRegistry;*/
 import org.gradle.api.internal.component.ComponentTypeRegistry;
 import org.gradle.api.internal.component.DefaultComponentTypeRegistry;
 import org.gradle.api.internal.file.DefaultArchiveOperations;
@@ -274,12 +274,12 @@ public class BuildScopeServices extends DefaultServiceRegistry {
         return listenerManager.createChild(Scopes.Build.class);
     }
 
-    protected ClassPathRegistry createClassPathRegistry() {
+  /*  protected ClassPathRegistry createClassPathRegistry() {
         ModuleRegistry moduleRegistry = get(ModuleRegistry.class);
         return new DefaultClassPathRegistry(
             new DefaultClassPathProvider(moduleRegistry),
             new DependencyClassPathProvider(moduleRegistry, get(PluginModuleRegistry.class)));
-    }
+    }*/
 
 
     protected GradleProperties createGradleProperties(

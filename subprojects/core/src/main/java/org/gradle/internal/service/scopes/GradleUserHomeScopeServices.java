@@ -16,12 +16,9 @@
 
 package org.gradle.internal.service.scopes;
 
-import org.gradle.api.internal.ClassPathRegistry;
-import org.gradle.api.internal.DefaultClassPathProvider;
-import org.gradle.api.internal.DefaultClassPathRegistry;
+
 import org.gradle.api.internal.changedetection.state.DefaultFileAccessTimeJournal;
 import org.gradle.api.internal.changedetection.state.GradleUserHomeScopeFileTimeStampInspector;
-import org.gradle.api.internal.classpath.ModuleRegistry;
 import org.gradle.api.internal.file.FileCollectionFactory;
 import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.internal.file.temp.GradleUserHomeTemporaryFileProvider;
@@ -192,12 +189,12 @@ public class GradleUserHomeScopeServices extends WorkerSharedUserHomeScopeServic
 
 
 
-    ClassPathRegistry createClassPathRegistry(ModuleRegistry moduleRegistry/*,WorkerProcessClassPathProvider workerProcessClassPathProvider*/) {
+   /* ClassPathRegistry createClassPathRegistry(ModuleRegistry moduleRegistry*//*,WorkerProcessClassPathProvider workerProcessClassPathProvider*//*) {
         return new DefaultClassPathRegistry(
             new DefaultClassPathProvider(moduleRegistry)
         );
     }
-
+*/
 
     protected JavaModuleDetector createJavaModuleDetector(FileContentCacheFactory cacheFactory, FileCollectionFactory fileCollectionFactory) {
         return new JavaModuleDetector(cacheFactory, fileCollectionFactory);
