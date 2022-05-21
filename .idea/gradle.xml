@@ -7,41 +7,13 @@
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="Android Studio default JDK" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/subprojects/base-annotations" />
-            <option value="$PROJECT_DIR$/subprojects/base-services" />
-            <option value="$PROJECT_DIR$/subprojects/build-cache" />
-            <option value="$PROJECT_DIR$/subprojects/build-cache-base" />
-            <option value="$PROJECT_DIR$/subprojects/build-cache-packaging" />
-            <option value="$PROJECT_DIR$/subprojects/build-operations" />
-            <option value="$PROJECT_DIR$/subprojects/build-option" />
-            <option value="$PROJECT_DIR$/subprojects/cli" />
-            <option value="$PROJECT_DIR$/subprojects/core" />
-            <option value="$PROJECT_DIR$/subprojects/core-api" />
-            <option value="$PROJECT_DIR$/subprojects/execution" />
-            <option value="$PROJECT_DIR$/subprojects/file-collections" />
-            <option value="$PROJECT_DIR$/subprojects/file-temp" />
-            <option value="$PROJECT_DIR$/subprojects/file-watching" />
-            <option value="$PROJECT_DIR$/subprojects/files" />
-            <option value="$PROJECT_DIR$/subprojects/functional" />
-            <option value="$PROJECT_DIR$/subprojects/hashing" />
-            <option value="$PROJECT_DIR$/subprojects/launcher" />
-            <option value="$PROJECT_DIR$/subprojects/logging" />
-            <option value="$PROJECT_DIR$/subprojects/messaging" />
-            <option value="$PROJECT_DIR$/subprojects/model-core" />
-            <option value="$PROJECT_DIR$/subprojects/native" />
-            <option value="$PROJECT_DIR$/subprojects/normalization-java" />
-            <option value="$PROJECT_DIR$/subprojects/persistent-cache" />
-            <option value="$PROJECT_DIR$/subprojects/problems" />
-            <option value="$PROJECT_DIR$/subprojects/process-services" />
-            <option value="$PROJECT_DIR$/subprojects/resources" />
-            <option value="$PROJECT_DIR$/subprojects/snapshots" />
           </set>
         </option>
-        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

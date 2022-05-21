@@ -1,6 +1,8 @@
 package com.dingyi.myluaapp.build
 
 
+import org.gradle.internal.build.BuildStateRegistry
+import org.gradle.internal.buildtree.BuildTreeModelControllerServices
 import org.gradle.internal.service.scopes.GlobalScopeServices
 import org.gradle.launcher.TestGradleLauncher
 import org.junit.Test
