@@ -1,10 +1,10 @@
 package com.dingyi.myluaapp.build
 
 
-import org.gradle.internal.build.BuildStateRegistry
+/*import org.gradle.internal.build.BuildStateRegistry
 import org.gradle.internal.buildtree.BuildTreeModelControllerServices
 import org.gradle.internal.service.scopes.GlobalScopeServices
-import org.gradle.launcher.TestGradleLauncher
+import org.gradle.launcher.TestGradleLauncher*/
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.BufferedReader
@@ -40,7 +40,7 @@ class GradleTest {
 
     @Test
     fun test1() {
-        val projectPath = File("G:\\android studio project\\AideLua")
+      /*  val projectPath = File("G:\\android studio project\\AideLua")
         val launcher = TestGradleLauncher
             .createLauncher {
                 it.projectDir = projectPath
@@ -58,6 +58,6 @@ class GradleTest {
             .create()
             .whenComplete { gradle, throwable ->
                 println(gradle)
-            }
+            }*/
     }
 }
