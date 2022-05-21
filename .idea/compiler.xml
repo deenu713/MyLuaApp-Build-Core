@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.7">
+    <bytecodeTargetLevel target="11">
       <module name="MyLuaApp-Build-Api.android-beans" target="11" />
       <module name="MyLuaApp-Build-Api.app" target="11" />
       <module name="MyLuaApp-Build-Api.base-services" target="11" />
@@ -31,10 +31,6 @@
       <module name="MyLuaApp-Build-Api.resources" target="11" />
       <module name="MyLuaApp-Build-Api.snapshots" target="11" />
       <module name="MyLuaApp-Build-Api.worker-processes" target="11" />
-      <module name="MyLuaApp-Build-Core.app" target="11" />
-      <module name="MyLuaApp-Build-Core.base-annotations" target="1.8" />
-      <module name="MyLuaApp-Build-Core.base-annotations.main" target="1.8" />
-      <module name="MyLuaApp-Build-Core.base-annotations.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
