@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/subprojects/base-annotations" />
             <option value="$PROJECT_DIR$/subprojects/base-services" />
+            <option value="$PROJECT_DIR$/subprojects/base-services-groovy" />
             <option value="$PROJECT_DIR$/subprojects/build-operations" />
             <option value="$PROJECT_DIR$/subprojects/hashing" />
           </set>
