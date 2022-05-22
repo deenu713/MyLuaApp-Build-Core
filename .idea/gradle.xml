@@ -16,7 +16,9 @@
             <option value="$PROJECT_DIR$/subprojects/base-services" />
             <option value="$PROJECT_DIR$/subprojects/base-services-groovy" />
             <option value="$PROJECT_DIR$/subprojects/build-operations" />
+            <option value="$PROJECT_DIR$/subprojects/files" />
             <option value="$PROJECT_DIR$/subprojects/hashing" />
+            <option value="$PROJECT_DIR$/subprojects/messaging" />
           </set>
         </option>
       </GradleProjectSettings>
