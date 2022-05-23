@@ -71,6 +71,7 @@ dependencies {
     implementation(project(":files"))
     implementation(project(":messaging"))
     implementation(project(":file-temp"))
+    implementation(project(":cli"))
 /*
 
     implementation(project(":launcher"))

@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/subprojects/base-services" />
             <option value="$PROJECT_DIR$/subprojects/base-services-groovy" />
             <option value="$PROJECT_DIR$/subprojects/build-operations" />
+            <option value="$PROJECT_DIR$/subprojects/cli" />
             <option value="$PROJECT_DIR$/subprojects/file-temp" />
             <option value="$PROJECT_DIR$/subprojects/files" />
             <option value="$PROJECT_DIR$/subprojects/hashing" />
