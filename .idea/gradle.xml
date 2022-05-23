@@ -16,10 +16,12 @@
             <option value="$PROJECT_DIR$/subprojects/base-services" />
             <option value="$PROJECT_DIR$/subprojects/base-services-groovy" />
             <option value="$PROJECT_DIR$/subprojects/build-operations" />
+            <option value="$PROJECT_DIR$/subprojects/build-option" />
             <option value="$PROJECT_DIR$/subprojects/cli" />
             <option value="$PROJECT_DIR$/subprojects/file-temp" />
             <option value="$PROJECT_DIR$/subprojects/files" />
             <option value="$PROJECT_DIR$/subprojects/hashing" />
+            <option value="$PROJECT_DIR$/subprojects/logging" />
             <option value="$PROJECT_DIR$/subprojects/messaging" />
             <option value="$PROJECT_DIR$/subprojects/native" />
           </set>
