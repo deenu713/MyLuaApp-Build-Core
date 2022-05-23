@@ -68,7 +68,7 @@ dependencies {
     implementation(project(":base-services-groovy"))
     androidTestImplementation ("androidx.test.ext:junit:1.1.3")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
-    implementation(project(":files"))
+    implementation(project(":native"))
     implementation(project(":messaging"))
     implementation(project(":file-temp"))
     implementation(project(":cli"))
