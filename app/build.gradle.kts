@@ -70,6 +70,7 @@ dependencies {
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
 
     implementation(project(":logging"))
+    implementation(project(":resources"))
     implementation(project(":file-temp"))
 
 /*
