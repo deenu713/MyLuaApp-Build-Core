@@ -25,6 +25,7 @@
             <option value="$PROJECT_DIR$/subprojects/messaging" />
             <option value="$PROJECT_DIR$/subprojects/native" />
             <option value="$PROJECT_DIR$/subprojects/persistent-cache" />
+            <option value="$PROJECT_DIR$/subprojects/process-services" />
             <option value="$PROJECT_DIR$/subprojects/resources" />
           </set>
         </option>

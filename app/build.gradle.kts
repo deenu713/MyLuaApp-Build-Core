@@ -71,6 +71,7 @@ dependencies {
 
     implementation(project(":logging"))
     implementation(project(":persistent-cache"))
+    implementation(project(":process-services"))
     implementation(project(":file-temp"))
 
 /*
