@@ -40,16 +40,6 @@ public class IntersectionPatternSet extends PatternSet {
         return Specs.intersect(super.getAsSpec(), other.getAsSpec());
     }
 
-    @Override
-    public Object addToAntBuilder(Object node, String childNodeName) {
-        return PatternSetAntBuilderDelegate.and(node, new Action<Object>() {
-            @Override
-            public void execute(Object andNode) {
-                org.gradle.api.tasks.util.internal.IntersectionPatternSet.super.addToAntBuilder(andNode, null);
-                other.addToAntBuilder(andNode, null);
-            }
-        });
-    }
 
     @Override
     public boolean isEmpty() {

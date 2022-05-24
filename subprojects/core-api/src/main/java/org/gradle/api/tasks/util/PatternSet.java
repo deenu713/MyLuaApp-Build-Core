@@ -21,9 +21,9 @@ import groovy.lang.Closure;
 import org.gradle.api.file.FileTreeElement;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.specs.Specs;
-import org.gradle.api.tasks.AntBuilderAware;
+
 import org.gradle.api.tasks.util.internal.IntersectionPatternSet;
-import org.gradle.api.tasks.util.internal.PatternSetAntBuilderDelegate;
+
 import org.gradle.api.tasks.util.internal.PatternSpecFactory;
 import org.gradle.internal.typeconversion.NotationParser;
 import org.gradle.internal.typeconversion.NotationParserBuilder;
@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * Standalone implementation of {@link PatternFilterable}.
  */
-public class PatternSet implements AntBuilderAware, PatternFilterable {
+public class PatternSet implements PatternFilterable {
 
     private static final NotationParser<Object, String> PARSER = NotationParserBuilder.toType(String.class).fromCharSequence().toComposite();
     private final PatternSpecFactory patternSpecFactory;
@@ -289,13 +289,4 @@ public class PatternSet implements AntBuilderAware, PatternFilterable {
         return this;
     }
 
-    @Override
-    public Object addToAntBuilder(Object node, String childNodeName) {
-
-        if (!nullToEmpty(includeSpecs).isEmpty() || !nullToEmpty(excludeSpecs).isEmpty()) {
-            throw new UnsupportedOperationException("Cannot add include/exclude specs to Ant node. Only include/exclude patterns are currently supported.");
-        }
-
-        return new PatternSetAntBuilderDelegate(getIncludes(), getExcludes(), isCaseSensitive()).addToAntBuilder(node, childNodeName);
-    }
 }

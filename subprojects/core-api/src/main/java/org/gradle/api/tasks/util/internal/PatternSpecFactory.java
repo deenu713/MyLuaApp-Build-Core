@@ -16,7 +16,7 @@
 
 package org.gradle.api.tasks.util.internal;
 
-import org.apache.tools.ant.DirectoryScanner;
+
 import org.gradle.api.InvalidUserCodeException;
 import org.gradle.api.file.FileTreeElement;
 import org.gradle.api.internal.file.RelativePathSpec;
@@ -82,7 +82,7 @@ public class PatternSpecFactory {
     }
 
     private synchronized Spec<FileTreeElement> getDefaultExcludeSpec(CaseSensitivity caseSensitivity) {
-        String[] defaultExcludes = DirectoryScanner.getDefaultExcludes();
+        String[] defaultExcludes = new String[] {};
         if (defaultExcludeSpecCache.isEmpty()) {
             updateDefaultExcludeSpecCache(defaultExcludes);
         } else if (invalidChangeOfExcludes(defaultExcludes)) {

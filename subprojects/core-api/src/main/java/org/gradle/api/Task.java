@@ -422,14 +422,7 @@ public interface Task extends Comparable<Task>, ExtensionAware {
      */
     Task configure(Closure configureClosure);
 
-    /**
-     * <p>Returns the <code>AntBuilder</code> for this task.  You can use this in your build file to execute ant
-     * tasks.</p>
-     *
-     * @return The <code>AntBuilder</code>
-     */
-    @Internal
-    AntBuilder getAnt();
+
 
     /**
      * <p>Returns the logger for this task. You can use this in your build file to write log messages.</p>
