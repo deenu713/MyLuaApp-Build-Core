@@ -71,6 +71,7 @@ dependencies {
 
 
     implementation(project(":core-api"))
+    implementation(project(":functional"))
     implementation(project(":file-temp"))
 
 /*
