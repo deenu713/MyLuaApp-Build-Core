@@ -21,7 +21,7 @@ android {
     sourceSets {
         getByName("main") {
             java.srcDirs("src/main/kotlin")
-            resources.srcDirs("src/main/res")
+           /* resources.srcDirs("src/main/res")*/
 
         }
         getByName("test") {
@@ -76,9 +76,9 @@ dependencies {
     implementation(project(":file-collections"))
     implementation(project(":file-watching"))
     implementation(project(":file-temp"))
+    implementation(project(":build-cache"))
 
 /*
-
     implementation(project(":launcher"))
     implementation(project(":core"))
     implementation(project(":logging"))
