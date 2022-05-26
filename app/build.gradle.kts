@@ -76,7 +76,7 @@ dependencies {
     implementation(project(":file-collections"))
     implementation(project(":file-watching"))
     implementation(project(":file-temp"))
-    implementation(project(":build-cache"))
+    implementation(project(":build-cache-packaging"))
 
 /*
     implementation(project(":launcher"))
@@ -100,6 +100,7 @@ dependencies {
 //    implementation ("net.rubygrapefruit:native-platform:0.22-milestone-23")
 //    implementation("net.rubygrapefruit:file-events:0.22-milestone-23")
 //    implementation("commons-io:commons-io:2.11.0")
+//    implementation("org.apache.commons:commons-compress:1.21")
 //    implementation ("org.slf4j:slf4j-api:1.7.36")
 //    implementation("org.fusesource.jansi:jansi:2.4.0")
 //    implementation("it.unimi.dsi:fastutil:8.5.8")
