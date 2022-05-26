@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/subprojects/build-option" />
             <option value="$PROJECT_DIR$/subprojects/cli" />
             <option value="$PROJECT_DIR$/subprojects/core-api" />
+            <option value="$PROJECT_DIR$/subprojects/file-collections" />
             <option value="$PROJECT_DIR$/subprojects/file-temp" />
             <option value="$PROJECT_DIR$/subprojects/files" />
             <option value="$PROJECT_DIR$/subprojects/functional" />

@@ -73,6 +73,7 @@ dependencies {
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
 
     implementation(project(":core-api"))
+    implementation(project(":file-collections"))
     implementation(project(":model-core"))
     implementation(project(":file-temp"))
 
