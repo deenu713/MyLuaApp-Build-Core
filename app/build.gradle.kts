@@ -78,6 +78,7 @@ dependencies {
     implementation(project(":file-temp"))
     implementation(project(":execution"))
     implementation(project(":worker-processes"))
+    implementation(project(":jvm-services"))
 
 /*
     implementation(project(":launcher"))

@@ -29,6 +29,7 @@
             <option value="$PROJECT_DIR$/subprojects/files" />
             <option value="$PROJECT_DIR$/subprojects/functional" />
             <option value="$PROJECT_DIR$/subprojects/hashing" />
+            <option value="$PROJECT_DIR$/subprojects/jvm-services" />
             <option value="$PROJECT_DIR$/subprojects/logging" />
             <option value="$PROJECT_DIR$/subprojects/messaging" />
             <option value="$PROJECT_DIR$/subprojects/model-core" />
