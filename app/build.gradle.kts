@@ -5,8 +5,8 @@ plugins {
 
 android {
 
-    compileSdk = 31
-    buildToolsVersion = "31.0.0"
+    compileSdk = 32
+    buildToolsVersion = "32.0.0"
 
     defaultConfig {
         applicationId = "com.dingyi.myluaapp.build.api"
@@ -68,11 +68,11 @@ dependencies {
     implementation ("androidx.appcompat:appcompat:1.4.1")
     implementation ("com.google.android.material:material:1.4.0")
     testImplementation ("junit:junit:4.13.2")
-    implementation(project(":base-services-groovy"))
+
     androidTestImplementation ("androidx.test.ext:junit:1.1.3")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
 
-    implementation(project(":core-api"))
+    implementation(project(":model-groovy"))
     implementation(project(":file-collections"))
     implementation(project(":model-core"))
     implementation(project(":file-temp"))

@@ -27,6 +27,7 @@
             <option value="$PROJECT_DIR$/subprojects/logging" />
             <option value="$PROJECT_DIR$/subprojects/messaging" />
             <option value="$PROJECT_DIR$/subprojects/model-core" />
+            <option value="$PROJECT_DIR$/subprojects/model-groovy" />
             <option value="$PROJECT_DIR$/subprojects/native" />
             <option value="$PROJECT_DIR$/subprojects/persistent-cache" />
             <option value="$PROJECT_DIR$/subprojects/problems" />
