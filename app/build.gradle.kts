@@ -45,11 +45,14 @@ android {
 
         debug {
             isMinifyEnabled = false
-            
+
         }
     }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
     packagingOptions {
-        resources.excludes.addAll(listOf("META-INF/**","xsd/*","license/*"))
+        resources.excludes.addAll(listOf("META-INF/**", "xsd/*", "license/*"))
         resources.pickFirsts.add("kotlin/**")
     }
     compileOptions {
@@ -72,6 +75,7 @@ dependencies {
 
     implementation(project(":core-api"))
     implementation(project(":functional"))
+    implementation(project(":snapshots"))
     implementation(project(":file-temp"))
 
 /*
