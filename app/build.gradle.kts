@@ -74,7 +74,7 @@ dependencies {
 
     implementation(project(":model-groovy"))
     implementation(project(":file-collections"))
-    implementation(project(":model-core"))
+    implementation(project(":file-watching"))
     implementation(project(":file-temp"))
 
 /*
