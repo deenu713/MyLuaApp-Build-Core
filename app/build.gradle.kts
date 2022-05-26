@@ -72,10 +72,8 @@ dependencies {
     androidTestImplementation ("androidx.test.ext:junit:1.1.3")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
 
-
     implementation(project(":core-api"))
-    implementation(project(":functional"))
-    implementation(project(":snapshots"))
+    implementation(project(":model-core"))
     implementation(project(":file-temp"))
 
 /*
