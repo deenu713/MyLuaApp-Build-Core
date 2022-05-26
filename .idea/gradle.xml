@@ -35,6 +35,7 @@
             <option value="$PROJECT_DIR$/subprojects/model-core" />
             <option value="$PROJECT_DIR$/subprojects/model-groovy" />
             <option value="$PROJECT_DIR$/subprojects/native" />
+            <option value="$PROJECT_DIR$/subprojects/normalization-java" />
             <option value="$PROJECT_DIR$/subprojects/persistent-cache" />
             <option value="$PROJECT_DIR$/subprojects/problems" />
             <option value="$PROJECT_DIR$/subprojects/process-services" />

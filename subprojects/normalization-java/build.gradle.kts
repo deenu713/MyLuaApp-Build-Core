@@ -8,11 +8,12 @@ java {
 }
 
 dependencies {
-    implementation(project(":base-services"))
-    implementation(project(":core-api"))
-    implementation(project(":file-temp"))
-    implementation(project(":process-services"))
-    implementation(project(":logging"))
+    implementation(project(":base-annotations"))
+    implementation(project(":hashing"))
+    implementation(project(":files"))
+    implementation(project(":snapshots"))
+    implementation(project(":functional"))
+
 
     implementation("javax.inject:javax.inject:1")
     implementation("com.google.guava:guava:30.1.1-jre")
@@ -20,9 +21,7 @@ dependencies {
     implementation("com.google.code.findbugs:jsr305:3.0.2")
 
     implementation("org.ow2.asm:asm:9.3")
-
-    implementation("net.rubygrapefruit:native-platform:0.22-milestone-23")
-
+    implementation("commons-io:commons-io:2.11.0")
     implementation("org.slf4j:slf4j-api:1.7.36")
 
 }

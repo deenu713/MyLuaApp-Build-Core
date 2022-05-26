@@ -22,6 +22,5 @@ dependencies {
 
     implementation("org.ow2.asm:asm:9.3")
 
-    implementation("commons-io:commons-io:2.11.0")
 
 }
