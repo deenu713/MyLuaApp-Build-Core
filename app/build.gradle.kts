@@ -77,6 +77,7 @@ dependencies {
     implementation(project(":file-watching"))
     implementation(project(":file-temp"))
     implementation(project(":execution"))
+    implementation(project(":worker-processes"))
 
 /*
     implementation(project(":launcher"))

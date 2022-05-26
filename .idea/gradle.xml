@@ -39,6 +39,7 @@
             <option value="$PROJECT_DIR$/subprojects/process-services" />
             <option value="$PROJECT_DIR$/subprojects/resources" />
             <option value="$PROJECT_DIR$/subprojects/snapshots" />
+            <option value="$PROJECT_DIR$/subprojects/worker-processes" />
           </set>
         </option>
       </GradleProjectSettings>
