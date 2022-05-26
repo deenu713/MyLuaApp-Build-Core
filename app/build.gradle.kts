@@ -76,7 +76,7 @@ dependencies {
     implementation(project(":file-collections"))
     implementation(project(":file-watching"))
     implementation(project(":file-temp"))
-    implementation(project(":build-cache-packaging"))
+    implementation(project(":execution"))
 
 /*
     implementation(project(":launcher"))
