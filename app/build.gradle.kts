@@ -77,13 +77,9 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":launcher"))
 
-
-
-
-    implementation(project(":launcher"))
-    implementation(project(":core"))
     implementation(project(":logging"))
     implementation(project(":core-api"))
+    implementation(project(":resources-http"))
     implementation(project(":base-services"))
     //implementation(project(":configuration-cache"))
 
