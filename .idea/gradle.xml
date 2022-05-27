@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/subprojects/build-operations" />
             <option value="$PROJECT_DIR$/subprojects/build-option" />
             <option value="$PROJECT_DIR$/subprojects/cli" />
+            <option value="$PROJECT_DIR$/subprojects/composite-builds" />
             <option value="$PROJECT_DIR$/subprojects/core" />
             <option value="$PROJECT_DIR$/subprojects/core-api" />
             <option value="$PROJECT_DIR$/subprojects/dependency-management" />
