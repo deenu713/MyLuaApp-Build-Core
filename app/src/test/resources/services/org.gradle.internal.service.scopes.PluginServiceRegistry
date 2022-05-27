@@ -9,3 +9,5 @@ org.gradle.platform.base.internal.registry.ComponentModelBaseServiceRegistry
 org.gradle.workers.internal.WorkersServices
 org.gradle.jvm.internal.services.PlatformJvmServices
 org.gradle.language.jvm.internal.JvmPluginServiceRegistry
+org.gradle.language.java.internal.JavaToolChainServiceRegistry
+org.gradle.language.java.internal.JavaLanguagePluginServiceRegistry
