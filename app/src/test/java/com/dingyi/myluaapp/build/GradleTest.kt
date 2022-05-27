@@ -56,6 +56,8 @@ class GradleTest {
         val launcher = TestGradleLauncher
             .createLauncher {
                 it.projectDir = projectPath
+                it.setTaskNames(listOf("help"))
+                it.gradleUserHomeDir = projectPath.resolve(".gradle")
             }
 
 
@@ -66,9 +68,11 @@ class GradleTest {
 
 
         launcher
-            .create()
-            .whenComplete { gradle, throwable ->
-                println(gradle)
+            .apply {
+                onCreateGradle {
+                    println(it)
+                }
             }
+            .execute()
     }
 }

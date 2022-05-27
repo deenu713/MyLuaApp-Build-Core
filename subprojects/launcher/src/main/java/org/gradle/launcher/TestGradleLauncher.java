@@ -3,27 +3,38 @@ package org.gradle.launcher;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 
+import org.gradle.BuildAdapter;
 import org.gradle.BuildListener;
 import org.gradle.BuildResult;
 import org.gradle.StartParameter;
 import org.gradle.api.Action;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.internal.StartParameterInternal;
+import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.logging.LogLevel;
+import org.gradle.api.logging.configuration.LoggingConfiguration;
 import org.gradle.configuration.GradleLauncherMetaData;
 import org.gradle.initialization.BuildCancellationToken;
 import org.gradle.initialization.BuildClientMetaData;
 import org.gradle.initialization.BuildEventConsumer;
+import org.gradle.initialization.BuildLayoutParameters;
 import org.gradle.initialization.BuildRequestContext;
 import org.gradle.initialization.BuildRequestMetaData;
 import org.gradle.initialization.DefaultBuildCancellationToken;
 import org.gradle.initialization.DefaultBuildRequestContext;
 import org.gradle.initialization.DefaultBuildRequestMetaData;
+import org.gradle.initialization.ReportedException;
+import org.gradle.internal.SystemProperties;
+import org.gradle.internal.UncheckedException;
 import org.gradle.internal.buildtree.BuildActionRunner;
 import org.gradle.internal.classpath.ClassPath;
+import org.gradle.internal.concurrent.CompositeStoppable;
+import org.gradle.internal.concurrent.Stoppable;
 import org.gradle.internal.event.ListenerManager;
 import org.gradle.internal.invocation.BuildAction;
+import org.gradle.internal.logging.DefaultLoggingConfiguration;
+import org.gradle.internal.logging.LoggingManagerInternal;
 import org.gradle.internal.logging.services.LoggingServiceRegistry;
 import org.gradle.internal.nativeintegration.services.NativeServices;
 import org.gradle.internal.service.ServiceRegistry;
@@ -33,14 +44,27 @@ import org.gradle.internal.service.scopes.GradleUserHomeScopeServiceRegistry;
 import org.gradle.internal.service.scopes.WorkerSharedGlobalScopeServices;
 import org.gradle.internal.session.BuildSessionState;
 import org.gradle.internal.session.CrossBuildSessionState;
+import org.gradle.internal.vfs.FileSystemAccess;
+import org.gradle.internal.vfs.VirtualFileSystem;
+import org.gradle.launcher.bootstrap.ExecutionListener;
+import org.gradle.launcher.cli.DebugLoggerWarningAction;
+import org.gradle.launcher.cli.ExceptionReportingAction;
 import org.gradle.launcher.cli.ExecuteBuildAction;
+import org.gradle.launcher.cli.NativeServicesInitializingAction;
+import org.gradle.launcher.cli.RunBuildAction;
+import org.gradle.launcher.cli.WelcomeMessageAction;
+import org.gradle.launcher.configuration.BuildLayoutResult;
+import org.gradle.launcher.exec.BuildActionExecuter;
 import org.gradle.launcher.exec.BuildActionParameters;
 import org.gradle.launcher.exec.BuildActionResult;
+import org.gradle.launcher.exec.BuildExecuter;
 import org.gradle.launcher.exec.DefaultBuildActionParameters;
 import org.gradle.testfixtures.internal.ProjectBuilderImpl;
 import org.gradle.testfixtures.internal.TestGlobalScopeServices;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -53,96 +77,144 @@ public class TestGradleLauncher {
 
     TestGradleLauncher(StartParameterInternal startParameter) {
         this.startParameter = startParameter;
-        NativeServices.initializeOnClient(startParameter.getProjectDir());
+
         if (globalServices == null) {
             globalServices = ServiceRegistryBuilder
                     .builder()
                     .displayName("global services")
                     .parent(LoggingServiceRegistry.newCommandLineProcessLogging())
-                    .parent(NativeServices.getInstance())
                     .provider(new GlobalScopeServices(false))
                     .build();
         }
     }
 
 
-    public CompletableFuture<Gradle> create() {
+    private static class Result implements BuildLayoutResult {
+        private final BuildLayoutParameters buildLayout;
 
-        StartParameterInternal startParameter = this.startParameter;
-        File projectDir = startParameter.getProjectDir();
-        BuildCancellationToken cancellationToken = new DefaultBuildCancellationToken();
-        BuildEventConsumer consumer = System.out::println;
-        BuildRequestMetaData requestMetaData = new DefaultBuildRequestMetaData(
-                System.currentTimeMillis()
-        );
-        BuildRequestContext requestContext = new DefaultBuildRequestContext(
-                requestMetaData, cancellationToken, consumer
-        );
-        NativeServices.initializeOnClient(projectDir);
-        BuildActionResult result = execute(new ExecuteBuildAction(startParameter),
-                new DefaultBuildActionParameters(ImmutableMap.of(),
-                        ImmutableMap.of(), projectDir, LogLevel.DEBUG,
-                        false, ClassPath.EMPTY), requestContext);
-
-        if (result.getFailure() != null) {
-            throw (RuntimeException) result.getFailure();
+        public Result(BuildLayoutParameters buildLayout) {
+            this.buildLayout = buildLayout;
         }
 
-        return (CompletableFuture<Gradle>) result.getResult();
+        @Override
+        public void applyTo(BuildLayoutParameters buildLayout) {
+            buildLayout.setCurrentDir(this.buildLayout.getCurrentDir());
+            buildLayout.setProjectDir(this.buildLayout.getProjectDir());
+            buildLayout.setGradleUserHomeDir(this.buildLayout.getGradleUserHomeDir());
+            buildLayout.setGradleInstallationHomeDir(this.buildLayout.getGradleInstallationHomeDir());
+        }
 
+        @Override
+        public void applyTo(StartParameterInternal startParameter) {
+            startParameter.setProjectDir(buildLayout.getProjectDir());
+            startParameter.setCurrentDir(buildLayout.getCurrentDir());
+            startParameter.setGradleUserHomeDir(buildLayout.getGradleUserHomeDir());
+        }
+
+        @Override
+        public File getGradleUserHomeDir() {
+            return buildLayout.getGradleUserHomeDir();
+        }
+    }
+
+    private BuildActionParameters createBuildActionParameters(StartParameter startParameter) {
+        return new DefaultBuildActionParameters(
+//                daemonParameters.getEffectiveSystemProperties(),
+                Collections.emptyMap(),
+//                daemonParameters.getEnvironmentVariables(),
+                Collections.emptyMap(),
+                SystemProperties.getInstance().getCurrentDir(),
+                startParameter.getLogLevel(),
+//                daemonParameters.isEnabled(),
+                false,
+                ClassPath.EMPTY);
     }
 
 
-    public BuildActionResult execute(BuildAction action, BuildActionParameters actionParameters, BuildRequestContext requestContext) {
-        StartParameterInternal startParameter = action.getStartParameter();
-        if (action.isCreateModel()) {
-            // When creating a model, do not use continuous mode
-            startParameter.setContinuous(false);
-        }
-        try (CrossBuildSessionState crossBuildSessionState = new CrossBuildSessionState(globalServices, startParameter)) {
-            try (BuildSessionState buildSessionState = new BuildSessionState(
-                    globalServices.get(GradleUserHomeScopeServiceRegistry.class),
-                    crossBuildSessionState, startParameter,
-                    requestContext, actionParameters.getInjectedPluginClasspath(),
-                    requestContext.getCancellationToken(),
-                    requestContext.getClient(), requestContext.getEventConsumer())) {
-                return buildSessionState.run(context -> {
-                    CompletableFuture<Gradle> future = CompletableFuture.completedFuture(null);
-                    BuildActionRunner.Result result = context.execute(action);
-                    ListenerManager listenerManager = globalServices
-                            .get(ListenerManager.class);
+    public ServiceRegistry getGlobalServices() {
+        return globalServices;
+    }
 
-                    listenerManager
-                            .addListener(new BuildListener() {
-                                @Override
-                                public void settingsEvaluated(Settings settings) {
-                                }
+    private long getBuildStartTime() {
+        return System.currentTimeMillis();
+    }
 
-                                @Override
-                                public void projectsLoaded(Gradle gradle) {
-                                    future.complete(gradle);
-                                }
+    private GradleLauncherMetaData clientMetaData() {
+        return new GradleLauncherMetaData();
+    }
 
-                                @Override
-                                public void projectsEvaluated(Gradle gradle) {
-                                }
+    private Runnable runBuildAndCloseServices(StartParameterInternal startParameter, BuildActionExecuter<BuildActionParameters, BuildRequestContext> executer, ServiceRegistry sharedServices, Object... stopBeforeSharedServices) {
+        BuildActionParameters
+                parameters = createBuildActionParameters(startParameter);
+        Stoppable stoppable = new CompositeStoppable(); //.add(stopBeforeSharedServices).add(sharedServices);
+        return new RunBuildAction(executer, startParameter, clientMetaData(), getBuildStartTime(), parameters, sharedServices, stoppable);
+    }
 
-                                @Override
-                                public void buildFinished(BuildResult result) {
-                                }
-                            });
 
-                    if (result.getBuildFailure() == null) {
-                        return BuildActionResult.of(future);
+    private void prepare() {
+        GradleUserHomeScopeServiceRegistry gradleUserHomeScopeServiceRegistry =
+                globalServices.get(GradleUserHomeScopeServiceRegistry.class);
+        ServiceRegistry gradleUserHomeScopeServices = gradleUserHomeScopeServiceRegistry
+                .getServicesFor(startParameter.getGradleUserHomeDir());
+        VirtualFileSystem virtualFileSystem =
+                gradleUserHomeScopeServices.get(VirtualFileSystem.class);
+        FileSystemAccess fileSystemAccess = gradleUserHomeScopeServices.get(FileSystemAccess.class);
+    }
+
+
+    public void onCreateGradle(Action<Gradle> action) {
+        globalServices
+                .get(ListenerManager.class)
+                .addListener(new BuildAdapter() {
+                    @Override
+                    public void projectsLoaded(Gradle gradle) {
+                        action.execute(gradle);
                     }
-
-                    if (requestContext.getCancellationToken().isCancellationRequested()) {
-                        return BuildActionResult.cancelled(result.getBuildFailure());
-                    }
-                    return BuildActionResult.failed(result.getClientFailure());
                 });
+    }
+
+    public void execute() {
+
+        Runnable runnable = runBuildAndCloseServices(
+                startParameter,
+                globalServices.get(BuildExecuter.class),
+                globalServices,
+                globalServices.get(GradleUserHomeScopeServiceRegistry.class)
+        );
+        Action<Throwable> reporter = throwable -> {
+
+        };
+
+        LoggingConfiguration loggingConfiguration = new DefaultLoggingConfiguration();
+
+
+        LoggingManagerInternal loggingManagerInternal =
+                globalServices.get(LoggingManagerInternal.class);
+
+        BuildLayoutParameters layoutParameters = new BuildLayoutParameters();
+        layoutParameters.setCurrentDir(SystemProperties.getInstance().getCurrentDir());
+        layoutParameters.setProjectDir(startParameter.getProjectDir());
+        layoutParameters.setGradleUserHomeDir(startParameter.getGradleUserHomeDir());
+
+        BuildLayoutResult buildLayout = new Result(layoutParameters);
+
+        Action<ExecutionListener> exceptionReportingAction =
+                new ExceptionReportingAction(reporter, loggingManagerInternal,
+                        new NativeServicesInitializingAction(buildLayout, loggingConfiguration, loggingManagerInternal,
+                                new WelcomeMessageAction(buildLayout,
+                                        new DebugLoggerWarningAction(loggingConfiguration, listener -> {
+                                            runnable.run();
+                                        }))));
+
+        prepare();
+        exceptionReportingAction.execute(failure -> {
+
+            if (!(failure instanceof ReportedException)) {
+                throw UncheckedException.throwAsUncheckedException(failure);
             }
-        }
+        });
+
+
     }
 
 

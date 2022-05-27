@@ -63,7 +63,7 @@ public class DefaultImportsReader implements ImportsReader {
     private static String[] generateImportPackages() throws IOException {
         URL url = DefaultImportsReader.class.getResource(RESOURCE);
         if (url == null) {
-            throw new IllegalStateException("Could not load default imports resource: " + RESOURCE);
+            throw  new IllegalStateException("Could not load default imports resource: " + RESOURCE);
         }
         return Resources.asCharSource(url, Charsets.UTF_8).readLines(new LineProcessor<String[]>() {
             private final List<String> packages = Lists.newLinkedList();

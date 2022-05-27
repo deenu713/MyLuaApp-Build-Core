@@ -79,7 +79,7 @@ dependencies {
 
     implementation(project(":logging"))
     implementation(project(":core-api"))
-    implementation(project(":plugins"))
+    implementation(project(":configuration-cache"))
     implementation(project(":base-services"))
     //implementation(project(":configuration-cache"))
 
