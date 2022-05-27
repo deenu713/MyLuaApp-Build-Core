@@ -19,6 +19,7 @@ class GradleTest {
 
 
     private fun extractImplementationClassNames(resource: URL): List<String>? {
+
         val urlConnection = resource.openConnection()
 
         val inputStream = urlConnection.getInputStream()
@@ -38,15 +39,25 @@ class GradleTest {
         }.getOrNull()
     }
 
+
+    private fun copyTestResourcesToLocalResources() {
+        val path = File("").canonicalFile.resolve("src/test/resources")
+        val localResourcePath = this.javaClass.classLoader
+            .getResource("META-INF")
+
+
+        path.copyRecursively(File(localResourcePath.toURI()),true)
+    }
+
     @Test
     fun test1() {
+        copyTestResourcesToLocalResources()
         val projectPath = File("G:\\android studio project\\AideLua")
         val launcher = TestGradleLauncher
             .createLauncher {
-                it.projectDir =  projectPath
+                it.projectDir = projectPath
             }
 
-        println(GlobalScopeServices::class.java.classLoader.getResource("").path)
 
         val resource =
             this.javaClass.classLoader.getResource("META-INF/services/org.gradle.internal.service.scopes.PluginServiceRegistry")

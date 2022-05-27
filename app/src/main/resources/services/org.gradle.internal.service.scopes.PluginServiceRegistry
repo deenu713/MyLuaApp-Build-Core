@@ -1,5 +1,4 @@
 org.gradle.caching.internal.BuildCacheServices
 org.gradle.internal.service.scopes.ExecutionServices
 org.gradle.internal.service.scopes.VirtualFileSystemServices
-org.gradle.launcher.LauncherServices
-org.gradle.configurationcache.ConfigurationCacheServices
+org.gradle.tooling.internal.provider.LauncherServices

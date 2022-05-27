@@ -55,7 +55,7 @@ public final class DefaultGradleVersion extends GradleVersion {
     public static final String VERSION_NUMBER_PROPERTY = "versionNumber";
 
     static {
-        URL resource = DefaultGradleVersion.class.getResource(RESOURCE_NAME);
+        /*URL resource = DefaultGradleVersion.class.getResource(RESOURCE_NAME);
         if (resource == null) {
             throw new GradleException(format("Resource '%s' not found.", RESOURCE_NAME));
         }
@@ -89,7 +89,9 @@ public final class DefaultGradleVersion extends GradleVersion {
             if (inputStream != null) {
                 uncheckedClose(inputStream);
             }
-        }
+        }*/
+
+        CURRENT = new DefaultGradleVersion("7.2.1", null, "unknown");
     }
 
     public static DefaultGradleVersion current() {

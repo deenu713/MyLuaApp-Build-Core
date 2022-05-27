@@ -31,12 +31,15 @@ public class DefaultClassPathRegistry implements ClassPathRegistry {
 
     @Override
     public ClassPath getClassPath(String name) {
-        for (ClassPathProvider provider : providers) {
+        //The gradle is all in dex,so only return default
+       return ClassPath.EMPTY;
+
+       /* for (ClassPathProvider provider : providers) {
             ClassPath classpath = provider.findClassPath(name);
             if (classpath != null) {
                 return classpath;
             }
-        }
-        throw new IllegalArgumentException(String.format("unknown classpath '%s' requested.", name));
+        }*/
+        //throw new IllegalArgumentException(String.format("unknown classpath '%s' requested.", name));
     }
 }
