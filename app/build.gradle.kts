@@ -75,16 +75,18 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
     implementation(project(":core"))
+    implementation(project(":launcher"))
 
 
-/*
+
+
     implementation(project(":launcher"))
     implementation(project(":core"))
     implementation(project(":logging"))
     implementation(project(":core-api"))
     implementation(project(":base-services"))
-    implementation(project(":configuration-cache"))
-*/
+    //implementation(project(":configuration-cache"))
+
 
 
 
