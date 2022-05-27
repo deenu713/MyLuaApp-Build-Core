@@ -38,8 +38,6 @@ import org.gradle.api.plugins.internal.JvmPluginsHelper;
 import org.gradle.api.plugins.jvm.internal.JvmEcosystemUtilities;
 import org.gradle.api.plugins.jvm.internal.JvmPluginServices;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.reporting.DirectoryReport;
-import org.gradle.api.reporting.ReportingExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskProvider;
@@ -47,8 +45,6 @@ import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.api.tasks.compile.GroovyCompile;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
-import org.gradle.api.tasks.testing.JUnitXmlReport;
-import org.gradle.api.tasks.testing.Test;
 import org.gradle.internal.deprecation.DeprecatableConfiguration;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 import org.gradle.jvm.toolchain.JavaToolchainSpec;
@@ -116,7 +112,6 @@ public class JavaBasePlugin implements Plugin<Project> {
 
         project.getPluginManager().apply(BasePlugin.class);
         project.getPluginManager().apply(JvmEcosystemPlugin.class);
-        project.getPluginManager().apply(ReportingBasePlugin.class);
 
         DefaultJavaPluginExtension javaPluginExtension = addExtensions(projectInternal);
 
@@ -124,7 +119,7 @@ public class JavaBasePlugin implements Plugin<Project> {
         configureCompileDefaults(project, javaPluginExtension);
 
         configureJavaDoc(project, javaPluginExtension);
-        configureTest(project, javaPluginExtension);
+
         configureBuildNeeded(project);
         configureBuildDependents(project);
     }
@@ -313,8 +308,7 @@ public class JavaBasePlugin implements Plugin<Project> {
     private void configureJavaDoc(final Project project, final JavaPluginExtension javaPluginExtension) {
         project.getTasks().withType(Javadoc.class).configureEach(javadoc -> {
             javadoc.getConventionMapping().map("destinationDir", () -> new File(javaPluginExtension.getDocsDir().get().getAsFile(), "javadoc"));
-            javadoc.getConventionMapping().map("title", () -> project.getExtensions().getByType(ReportingExtension.class).getApiDocTitle());
-            javadoc.getJavadocTool().convention(getToolchainTool(project, JavaToolchainService::javadocToolFor));
+              javadoc.getJavadocTool().convention(getToolchainTool(project, JavaToolchainService::javadocToolFor));
         });
     }
 
@@ -334,20 +328,7 @@ public class JavaBasePlugin implements Plugin<Project> {
         });
     }
 
-    private void configureTest(final Project project, final JavaPluginExtension javaPluginExtension) {
-        project.getTasks().withType(Test.class).configureEach(test -> configureTestDefaults(test, project, javaPluginExtension));
-    }
 
-    private void configureTestDefaults(final Test test, Project project, final JavaPluginExtension javaPluginExtension) {
-        DirectoryReport htmlReport = test.getReports().getHtml();
-        JUnitXmlReport xmlReport = test.getReports().getJunitXml();
-
-        xmlReport.getOutputLocation().convention(javaPluginExtension.getTestResultsDir().dir(test.getName()));
-        htmlReport.getOutputLocation().convention(javaPluginExtension.getTestReportDir().dir(test.getName()));
-        test.getBinaryResultsDirectory().convention(javaPluginExtension.getTestResultsDir().dir(test.getName() + "/binary"));
-        test.workingDir(project.getProjectDir());
-        test.getJavaLauncher().convention(getToolchainTool(project, JavaToolchainService::launcherFor));
-    }
 
     private <T> Provider<T> getToolchainTool(Project project, BiFunction<JavaToolchainService, JavaToolchainSpec, Provider<T>> toolMapper) {
         final JavaPluginExtension extension = project.getExtensions().getByType(JavaPluginExtension.class);

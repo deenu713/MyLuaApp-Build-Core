@@ -31,7 +31,6 @@ import org.gradle.api.plugins.internal.JvmPluginsHelper;
 import org.gradle.api.plugins.jvm.internal.JvmEcosystemUtilities;
 import org.gradle.api.plugins.jvm.internal.JvmPluginServices;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.reporting.ReportingExtension;
 import org.gradle.api.tasks.GroovyRuntime;
 import org.gradle.api.tasks.GroovySourceDirectorySet;
 import org.gradle.api.tasks.TaskProvider;
@@ -158,8 +157,6 @@ public class GroovyBasePlugin implements Plugin<Project> {
                 return groovyClasspath.plus(jansi);
             });
             groovydoc.getConventionMapping().map("destinationDir", () -> javaPluginExtension().getDocsDir().dir("groovydoc").get().getAsFile());
-            groovydoc.getConventionMapping().map("docTitle", () -> projectExtension(ReportingExtension.class).getApiDocTitle());
-            groovydoc.getConventionMapping().map("windowTitle", () -> projectExtension(ReportingExtension.class).getApiDocTitle());
         });
     }
 
