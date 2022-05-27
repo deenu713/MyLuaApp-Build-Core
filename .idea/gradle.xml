@@ -32,6 +32,7 @@
             <option value="$PROJECT_DIR$/subprojects/functional" />
             <option value="$PROJECT_DIR$/subprojects/hashing" />
             <option value="$PROJECT_DIR$/subprojects/jvm-services" />
+            <option value="$PROJECT_DIR$/subprojects/language-jvm" />
             <option value="$PROJECT_DIR$/subprojects/launcher" />
             <option value="$PROJECT_DIR$/subprojects/logging" />
             <option value="$PROJECT_DIR$/subprojects/messaging" />
