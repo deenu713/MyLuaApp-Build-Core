@@ -7,3 +7,4 @@ org.gradle.api.internal.artifacts.DependencyServices
 org.gradle.plugin.internal.PluginUsePluginServiceRegistry
 org.gradle.platform.base.internal.registry.ComponentModelBaseServiceRegistry
 org.gradle.workers.internal.WorkersServices
+org.gradle.jvm.internal.services.PlatformJvmServices

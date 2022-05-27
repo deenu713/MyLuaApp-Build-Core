@@ -80,7 +80,7 @@ dependencies {
     implementation(project(":logging"))
     implementation(project(":core-api"))
     implementation(project(":plugin-use"))
-    implementation(project(":platform-base"))
+    implementation(project(":platform-jvm"))
     implementation(project(":base-services"))
     //implementation(project(":configuration-cache"))
 
