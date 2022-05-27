@@ -4,3 +4,4 @@ org.gradle.internal.service.scopes.VirtualFileSystemServices
 org.gradle.tooling.internal.provider.LauncherServices
 org.gradle.internal.resource.transport.http.HttpResourcesPluginServiceRegistry
 org.gradle.api.internal.artifacts.DependencyServices
+org.gradle.plugin.internal.PluginUsePluginServiceRegistry

@@ -40,6 +40,7 @@
             <option value="$PROJECT_DIR$/subprojects/native" />
             <option value="$PROJECT_DIR$/subprojects/normalization-java" />
             <option value="$PROJECT_DIR$/subprojects/persistent-cache" />
+            <option value="$PROJECT_DIR$/subprojects/plugin-use" />
             <option value="$PROJECT_DIR$/subprojects/problems" />
             <option value="$PROJECT_DIR$/subprojects/process-services" />
             <option value="$PROJECT_DIR$/subprojects/resources" />
