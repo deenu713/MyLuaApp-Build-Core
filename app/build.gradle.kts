@@ -79,8 +79,7 @@ dependencies {
 
     implementation(project(":logging"))
     implementation(project(":core-api"))
-    implementation(project(":composite-builds"))
-    implementation(project(":language-java"))
+    implementation(project(":plugins"))
     implementation(project(":base-services"))
     //implementation(project(":configuration-cache"))
 
