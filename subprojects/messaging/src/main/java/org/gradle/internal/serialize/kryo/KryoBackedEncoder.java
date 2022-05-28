@@ -85,7 +85,7 @@ public class KryoBackedEncoder extends AbstractEncoder implements FlushableEncod
 
     @Override
     public void writeNullableString(@Nullable CharSequence value) {
-        output.writeString(value.toString());
+        output.writeString(value == null ? null : value.toString());
     }
 
     @Override

@@ -65,6 +65,7 @@ public class SessionFailureReportingActionExecuter implements BuildActionExecute
                 exceptionAnalyser = new StackTraceSanitizingExceptionAnalyser(exceptionAnalyser);
             }
             RuntimeException failure = exceptionAnalyser.transform(e);
+            System.err.println(failure);
             BuildStartedTime buildStartedTime = BuildStartedTime.startingAt(requestContext.getStartTime());
             BuildLogger buildLogger = new BuildLogger(Logging.getLogger(BuildSessionLifecycleBuildActionExecuter.class), styledTextOutputFactory, action.getStartParameter(), requestContext, buildStartedTime, clock, workValidationWarningReporter);
             buildLogger.buildFinished(new BuildResult(null, failure));

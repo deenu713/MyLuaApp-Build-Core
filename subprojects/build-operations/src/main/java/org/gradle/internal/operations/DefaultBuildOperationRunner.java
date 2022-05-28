@@ -73,6 +73,7 @@ public class DefaultBuildOperationRunner implements BuildOperationRunner {
                     listener.start(descriptor, operationState);
                     try {
                         worker.execute(buildOperation, context);
+
                     } catch (Throwable t) {
                         if (context.getFailure() == null) {
                             context.failed(t);

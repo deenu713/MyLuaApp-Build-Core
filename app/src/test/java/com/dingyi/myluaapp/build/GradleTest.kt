@@ -77,12 +77,14 @@ class GradleTest {
                 it.logLevel = LogLevel.INFO;
 
                 it.projectDir = projectPath
-                it.currentDir = it.projectDir
+
                 it.gradleUserHomeDir = projectPath.resolve(".gradle_home")
                 it.projectCacheDir =  projectPath.resolve(".gradle")
-                it.setTaskNames(listOf("testTask"))
+                it.setTaskNames(listOf("sync"))
 
             }
+
+
 
 
         launcher

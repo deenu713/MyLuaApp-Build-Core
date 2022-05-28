@@ -63,6 +63,22 @@ android {
 
 }
 
+tasks
+    .register("test2") {
+        doFirst {
+            println(java)
+            println("test2")
+            println(
+                project
+                    .tasks
+                    .getByName("assemble")
+            )
+
+        }
+
+    }
+
+
 
 dependencies {
     //implementation(project(":build-core"))
