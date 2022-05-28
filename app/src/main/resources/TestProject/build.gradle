@@ -1,0 +1,16 @@
+//import com.dingyi.myluaapp.build.TestPlugin
+
+println("Hello World")
+
+//apply plugin: TestPlugin
+
+tasks.register("testTask") {
+    it.doLast {
+        println("Executing TestTask")
+    }
+    println("Config TestTask")
+    it.doFirst {
+        println("Executing doFirst!")
+    }
+}
+

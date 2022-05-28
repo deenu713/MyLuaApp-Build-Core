@@ -91,7 +91,7 @@ public final class DefaultGradleVersion extends GradleVersion {
             }
         }*/
 
-        CURRENT = new DefaultGradleVersion("7.2.1", null, "unknown");
+        CURRENT = new DefaultGradleVersion("7.2.0", null, "unknown");
     }
 
     public static DefaultGradleVersion current() {

@@ -10,9 +10,11 @@ import org.gradle.StartParameter;
 import org.gradle.api.Action;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.internal.StartParameterInternal;
+import org.gradle.api.internal.classpath.EffectiveClassPath;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.logging.LogLevel;
+import org.gradle.api.logging.configuration.ConsoleOutput;
 import org.gradle.api.logging.configuration.LoggingConfiguration;
 import org.gradle.configuration.GradleLauncherMetaData;
 import org.gradle.initialization.BuildCancellationToken;
@@ -25,9 +27,11 @@ import org.gradle.initialization.DefaultBuildCancellationToken;
 import org.gradle.initialization.DefaultBuildRequestContext;
 import org.gradle.initialization.DefaultBuildRequestMetaData;
 import org.gradle.initialization.ReportedException;
+import org.gradle.initialization.SettingsEvaluatedCallbackFiringSettingsProcessor;
 import org.gradle.internal.SystemProperties;
 import org.gradle.internal.UncheckedException;
 import org.gradle.internal.buildtree.BuildActionRunner;
+import org.gradle.internal.classloader.ClassLoaderUtils;
 import org.gradle.internal.classpath.ClassPath;
 import org.gradle.internal.concurrent.CompositeStoppable;
 import org.gradle.internal.concurrent.Stoppable;
@@ -63,9 +67,13 @@ import org.gradle.testfixtures.internal.ProjectBuilderImpl;
 import org.gradle.testfixtures.internal.TestGlobalScopeServices;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 
 
 public class TestGradleLauncher {
@@ -73,21 +81,30 @@ public class TestGradleLauncher {
 
     private StartParameterInternal startParameter;
 
-    private static ServiceRegistry globalServices;
+    private ServiceRegistry globalServices;
+
+    private List<Class> injectPluginClasses;
 
     TestGradleLauncher(StartParameterInternal startParameter) {
         this.startParameter = startParameter;
 
-        if (globalServices == null) {
-            globalServices = ServiceRegistryBuilder
-                    .builder()
-                    .displayName("global services")
-                    .parent(LoggingServiceRegistry.newCommandLineProcessLogging())
-                    .provider(new GlobalScopeServices(false))
-                    .build();
-        }
+        LoggingServiceRegistry serviceRegistry =
+                LoggingServiceRegistry.newCommandLineProcessLogging();
+        NativeServices.initializeOnDaemon(startParameter.getGradleUserHomeDir());
+        globalServices = ServiceRegistryBuilder
+                .builder()
+                .parent(serviceRegistry)
+                .parent(NativeServices.getInstance())
+                .displayName("global services")
+                .provider(new GlobalScopeServices(true, ClassPath.EMPTY))
+                .build();
+
+        injectPluginClasses = new ArrayList<>();
     }
 
+    public void injectedPluginClasses(Class... classes) {
+        this.injectPluginClasses.addAll(List.of(classes));
+    }
 
     private static class Result implements BuildLayoutResult {
         private final BuildLayoutParameters buildLayout;
@@ -123,16 +140,26 @@ public class TestGradleLauncher {
                 Collections.emptyMap(),
 //                daemonParameters.getEnvironmentVariables(),
                 Collections.emptyMap(),
-                SystemProperties.getInstance().getCurrentDir(),
+                startParameter.getCurrentDir(),
                 startParameter.getLogLevel(),
 //                daemonParameters.isEnabled(),
                 false,
-                ClassPath.EMPTY);
+                injectPluginClasses
+                        .stream().reduce(ClassPath.EMPTY,
+                                (classPath, aClass) -> classPath.plus(new EffectiveClassPath(aClass.getClassLoader())),
+                                ClassPath::plus)
+        );
     }
 
 
     public ServiceRegistry getGlobalServices() {
         return globalServices;
+    }
+
+    public ServiceRegistry getGradleUserHomeServices() {
+        return globalServices
+                .get(GradleUserHomeScopeServiceRegistry.class)
+                .getServicesFor(startParameter.getGradleUserHomeDir());
     }
 
     private long getBuildStartTime() {
@@ -159,19 +186,32 @@ public class TestGradleLauncher {
         VirtualFileSystem virtualFileSystem =
                 gradleUserHomeScopeServices.get(VirtualFileSystem.class);
         FileSystemAccess fileSystemAccess = gradleUserHomeScopeServices.get(FileSystemAccess.class);
+
     }
 
 
     public void onCreateGradle(Action<Gradle> action) {
-        globalServices
+        getGradleUserHomeServices()
                 .get(ListenerManager.class)
                 .addListener(new BuildAdapter() {
+                    @Override
+                    public void projectsEvaluated(Gradle gradle) {
+                        action.execute(gradle);
+                    }
+
                     @Override
                     public void projectsLoaded(Gradle gradle) {
                         action.execute(gradle);
                     }
                 });
     }
+
+    public String throwableToString(Throwable throwable) {
+        StringWriter stringWriter = new StringWriter();
+        throwable.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
+    }
+
 
     public void execute() {
 
@@ -181,18 +221,28 @@ public class TestGradleLauncher {
                 globalServices,
                 globalServices.get(GradleUserHomeScopeServiceRegistry.class)
         );
-        Action<Throwable> reporter = throwable -> {
 
+        Action<Throwable> reporter = throwable -> {
+            System.out.println(throwableToString(throwable));
         };
 
         LoggingConfiguration loggingConfiguration = new DefaultLoggingConfiguration();
 
 
+        loggingConfiguration.setLogLevel(startParameter.getLogLevel());
+        loggingConfiguration.setShowStacktrace(startParameter.getShowStacktrace());
+
         LoggingManagerInternal loggingManagerInternal =
                 globalServices.get(LoggingManagerInternal.class);
 
+        loggingManagerInternal
+                .addStandardErrorListener(System.err);
+
+        loggingManagerInternal
+                .addStandardOutputListener(System.out);
+
         BuildLayoutParameters layoutParameters = new BuildLayoutParameters();
-        layoutParameters.setCurrentDir(SystemProperties.getInstance().getCurrentDir());
+        layoutParameters.setCurrentDir(startParameter.getCurrentDir());
         layoutParameters.setProjectDir(startParameter.getProjectDir());
         layoutParameters.setGradleUserHomeDir(startParameter.getGradleUserHomeDir());
 
@@ -208,7 +258,7 @@ public class TestGradleLauncher {
 
         prepare();
         exceptionReportingAction.execute(failure -> {
-
+            System.err.println(throwableToString(failure));
             if (!(failure instanceof ReportedException)) {
                 throw UncheckedException.throwAsUncheckedException(failure);
             }
@@ -220,6 +270,7 @@ public class TestGradleLauncher {
 
     public synchronized static TestGradleLauncher createLauncher(Action<StartParameter> configAction) {
         StartParameterInternal startParameterInternal = new StartParameterInternal();
+
         configAction.execute(startParameterInternal);
         return new TestGradleLauncher(startParameterInternal);
     }

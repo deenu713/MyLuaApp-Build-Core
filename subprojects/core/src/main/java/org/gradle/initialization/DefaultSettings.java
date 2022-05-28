@@ -47,7 +47,6 @@ import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.scopes.ServiceRegistryFactory;
 import org.gradle.plugin.management.PluginManagementSpec;
 import org.gradle.plugin.management.internal.PluginManagementSpecInternal;
-import org.gradle.vcs.SourceControl;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -342,17 +341,6 @@ public abstract class DefaultSettings extends AbstractPluginAware implements Set
     @Override
     @Inject
     public PluginManagementSpec getPluginManagement() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void sourceControl(Action<? super SourceControl> configuration) {
-        configuration.execute(getSourceControl());
-    }
-
-    @Override
-    @Inject
-    public SourceControl getSourceControl() {
         throw new UnsupportedOperationException();
     }
 

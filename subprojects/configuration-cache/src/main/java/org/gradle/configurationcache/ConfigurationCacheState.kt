@@ -70,7 +70,6 @@ import org.gradle.internal.operations.RunnableBuildOperation
 import org.gradle.internal.serialize.Decoder
 import org.gradle.internal.serialize.Encoder
 import org.gradle.plugin.management.internal.PluginRequests
-import org.gradle.vcs.internal.VcsMappingsStore
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -348,15 +347,15 @@ class ConfigurationCacheState(
         writeCollection(gradle.includedBuilds()) {
             writeIncludedBuildState(it, buildTreeState)
         }
-        if (gradle.serviceOf<VcsMappingsStore>().asResolver().hasRules()) {
+      /*  if (gradle.serviceOf<VcsMappingsStore>().asResolver().hasRules()) {
             logNotImplemented(
                 feature = "source dependencies",
                 documentationSection = NotYetImplementedSourceDependencies
             )
             writeBoolean(true)
-        } else {
+        } else {*/
             writeBoolean(false)
-        }
+       /* }*/
     }
 
     private

@@ -49,8 +49,8 @@ public class    ProcessBootstrap {
         ClassPath runtimeClasspath = classPathRegistry.getClassPath("GRADLE_RUNTIME");
         ClassLoader antClassLoader = classLoaderFactory.createIsolatedClassLoader("ant-loader", antClasspath);
         ClassLoader runtimeClassLoader = new VisitableURLClassLoader("ant-and-gradle-loader", antClassLoader, runtimeClasspath);
-
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+
         Thread.currentThread().setContextClassLoader(runtimeClassLoader);
 
         try {

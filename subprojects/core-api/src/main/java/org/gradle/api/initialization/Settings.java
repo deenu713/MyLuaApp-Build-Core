@@ -30,7 +30,6 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.internal.HasInternalProtocol;
 import org.gradle.plugin.management.PluginManagementSpec;
-import org.gradle.vcs.SourceControl;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -275,19 +274,6 @@ public interface Settings extends PluginAware, ExtensionAware {
      */
     PluginManagementSpec getPluginManagement();
 
-    /**
-     * Configures source control.
-     *
-     * @since 4.4
-     */
-    void sourceControl(Action<? super SourceControl> configuration);
-
-    /**
-     * Returns the source control configuration.
-     *
-     * @since 4.4
-     */
-    SourceControl getSourceControl();
 
     /**
      * Enables a feature preview by name.

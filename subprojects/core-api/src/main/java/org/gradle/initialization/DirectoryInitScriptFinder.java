@@ -36,6 +36,7 @@ public abstract class DirectoryInitScriptFinder implements InitScriptFinder {
 
     @Nullable
     protected File resolveScriptFile(File dir, String basename) {
+        System.out.println("resolveScriptFile: " + dir + " " + basename);
         return resolver().resolveScriptFile(dir, basename);
     }
 

@@ -1,8 +1,17 @@
 package com.dingyi.myluaapp.build
 
 
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.ShowStacktrace
+import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.groovy.scripts.internal.BuildScriptTransformer
+import org.gradle.initialization.UserHomeInitScriptFinder
 import org.gradle.internal.build.BuildStateRegistry
 import org.gradle.internal.buildtree.BuildTreeModelControllerServices
+import org.gradle.internal.classpath.ClassPath
+import org.gradle.internal.service.ServiceRegistry
 import org.gradle.internal.service.scopes.GlobalScopeServices
 import org.gradle.launcher.TestGradleLauncher
 import org.junit.Test
@@ -13,6 +22,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.net.JarURLConnection
 import java.net.URL
+import java.net.URLClassLoader
 
 
 class GradleTest {
@@ -52,19 +62,32 @@ class GradleTest {
     @Test
     fun test1() {
         copyTestResourcesToLocalResources()
-        val projectPath = File("G:\\android studio project\\AideLua")
+        val projectPath = File("G:\\android studio project\\MyLuaApp-Build-Core\\app\\src\\main\\resources\\TestProject")
+
+        System.setProperty("org.gradle.native", "false");
         val launcher = TestGradleLauncher
             .createLauncher {
+                it.showStacktrace = ShowStacktrace.ALWAYS_FULL;
+                /* setConfigurationCache(BuildOption.Value.value(true));
+                 startParameter.setConfigurationCacheDebug(true);*/
+                it.warningMode = WarningMode.All;
+
+                it.logLevel = LogLevel.INFO;
+
                 it.projectDir = projectPath
-                it.setTaskNames(listOf("help"))
-                it.gradleUserHomeDir = projectPath.resolve(".gradle")
+                it.currentDir = it.projectDir
+                it.gradleUserHomeDir = projectPath.resolve(".gradle_home")
+                it.projectCacheDir =  projectPath.resolve(".gradle")
+                it.setTaskNames(listOf("testTask"))
+
             }
 
 
         val resource =
             this.javaClass.classLoader.getResource("META-INF/services/org.gradle.internal.service.scopes.PluginServiceRegistry")
 
-        println(extractImplementationClassNames(resource))
+
+
 
 
         launcher
@@ -72,7 +95,12 @@ class GradleTest {
                 onCreateGradle {
                     println(it)
                 }
+                injectedPluginClasses(TestPlugin::class.java)
             }
             .execute()
     }
+
+
 }
+
+

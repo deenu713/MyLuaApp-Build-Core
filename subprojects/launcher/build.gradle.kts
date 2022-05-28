@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":core-api"))
     implementation(project(":core"))
     //implementation(project(":bootstrap"))
-    //implementation(project(":jvm-services"))
+    implementation(project(":jvm-services"))
     //implementation(project(":build-events"))
     implementation(project(":file-watching"))
     implementation(project(":problems"))
