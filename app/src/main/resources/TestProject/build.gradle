@@ -1,16 +1,35 @@
 //import com.dingyi.myluaapp.build.TestPlugin
 
-println("Hello World")
 
+//apply java plugin
+pluginManager
+.apply(JavaPlugin)
+//apply plugin: 'com.dingyi.myluaapp.build.TestPlugin'
 //apply plugin: TestPlugin
-
-tasks.register("testTask") {
+/*
+tasks.register("testTask2") {
     it.doLast {
-        println("Executing TestTask")
+        println("Executing TestTask2")
     }
-    println("Config TestTask")
+    println("Config TestTask2")
     it.doFirst {
         println("Executing doFirst!")
     }
 }
 
+tasks.register("testTask") {
+    it.dependsOn("testTask2")
+    it.doFirst {
+        println("Executing doFirst2!")
+    }
+}*/
+
+repositories {
+    mavenCentral()
+}
+
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}

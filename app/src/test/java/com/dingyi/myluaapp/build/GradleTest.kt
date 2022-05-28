@@ -61,7 +61,9 @@ class GradleTest {
 
     @Test
     fun test1() {
+
         copyTestResourcesToLocalResources()
+
         val projectPath = File("G:\\android studio project\\MyLuaApp-Build-Core\\app\\src\\main\\resources\\TestProject")
 
         System.setProperty("org.gradle.native", "false");
@@ -83,19 +85,21 @@ class GradleTest {
             }
 
 
-        val resource =
-            this.javaClass.classLoader.getResource("META-INF/services/org.gradle.internal.service.scopes.PluginServiceRegistry")
-
-
-
-
-
         launcher
             .apply {
-                onCreateGradle {
-                    println(it)
+                onCreateGradle { gradle ->
+                    println("get gradle")
+                    println("gradle: $gradle")
+
+                    gradle
+                        .allprojects { project ->
+                            project.plugins
+                                .apply(TestPlugin::class.java)
+                        }
+
+
                 }
-                injectedPluginClasses(TestPlugin::class.java)
+                //injectedPluginClasses(TestPlugin::class.java)
             }
             .execute()
     }

@@ -191,19 +191,15 @@ public class TestGradleLauncher {
 
 
     public void onCreateGradle(Action<Gradle> action) {
-        getGradleUserHomeServices()
-                .get(ListenerManager.class)
-                .addListener(new BuildAdapter() {
-                    @Override
-                    public void projectsEvaluated(Gradle gradle) {
-                        action.execute(gradle);
-                    }
-
-                    @Override
-                    public void projectsLoaded(Gradle gradle) {
-                        action.execute(gradle);
-                    }
-                });
+        ListenerManager listenerManager = getGradleUserHomeServices()
+                .get(ListenerManager.class);
+        System.out.println("listenerManager: " + listenerManager);
+        listenerManager.addListener(new BuildAdapter() {
+            @Override
+            public void beforeSettings(Settings settings) {
+                action.execute(settings.getGradle());
+            }
+        });
     }
 
     public String throwableToString(Throwable throwable) {
