@@ -1,15 +1,21 @@
 package org.gradle.launcher;
 
+import org.gradle.BuildResult;
 import org.gradle.StartParameter;
 import org.gradle.api.Action;
 import org.gradle.api.internal.StartParameterInternal;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.logging.configuration.LoggingConfiguration;
 import org.gradle.configuration.GradleLauncherMetaData;
+import org.gradle.execution.WorkValidationWarningReporter;
 import org.gradle.initialization.BuildLayoutParameters;
 import org.gradle.initialization.BuildRequestContext;
+import org.gradle.initialization.BuildRequestMetaData;
 import org.gradle.initialization.ReportedException;
 import org.gradle.internal.UncheckedException;
 import org.gradle.internal.buildevents.BuildExceptionReporter;
+import org.gradle.internal.buildevents.BuildLogger;
+import org.gradle.internal.buildevents.BuildStartedTime;
 import org.gradle.internal.classpath.ClassPath;
 import org.gradle.internal.concurrent.CompositeStoppable;
 import org.gradle.internal.concurrent.Stoppable;
@@ -22,6 +28,8 @@ import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.ServiceRegistryBuilder;
 import org.gradle.internal.service.scopes.GlobalScopeServices;
 import org.gradle.internal.service.scopes.GradleUserHomeScopeServiceRegistry;
+import org.gradle.internal.time.Clock;
+import org.gradle.internal.time.Time;
 import org.gradle.internal.vfs.FileSystemAccess;
 import org.gradle.internal.vfs.VirtualFileSystem;
 import org.gradle.launcher.bootstrap.ExecutionListener;
@@ -94,21 +102,21 @@ public class TestGradleLauncher {
 
     }
 
-    public void execute(String... task) {
+    public void execute(String... taskNames) {
 
         prepareServices();
 
         GradleLauncherMetaData launcherMetaData = clientMetaData();
 
-        long buildStartTime = System.currentTimeMillis();
-
-        startParameter.setTaskNames(List.of(task));
+        long buildStartedTime = System.currentTimeMillis();
+        Clock clock = Time.clock();
+        startParameter.setTaskNames(List.of(taskNames));
         System.out.println( globalServices.get(BuildExecuter.class));
         Action<ExecutionListener> executionAction = (listener) -> {
             runBuildAndCloseServices(
                     startParameter,
                     launcherMetaData,
-                    buildStartTime,
+                    buildStartedTime,
                     globalServices.get(BuildExecuter.class),
                     globalServices,
                     globalServices.get(GradleUserHomeScopeServiceRegistry.class)
