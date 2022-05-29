@@ -21,8 +21,6 @@ class TestPlugin : Plugin<Project> {
                     configuration.dependencies.forEach {
                         task.inputs
                             .property("${it.group}:${it.name}:${it.version}", it.toString())
-
-
                     }
                 }
 
