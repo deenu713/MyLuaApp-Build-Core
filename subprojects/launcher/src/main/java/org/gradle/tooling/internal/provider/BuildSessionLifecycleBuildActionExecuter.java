@@ -29,8 +29,7 @@ import org.gradle.launcher.exec.BuildActionExecuter;
 import org.gradle.launcher.exec.BuildActionParameters;
 import org.gradle.launcher.exec.BuildActionResult;
 import org.gradle.launcher.exec.BuildExecuter;
-import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
-import org.gradle.tooling.internal.provider.serialization.SerializedPayload;
+
 
 /**
  * A {@link BuildExecuter} responsible for establishing the {@link BuildSessionState} to execute a {@link BuildAction} within.
@@ -55,14 +54,8 @@ public class BuildSessionLifecycleBuildActionExecuter implements BuildActionExec
             try (BuildSessionState buildSessionState = new BuildSessionState(userHomeServiceRegistry, crossBuildSessionState, startParameter, requestContext, actionParameters.getInjectedPluginClasspath(), requestContext.getCancellationToken(), requestContext.getClient(), requestContext.getEventConsumer())) {
                 return buildSessionState.run(context -> {
                     BuildActionRunner.Result result = context.execute(action);
-                    PayloadSerializer payloadSerializer = context.getServices().get(PayloadSerializer.class);
                     if (result.getBuildFailure() == null) {
-                        if (result.getClientResult() instanceof SerializedPayload) {
-                            // Already serialized
-                            return BuildActionResult.of((SerializedPayload) result.getClientResult());
-                        } else {
-                            return BuildActionResult.of(payloadSerializer.serialize(result.getClientResult()));
-                        }
+                        return BuildActionResult.of(result.getClientResult());
                     }
                     if (requestContext.getCancellationToken().isCancellationRequested()) {
                         // If the build was cancelled, don't return any result

@@ -1,7 +1,6 @@
 package org.gradle.tooling.internal.provider;
 
 import org.gradle.api.execution.internal.TaskInputsListeners;
-import org.gradle.api.internal.changedetection.state.FileHasherStatistics;
 import org.gradle.deployment.internal.DeploymentRegistryInternal;
 import org.gradle.execution.WorkValidationWarningReporter;
 import org.gradle.initialization.BuildCancellationToken;
@@ -16,9 +15,7 @@ import org.gradle.internal.buildtree.BuildTreeModelControllerServices;
 import org.gradle.internal.buildtree.ProblemReportingBuildActionRunner;
 import org.gradle.internal.classpath.CachedClasspathTransformer;
 import org.gradle.internal.concurrent.ExecutorFactory;
-import org.gradle.internal.enterprise.core.GradleEnterprisePluginManager;
 import org.gradle.internal.event.ListenerManager;
-import org.gradle.internal.file.StatStatistics;
 import org.gradle.internal.filewatch.DefaultFileSystemChangeWaiterFactory;
 import org.gradle.internal.filewatch.FileSystemChangeWaiterFactory;
 import org.gradle.internal.filewatch.FileWatcherFactory;
@@ -27,7 +24,6 @@ import org.gradle.internal.logging.text.StyledTextOutputFactory;
 import org.gradle.internal.operations.BuildOperationExecutor;
 import org.gradle.internal.operations.BuildOperationListenerManager;
 import org.gradle.internal.operations.BuildOperationProgressEventEmitter;
-import org.gradle.internal.operations.BuildOperationRunner;
 import org.gradle.internal.operations.logging.LoggingBuildOperationProgressBroadcaster;
 import org.gradle.internal.operations.notify.BuildOperationNotificationValve;
 import org.gradle.internal.service.ServiceRegistration;
@@ -35,10 +31,8 @@ import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.scopes.AbstractPluginServiceRegistry;
 import org.gradle.internal.service.scopes.GradleUserHomeScopeServiceRegistry;
 import org.gradle.internal.session.BuildSessionActionExecutor;
-import org.gradle.internal.snapshot.impl.DirectorySnapshotterStatistics;
 import org.gradle.internal.time.Clock;
 import org.gradle.internal.time.Time;
-import org.gradle.internal.watch.vfs.BuildLifecycleAwareVirtualFileSystem;
 import org.gradle.internal.work.WorkerLeaseService;
 import org.gradle.launcher.exec.BuildCompletionNotifyingBuildActionRunner;
 import org.gradle.launcher.exec.BuildExecuter;
@@ -49,19 +43,7 @@ import org.gradle.launcher.exec.RootBuildLifecycleBuildActionExecutor;
 import org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor;
 import org.gradle.launcher.exec.RunAsWorkerThreadBuildActionExecutor;
 import org.gradle.problems.buildtree.ProblemReporter;
-import org.gradle.tooling.internal.provider.BuildSessionLifecycleBuildActionExecuter;
-import org.gradle.tooling.internal.provider.ExecuteBuildActionRunner;
-import org.gradle.tooling.internal.provider.FileSystemWatchingBuildActionRunner;
-import org.gradle.tooling.internal.provider.SessionFailureReportingActionExecuter;
-import org.gradle.tooling.internal.provider.SetupLoggingActionExecuter;
-import org.gradle.tooling.internal.provider.StartParamsValidatingActionExecuter;
-import org.gradle.tooling.internal.provider.serialization.ClassLoaderCache;
-import org.gradle.tooling.internal.provider.serialization.DaemonSidePayloadClassLoaderFactory;
-import org.gradle.tooling.internal.provider.serialization.DefaultPayloadClassLoaderRegistry;
-import org.gradle.tooling.internal.provider.serialization.ModelClassLoaderFactory;
-import org.gradle.tooling.internal.provider.serialization.PayloadClassLoaderFactory;
-import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
-import org.gradle.tooling.internal.provider.serialization.WellKnownClassLoaderRegistry;
+
 
 import java.util.List;
 
@@ -113,22 +95,10 @@ public class LauncherServices extends AbstractPluginServiceRegistry {
             return new ExecuteBuildActionRunner();
         }
 
-        ClassLoaderCache createClassLoaderCache() {
-            return new ClassLoaderCache();
-        }
+
     }
 
     static class ToolingGradleUserHomeScopeServices {
-        PayloadClassLoaderFactory createClassLoaderFactory(CachedClasspathTransformer cachedClasspathTransformer) {
-            return new DaemonSidePayloadClassLoaderFactory(new ModelClassLoaderFactory(),
-                    cachedClasspathTransformer);
-        }
-
-        PayloadSerializer createPayloadSerializer(ClassLoaderCache classLoaderCache,
-                                                  PayloadClassLoaderFactory classLoaderFactory) {
-            return new PayloadSerializer(new WellKnownClassLoaderRegistry(
-                    new DefaultPayloadClassLoaderRegistry(classLoaderCache, classLoaderFactory)));
-        }
     }
 
     static class ToolingBuildSessionScopeServices {
