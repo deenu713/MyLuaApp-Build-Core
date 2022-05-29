@@ -18,6 +18,7 @@ package org.gradle.tooling.internal.provider;
 
 import org.gradle.api.internal.StartParameterInternal;
 import org.gradle.initialization.BuildRequestContext;
+import org.gradle.internal.UncheckedException;
 import org.gradle.internal.buildtree.BuildActionRunner;
 import org.gradle.internal.invocation.BuildAction;
 import org.gradle.internal.service.ServiceRegistry;
@@ -64,9 +65,15 @@ public class BuildSessionLifecycleBuildActionExecuter implements BuildActionExec
                         }
                     }
                     if (requestContext.getCancellationToken().isCancellationRequested()) {
-                        return BuildActionResult.cancelled(payloadSerializer.serialize(result.getBuildFailure()));
+                        // If the build was cancelled, don't return any result
+                        // And throw the cancellation exception
+                        throw UncheckedException
+                                .throwAsUncheckedException(result.getBuildFailure());
+                        //return BuildActionResult.cancelled(payloadSerializer.serialize(result.getBuildFailure()));
                     }
-                    return BuildActionResult.failed(payloadSerializer.serialize(result.getClientFailure()));
+                    // Otherwise, throw the failure
+                    throw UncheckedException
+                            .throwAsUncheckedException(result.getClientFailure() != null ? result.getClientFailure() : result.getBuildFailure());
                 });
             }
         }

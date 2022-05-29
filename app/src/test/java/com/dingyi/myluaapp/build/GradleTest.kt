@@ -4,6 +4,7 @@ package com.dingyi.myluaapp.build
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.ConsoleOutput
 import org.gradle.api.logging.configuration.ShowStacktrace
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.groovy.scripts.internal.BuildScriptTransformer
@@ -73,37 +74,25 @@ class GradleTest {
                 /* setConfigurationCache(BuildOption.Value.value(true));
                  startParameter.setConfigurationCacheDebug(true);*/
                 it.warningMode = WarningMode.All;
-
+                it.consoleOutput = ConsoleOutput.Plain
                 it.logLevel = LogLevel.INFO;
-
+                it.isBuildCacheEnabled = true
+                it.isBuildCacheDebugLogging = true
                 it.projectDir = projectPath
-
                 it.gradleUserHomeDir = projectPath.resolve(".gradle_home")
                 it.projectCacheDir =  projectPath.resolve(".gradle")
-                it.setTaskNames(listOf("sync"))
 
             }
-
-
 
 
         launcher
-            .apply {
+            /*.apply {
                 onCreateGradle { gradle ->
                     println("get gradle")
                     println("gradle: $gradle")
-
-                    gradle
-                        .allprojects { project ->
-                            project.plugins
-                                .apply(TestPlugin::class.java)
-                        }
-
-
                 }
-                //injectedPluginClasses(TestPlugin::class.java)
-            }
-            .execute()
+            }*/
+            .execute("sync")
     }
 
 

@@ -91,8 +91,9 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
     implementation(project(":core"))
+    implementation(project(":base-services-groovy"))
     implementation(project(":launcher"))
-
+    implementation(project(":model-core"))
     implementation(project(":logging"))
     implementation(project(":core-api"))
     implementation(project(":configuration-cache"))
