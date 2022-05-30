@@ -22,7 +22,6 @@ import org.gradle.api.internal.initialization.ClassLoaderScope;
 import org.gradle.groovy.scripts.ScriptSource;
 import org.gradle.groovy.scripts.TextResourceScriptSource;
 import org.gradle.initialization.DefaultProjectDescriptor;
-import org.gradle.initialization.DependenciesAccessors;
 import org.gradle.internal.FileUtils;
 import org.gradle.internal.deprecation.DeprecationLogger;
 import org.gradle.internal.management.DependencyResolutionManagementInternal;
@@ -31,8 +30,9 @@ import org.gradle.internal.resource.TextFileResourceLoader;
 import org.gradle.internal.resource.TextResource;
 import org.gradle.util.internal.NameValidator;
 
-import javax.annotation.Nullable;
 import java.io.File;
+
+import javax.annotation.Nullable;
 
 public class ProjectFactory implements IProjectFactory {
     private final Instantiator instantiator;
@@ -63,7 +63,7 @@ public class ProjectFactory implements IProjectFactory {
         project.beforeEvaluate(p -> {
             nagUserAboutDeprecatedFlatProjectLayout(project);
             NameValidator.validate(project.getName(), "project name", DefaultProjectDescriptor.INVALID_NAME_IN_INCLUDE_HINT);
-            gradle.getServices().get(DependenciesAccessors.class).createExtensions(project);
+//            gradle.getServices().get(DependenciesAccessors.class).createExtensions(project);
             gradle.getServices().get(DependencyResolutionManagementInternal.class).configureProject(project);
         });
 

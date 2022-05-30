@@ -16,7 +16,6 @@
 package org.gradle.internal.management;
 
 import org.gradle.api.artifacts.dsl.ComponentMetadataHandler;
-import org.gradle.api.initialization.dsl.VersionCatalogBuilder;
 import org.gradle.api.initialization.resolve.DependencyResolutionManagement;
 import org.gradle.api.initialization.resolve.RepositoriesMode;
 import org.gradle.api.initialization.resolve.RulesMode;
@@ -39,7 +38,6 @@ public interface DependencyResolutionManagementInternal extends DependencyResolu
 
     Property<String> getDefaultProjectsExtensionName();
 
-    List<VersionCatalogBuilder> getDependenciesModelBuilders();
 
     enum RepositoriesModeInternal {
         PREFER_PROJECT(true),

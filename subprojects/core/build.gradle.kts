@@ -90,7 +90,7 @@ dependencies {
     implementation("net.rubygrapefruit:native-platform:0.22-milestone-23")
     implementation("org.ow2.asm:asm-commons:9.3")
 
-    implementation("org.tomlj:tomlj:1.0.0")
+
     implementation("org.apache.commons:commons-compress:1.21")
 
 

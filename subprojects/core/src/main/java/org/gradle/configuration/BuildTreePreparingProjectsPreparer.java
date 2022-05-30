@@ -16,20 +16,14 @@
 
 package org.gradle.configuration;
 
-import org.gradle.api.initialization.dsl.VersionCatalogBuilder;
+
 import org.gradle.api.internal.GradleInternal;
 import org.gradle.api.internal.SettingsInternal;
-import org.gradle.api.internal.file.FileCollectionFactory;
 import org.gradle.api.internal.initialization.ClassLoaderScope;
 import org.gradle.initialization.BuildLoader;
-import org.gradle.initialization.DependenciesAccessors;
 import org.gradle.initialization.buildsrc.BuildSourceBuilder;
 import org.gradle.internal.build.BuildStateRegistry;
 import org.gradle.internal.classpath.ClassPath;
-import org.gradle.internal.management.DependencyResolutionManagementInternal;
-import org.gradle.internal.service.ServiceRegistry;
-
-import java.io.File;
 
 public class BuildTreePreparingProjectsPreparer implements ProjectsPreparer {
     private final ProjectsPreparer delegate;
@@ -51,7 +45,7 @@ public class BuildTreePreparingProjectsPreparer implements ProjectsPreparer {
         ClassLoaderScope settingsClassLoaderScope = settings.getClassLoaderScope();
         ClassLoaderScope buildSrcClassLoaderScope = settingsClassLoaderScope.createChild("buildSrc[" + gradle.getIdentityPath() + "]");
         gradle.setBaseProjectClassLoaderScope(buildSrcClassLoaderScope);
-        generateDependenciesAccessorsAndAssignPluginVersions(gradle.getServices(), settings, buildSrcClassLoaderScope);
+//        generateDependenciesAccessorsAndAssignPluginVersions(gradle.getServices(), settings, buildSrcClassLoaderScope);
         // attaches root project
         buildLoader.load(gradle.getSettings(), gradle);
         // Makes included build substitutions available
@@ -74,7 +68,7 @@ public class BuildTreePreparingProjectsPreparer implements ProjectsPreparer {
         baseProjectClassLoaderScope.export(buildSrcClassPath).lock();
     }
 
-    private void generateDependenciesAccessorsAndAssignPluginVersions(ServiceRegistry services, SettingsInternal settings, ClassLoaderScope classLoaderScope) {
+    /*private void generateDependenciesAccessorsAndAssignPluginVersions(ServiceRegistry services, SettingsInternal settings, ClassLoaderScope classLoaderScope) {
         DependenciesAccessors accessors = services.get(DependenciesAccessors.class);
         DependencyResolutionManagementInternal dm = services.get(DependencyResolutionManagementInternal.class);
         dm.getDefaultLibrariesExtensionName().finalizeValue();
@@ -90,5 +84,5 @@ public class BuildTreePreparingProjectsPreparer implements ProjectsPreparer {
             });
         }
         accessors.generateAccessors(dm.getDependenciesModelBuilders(), classLoaderScope, settings);
-    }
+    }*/
 }

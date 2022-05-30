@@ -28,11 +28,9 @@ import org.gradle.api.artifacts.ComponentMetadataRule;
 import org.gradle.api.artifacts.dsl.ComponentMetadataHandler;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
-import org.gradle.api.initialization.dsl.VersionCatalogBuilder;
 import org.gradle.api.initialization.resolve.DependencyResolutionManagement;
 import org.gradle.api.initialization.resolve.RepositoriesMode;
 import org.gradle.api.initialization.resolve.RulesMode;
-import org.gradle.api.initialization.resolve.MutableVersionCatalogContainer;
 import org.gradle.api.internal.CollectionCallbackActionDecorator;
 import org.gradle.api.internal.FeaturePreviews;
 import org.gradle.api.internal.artifacts.DependencyManagementServices;
@@ -70,7 +68,6 @@ public class DefaultDependencyResolutionManagement implements DependencyResoluti
     private final Property<RulesMode> rulesMode;
     private final Property<String> librariesExtensionName;
     private final Property<String> projectsExtensionName;
-    private final DefaultVersionCatalogBuilderContainer versionCatalogs;
 
     private boolean mutable = true;
 
@@ -89,8 +86,7 @@ public class DefaultDependencyResolutionManagement implements DependencyResoluti
         this.dependencyResolutionServices = Lazy.locking().of(() -> dependencyManagementServices.create(fileResolver, fileCollectionFactory, dependencyMetaDataProvider, makeUnknownProjectFinder(), RootScriptDomainObjectContext.INSTANCE));
         this.librariesExtensionName = objects.property(String.class).convention("libs");
         this.projectsExtensionName = objects.property(String.class).convention("projects");
-        this.versionCatalogs = objects.newInstance(DefaultVersionCatalogBuilderContainer.class, collectionCallbackActionDecorator, objects, providers, dependencyResolutionServices, context, featurePreviews);
-    }
+         }
 
     @Override
     public void repositories(Action<? super RepositoryHandler> repositoryConfiguration) {
@@ -129,15 +125,6 @@ public class DefaultDependencyResolutionManagement implements DependencyResoluti
         return RepositoriesModeInternal.of(repositoryMode.get());
     }
 
-    @Override
-    public void versionCatalogs(Action<? super MutableVersionCatalogContainer> spec) {
-        spec.execute(versionCatalogs);
-    }
-
-    @Override
-    public MutableVersionCatalogContainer getVersionCatalogs() {
-        return versionCatalogs;
-    }
 
     @Override
     public RulesModeInternal getConfiguredRulesMode() {
@@ -155,10 +142,6 @@ public class DefaultDependencyResolutionManagement implements DependencyResoluti
         return librariesExtensionName;
     }
 
-    @Override
-    public List<VersionCatalogBuilder> getDependenciesModelBuilders() {
-        return ImmutableList.copyOf(versionCatalogs);
-    }
 
     @Override
     public void configureProject(ProjectInternal project) {

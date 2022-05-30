@@ -107,8 +107,6 @@ import org.gradle.api.internal.artifacts.repositories.resolver.ExternalResourceA
 import org.gradle.api.internal.artifacts.repositories.transport.RepositoryTransport;
 import org.gradle.api.internal.artifacts.repositories.transport.RepositoryTransportFactory;
 import org.gradle.api.internal.attributes.ImmutableAttributesFactory;
-import org.gradle.api.internal.catalog.DefaultDependenciesAccessors;
-import org.gradle.api.internal.catalog.DependenciesAccessorsWorkspaceProvider;
 import org.gradle.api.internal.file.FileCollectionFactory;
 import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.internal.file.temp.TemporaryFileProvider;
@@ -134,7 +132,6 @@ import org.gradle.cache.internal.InMemoryCacheDecoratorFactory;
 import org.gradle.cache.internal.ProducerGuard;
 import org.gradle.caching.internal.origin.OriginMetadata;
 import org.gradle.configuration.internal.UserCodeApplicationContext;
-import org.gradle.initialization.DependenciesAccessors;
 import org.gradle.initialization.ProjectAccessListener;
 import org.gradle.initialization.internal.InternalBuildFinishedListener;
 import org.gradle.initialization.layout.BuildLayout;
@@ -685,15 +682,7 @@ class DependencyManagementBuildScopeServices {
 
 
 
-    DependenciesAccessors createDependenciesAccessorGenerator(ClassPathRegistry registry,
-                                                              DependenciesAccessorsWorkspaceProvider workspace,
-                                                              DefaultProjectDependencyFactory factory,
-                                                              ExecutionEngine executionEngine,
-                                                              FeaturePreviews featurePreviews,
-                                                              FileCollectionFactory fileCollectionFactory,
-                                                              InputFingerprinter inputFingerprinter) {
-        return new DefaultDependenciesAccessors(registry, workspace, factory, featurePreviews, executionEngine, fileCollectionFactory, inputFingerprinter);
-    }
+
 
 
     /**
