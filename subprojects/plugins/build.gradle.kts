@@ -24,8 +24,7 @@ dependencies {
     implementation(project(":platform-jvm"))
     implementation(project(":language-jvm"))
     implementation(project(":language-java"))
-    implementation(project(":language-groovy")) /*
-    implementation(project(":diagnostics"))
+    /*implementation(project(":diagnostics"))
     implementation(project(":testing-base"))
     implementation(project(":testing-jvm"))*/
     implementation(project(":snapshots"))

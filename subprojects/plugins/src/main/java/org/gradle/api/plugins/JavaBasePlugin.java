@@ -42,7 +42,6 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.AbstractCompile;
-import org.gradle.api.tasks.compile.GroovyCompile;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.internal.deprecation.DeprecatableConfiguration;
@@ -286,13 +285,6 @@ public class JavaBasePlugin implements Plugin<Project> {
                     // Toolchains in use
                     checkToolchainAndCompatibilityUsage(javaExtension, rawJavaVersionSupplier);
                     return javaCompile.getJavaCompiler().get().getMetadata().getLanguageVersion().toString();
-                }
-            }
-            if (compile instanceof GroovyCompile) {
-                GroovyCompile groovyCompile = (GroovyCompile) compile;
-                if (groovyCompile.getJavaLauncher().isPresent()) {
-                    checkToolchainAndCompatibilityUsage(javaExtension, rawJavaVersionSupplier);
-                    return groovyCompile.getJavaLauncher().get().getMetadata().getLanguageVersion().toString();
                 }
             }
             return javaVersionSupplier.get().toString();
