@@ -39,7 +39,7 @@ public class BuildTreeLifecycleBuildActionExecutor implements BuildSessionAction
     public BuildActionRunner.Result execute(BuildAction action, BuildSessionContext buildSession) {
         BuildActionModelRequirements actionRequirements;
 
-            actionRequirements = new RunTasksRequirements(action.getStartParameter());
+        actionRequirements = new RunTasksRequirements(action.getStartParameter());
 
         BuildTreeModelControllerServices.Supplier modelServices = buildTreeModelControllerServices.servicesForBuildTree(actionRequirements);
         try (BuildTreeState buildTree = new BuildTreeState(buildSession.getServices(), modelServices)) {
