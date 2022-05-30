@@ -183,8 +183,7 @@ import org.gradle.plugin.management.internal.autoapply.AutoAppliedPluginHandler;
 import org.gradle.plugin.use.internal.PluginRequestApplicator;
 import org.gradle.process.internal.DefaultExecOperations;
 import org.gradle.process.internal.ExecFactory;
-import org.gradle.tooling.provider.model.internal.BuildScopeToolingModelBuilderRegistryAction;
-import org.gradle.tooling.provider.model.internal.DefaultToolingModelBuilderRegistry;
+
 
 import java.util.List;
 
@@ -554,19 +553,6 @@ public class BuildScopeServices extends DefaultServiceRegistry {
         return new DefaultAuthenticationSchemeRegistry();
     }
 
-    protected DefaultToolingModelBuilderRegistry createBuildScopedToolingModelBuilders(List<BuildScopeToolingModelBuilderRegistryAction> registryActions,
-                                                                                       BuildOperationExecutor buildOperationExecutor,
-                                                                                       ProjectStateRegistry projectStateRegistry,
-                                                                                       UserCodeApplicationContext userCodeApplicationContext) {
-        DefaultToolingModelBuilderRegistry registry = new DefaultToolingModelBuilderRegistry(buildOperationExecutor, projectStateRegistry, userCodeApplicationContext);
-        // Services are created on demand, and this may happen while applying a plugin
-        userCodeApplicationContext.gradleRuntime(() -> {
-            for (BuildScopeToolingModelBuilderRegistryAction registryAction : registryActions) {
-                registryAction.execute(registry);
-            }
-        });
-        return registry;
-    }
 
     protected BuildScanUserInputHandler createBuildScanUserInputHandler(UserInputHandler userInputHandler) {
         return new DefaultBuildScanUserInputHandler(userInputHandler);

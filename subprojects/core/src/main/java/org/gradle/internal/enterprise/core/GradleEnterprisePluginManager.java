@@ -30,7 +30,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ServiceScope(Scopes.BuildTree.class)
-public class GradleEnterprisePluginManager {
+public class
+GradleEnterprisePluginManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GradleEnterprisePluginManager.class);
 

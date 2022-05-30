@@ -82,7 +82,6 @@ import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.state.DefaultManagedFactoryRegistry;
 import org.gradle.internal.state.ManagedFactoryRegistry;
 import org.gradle.internal.typeconversion.DefaultTypeConverter;
-import org.gradle.internal.typeconversion.TypeConverter;
 import org.gradle.model.internal.inspect.ModelRuleExtractor;
 import org.gradle.model.internal.inspect.ModelRuleSourceDetector;
 import org.gradle.model.internal.registry.DefaultModelRegistry;
@@ -92,7 +91,6 @@ import org.gradle.normalization.internal.DefaultRuntimeClasspathNormalization;
 import org.gradle.normalization.internal.InputNormalizationHandlerInternal;
 import org.gradle.normalization.internal.RuntimeClasspathNormalizationInternal;
 import org.gradle.process.internal.ExecFactory;
-import org.gradle.tooling.provider.model.internal.DefaultToolingModelBuilderRegistry;
 import org.gradle.util.Path;
 
 import javax.annotation.Nullable;
@@ -161,12 +159,6 @@ public class ProjectScopeServices extends DefaultServiceRegistry {
 
     protected TemporaryFileProvider createTemporaryFileProvider() {
         return new DefaultTemporaryFileProvider(() -> new File(project.getBuildDir(), "tmp"));
-    }
-
-
-
-    protected DefaultToolingModelBuilderRegistry decorateToolingModelRegistry(DefaultToolingModelBuilderRegistry buildScopedToolingModelBuilders, BuildOperationExecutor buildOperationExecutor, ProjectStateRegistry projectStateRegistry) {
-        return buildScopedToolingModelBuilders.createChild();
     }
 
     protected PluginManagerInternal createPluginManager(Instantiator instantiator, InstantiatorFactory instantiatorFactory, BuildOperationExecutor buildOperationExecutor, UserCodeApplicationContext userCodeApplicationContext, CollectionCallbackActionDecorator decorator, DomainObjectCollectionFactory domainObjectCollectionFactory) {
@@ -294,9 +286,6 @@ public class ProjectScopeServices extends DefaultServiceRegistry {
         return new ComponentRegistry();
     }
 
-    protected TypeConverter createTypeConverter(PathToFileResolver fileResolver) {
-        return new DefaultTypeConverter(fileResolver);
-    }
 
     private class ProjectBackedModuleMetaDataProvider implements DependencyMetaDataProvider {
         @Override
