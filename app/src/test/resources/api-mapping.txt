@@ -1072,7 +1072,6 @@ GradleVersion:org.gradle.util.GradleVersion;
 NameMatcher:org.gradle.util.NameMatcher;
 NameValidator:org.gradle.util.NameValidator;
 RelativePathUtil:org.gradle.util.RelativePathUtil;
-SingleMessageLogger:org.gradle.util.SingleMessageLogger;
 TextUtil:org.gradle.util.TextUtil;
 VersionNumber:org.gradle.util.VersionNumber;
 WrapUtil:org.gradle.util.WrapUtil;

@@ -82,9 +82,6 @@ import org.gradle.internal.vfs.FileSystemAccess;
 import org.gradle.process.internal.ExecFactory;
 import org.gradle.process.internal.JavaExecHandleFactory;
 import org.gradle.process.internal.health.memory.MemoryManager;
-import org.gradle.process.internal.worker.DefaultWorkerProcessFactory;
-import org.gradle.process.internal.worker.WorkerProcessFactory;
-import org.gradle.process.internal.worker.child.WorkerProcessClassPathProvider;
 import org.gradle.util.GradleVersion;
 
 import java.io.File;
@@ -196,33 +193,14 @@ public class GradleUserHomeScopeServices extends WorkerSharedUserHomeScopeServic
         return parent.forContext(fileResolver, fileCollectionFactory, instantiator, objectFactory, javaModuleDetector);
     }
 
-    WorkerProcessFactory createWorkerProcessFactory(LoggingManagerInternal loggingManagerInternal, MessagingServer messagingServer, ClassPathRegistry classPathRegistry,
-                                                    TemporaryFileProvider temporaryFileProvider, JavaExecHandleFactory execHandleFactory, JvmVersionDetector jvmVersionDetector,
-                                                    MemoryManager memoryManager, GradleUserHomeDirProvider gradleUserHomeDirProvider, OutputEventListener outputEventListener) {
-        return new DefaultWorkerProcessFactory(
-            loggingManagerInternal,
-            messagingServer,
-            classPathRegistry,
-            new LongIdGenerator(),
-            gradleUserHomeDirProvider.getGradleUserHomeDirectory(),
-            temporaryFileProvider,
-            execHandleFactory,
-            jvmVersionDetector,
-            outputEventListener,
-            memoryManager
-        );
-    }
 
-    ClassPathRegistry createClassPathRegistry(ModuleRegistry moduleRegistry, WorkerProcessClassPathProvider workerProcessClassPathProvider) {
+
+    ClassPathRegistry createClassPathRegistry(ModuleRegistry moduleRegistry) {
         return new DefaultClassPathRegistry(
-            new DefaultClassPathProvider(moduleRegistry),
-            workerProcessClassPathProvider
+            new DefaultClassPathProvider(moduleRegistry)
         );
     }
 
-    WorkerProcessClassPathProvider createWorkerProcessClassPathProvider(CacheRepository cacheRepository, ModuleRegistry moduleRegistry) {
-        return new WorkerProcessClassPathProvider(cacheRepository, moduleRegistry);
-    }
 
     protected JavaModuleDetector createJavaModuleDetector(FileContentCacheFactory cacheFactory, FileCollectionFactory fileCollectionFactory) {
         return new JavaModuleDetector(cacheFactory, fileCollectionFactory);

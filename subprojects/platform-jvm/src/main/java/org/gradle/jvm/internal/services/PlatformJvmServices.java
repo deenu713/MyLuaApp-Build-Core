@@ -22,6 +22,7 @@ import org.gradle.internal.service.scopes.AbstractPluginServiceRegistry;
 import org.gradle.jvm.toolchain.internal.DefaultJavaToolchainService;
 
 import org.gradle.jvm.toolchain.internal.JavaToolchainFactory;
+import org.gradle.jvm.toolchain.internal.JavaToolchainQueryService;
 
 public class PlatformJvmServices extends AbstractPluginServiceRegistry {
 
@@ -39,7 +40,7 @@ public class PlatformJvmServices extends AbstractPluginServiceRegistry {
     @Override
     public void registerProjectServices(ServiceRegistration registration) {
         registration.add(JavaToolchainFactory.class);
-
+        registration.add(JavaToolchainQueryService.class);
         registration.add(DefaultJavaToolchainService.class);
     }
 
