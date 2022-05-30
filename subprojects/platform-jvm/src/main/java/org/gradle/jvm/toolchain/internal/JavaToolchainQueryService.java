@@ -23,8 +23,10 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.internal.jvm.Jvm;
 import org.gradle.jvm.toolchain.JavaToolchainSpec;
+/*
 import org.gradle.jvm.toolchain.install.internal.DefaultJavaToolchainProvisioningService;
 import org.gradle.jvm.toolchain.install.internal.JavaToolchainProvisioningService;
+*/
 
 import javax.inject.Inject;
 import java.io.File;
@@ -35,21 +37,24 @@ import java.util.function.Supplier;
 
 public class JavaToolchainQueryService {
 
-    private final JavaInstallationRegistry registry;
+    //    private final JavaInstallationRegistry registry;
     private final JavaToolchainFactory toolchainFactory;
-    private final JavaToolchainProvisioningService installService;
-    private final Provider<Boolean> detectEnabled;
-    private final Provider<Boolean> downloadEnabled;
+//    private final JavaToolchainProvisioningService installService;
+
+    private final ProviderFactory providerFactory;
     private final Map<JavaToolchainSpec, JavaToolchain> matchingToolchains;
 
     @Inject
-    public JavaToolchainQueryService(JavaInstallationRegistry registry, JavaToolchainFactory toolchainFactory, JavaToolchainProvisioningService provisioningService, ProviderFactory factory) {
-        this.registry = registry;
+    public JavaToolchainQueryService(/*JavaInstallationRegistry registry,*/ JavaToolchainFactory toolchainFactory /*, JavaToolchainProvisioningService provisioningService*/, ProviderFactory factory) {
+        /*  this.registry = registry;*/
         this.toolchainFactory = toolchainFactory;
-        this.installService = provisioningService;
-        this.detectEnabled = factory.gradleProperty(AutoDetectingInstallationSupplier.AUTO_DETECT).forUseAtConfigurationTime().map(Boolean::parseBoolean);
+        /* this.installService = provisioningService;*/
+        /*this.detectEnabled = factory.gradleProperty(AutoDetectingInstallationSupplier.AUTO_DETECT).forUseAtConfigurationTime().map(Boolean::parseBoolean);
         this.downloadEnabled = factory.gradleProperty(DefaultJavaToolchainProvisioningService.AUTO_DOWNLOAD).forUseAtConfigurationTime().map(Boolean::parseBoolean);
+      */
         this.matchingToolchains = new ConcurrentHashMap<>();
+        this.providerFactory = factory;
+
     }
 
     <T> Provider<T> toolFor(JavaToolchainSpec spec, Transformer<T, JavaToolchain> toolFunction) {
@@ -73,27 +78,14 @@ public class JavaToolchainQueryService {
         if (filter instanceof SpecificInstallationToolchainSpec) {
             return asToolchain(((SpecificInstallationToolchainSpec) filter).getJavaHome(), filter).get();
         }
-        return registry.listInstallations().stream()
-            .map(InstallationLocation::getLocation)
-            .map(javaHome -> asToolchain(javaHome, filter))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .filter(new ToolchainMatcher(filter))
-            .sorted(new JavaToolchainComparator())
-            .findFirst()
-            .orElseGet(() -> downloadToolchain(filter));
+        //TODO: use other toolchain spec to compile java
+        return null;
+
     }
 
-    private JavaToolchain downloadToolchain(JavaToolchainSpec spec) {
-        final Optional<File> installation = installService.tryInstall(spec);
-        final Optional<JavaToolchain> toolchain = installation
-            .map(home -> asToolchain(home, spec))
-            .orElseThrow(noToolchainAvailable(spec));
-        return toolchain.orElseThrow(provisionedToolchainIsInvalid(installation::get));
-    }
 
     private Supplier<GradleException> noToolchainAvailable(JavaToolchainSpec spec) {
-        return () -> new NoToolchainAvailableException(spec, detectEnabled.getOrElse(true), downloadEnabled.getOrElse(true));
+        return () -> new NoToolchainAvailableException(spec, false,false);
     }
 
     private Supplier<GradleException> provisionedToolchainIsInvalid(Supplier<File> javaHome) {
