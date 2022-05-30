@@ -12,7 +12,15 @@ class TestPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.logger.info("test plugin")
         target.task("sync") { task ->
+
             target
+                .configurations
+                .forEach {
+                    target.logger.info("configuration: ${it.name}")
+
+                }
+
+            /*target
                 .configurations
                 .matching {
                     it.isCanBeResolved
@@ -21,23 +29,31 @@ class TestPlugin : Plugin<Project> {
                     configuration.dependencies.forEach {
                         task.inputs
                             .property("${it.group}:${it.name}:${it.version}", it.toString())
+
+
+                        task.outputs
+                            .file(it)
+
                     }
                 }
 
-
-            task.doFirst {
-                target
-                    .configurations
-                    .matching { it.isCanBeResolved }
-                    .configureEach { configuration ->
+            task.doLast {
+                target.logger.info("start sync task")
+                target.configurations
+                    .matching {
+                        it.isCanBeResolved
+                    }
+                    .forEach { configuration ->
+                        //resolve dependencies
                         configuration.resolve()
+
                     }
             }
-
+*/
+        }
             //config input
 
 
-        }
     }
 }
 

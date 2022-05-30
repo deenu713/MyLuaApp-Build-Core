@@ -92,7 +92,7 @@ class GradleTest {
                     println("gradle: $gradle")
                 }
             }*/
-            .execute("sync")
+            .execute("assemble")
     }
 
 

@@ -82,7 +82,7 @@ public class PatternSpecFactory {
     }
 
     private synchronized Spec<FileTreeElement> getDefaultExcludeSpec(CaseSensitivity caseSensitivity) {
-        String[] defaultExcludes = new String[] {};
+        String[] defaultExcludes = new String[]{".git"};
         if (defaultExcludeSpecCache.isEmpty()) {
             updateDefaultExcludeSpecCache(defaultExcludes);
         } else if (invalidChangeOfExcludes(defaultExcludes)) {
