@@ -13,3 +13,4 @@ org.gradle.language.java.internal.JavaLanguagePluginServiceRegistry
 org.gradle.composite.internal.CompositeBuildServices
 org.gradle.configurationcache.ConfigurationCacheServices
 org.gradle.api.plugins.internal.PluginAuthorServices
+org.gradle.api.internal.tasks.CompileServices

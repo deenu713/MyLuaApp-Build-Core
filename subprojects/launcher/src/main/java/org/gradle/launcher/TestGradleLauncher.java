@@ -109,7 +109,7 @@ public class TestGradleLauncher {
         GradleLauncherMetaData launcherMetaData = clientMetaData();
 
         long buildStartedTime = System.currentTimeMillis();
-        Clock clock = Time.clock();
+
         startParameter.setTaskNames(List.of(taskNames));
         System.out.println( globalServices.get(BuildExecuter.class));
         Action<ExecutionListener> executionAction = (listener) -> {
@@ -206,6 +206,7 @@ public class TestGradleLauncher {
             Object... stopBeforeSharedServices) {
         BuildActionParameters
                 parameters = createBuildActionParameters(startParameter);
+
         Stoppable stoppable = new CompositeStoppable();
                 /*.add(stopBeforeSharedServices).add(sharedServices);*/
         return new RunBuildAction(executer, startParameter, metaData, buildStartTime, parameters, sharedServices, stoppable);
