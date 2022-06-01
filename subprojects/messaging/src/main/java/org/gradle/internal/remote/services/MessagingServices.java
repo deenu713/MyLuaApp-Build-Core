@@ -16,7 +16,6 @@
 
 package org.gradle.internal.remote.services;
 
-import org.gradle.internal.concurrent.ExecutorFactory;
 import org.gradle.internal.id.IdGenerator;
 import org.gradle.internal.id.UUIDGenerator;
 

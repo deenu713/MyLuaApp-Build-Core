@@ -219,6 +219,7 @@ public class DynamicVersionResolver {
         return versionedComponentChooser.selectNewestComponent(one.module, two.module) == one.module ? one : two;
     }
 
+
     private static class AttemptCollector implements Action<ResourceAwareResolveResult> {
         private final List<String> attempts = new ArrayList<>();
 
@@ -233,6 +234,7 @@ public class DynamicVersionResolver {
             }
         }
     }
+
 
     /**
      * This class contains state used to resolve a component from a specific repository. It can be used in multiple passes,

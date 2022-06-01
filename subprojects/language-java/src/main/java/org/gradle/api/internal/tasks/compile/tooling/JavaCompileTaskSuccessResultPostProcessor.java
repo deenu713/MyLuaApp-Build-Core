@@ -17,7 +17,6 @@
 package org.gradle.api.internal.tasks.compile.tooling;
 
 import org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationType;
-import org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationType.Result.AnnotationProcessorDetails;
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType;
 import org.gradle.internal.operations.BuildOperationDescriptor;
 import org.gradle.internal.operations.BuildOperationListener;
@@ -32,9 +31,6 @@ import org.gradle.internal.build.event.types.DefaultJavaCompileTaskSuccessResult
 import org.gradle.internal.build.event.types.DefaultTaskSuccessResult;
 import org.gradle.internal.build.event.OperationResultPostProcessor;*/
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

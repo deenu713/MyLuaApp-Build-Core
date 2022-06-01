@@ -73,6 +73,9 @@ public class BasicGlobalScopeServices {
             fileLockContentionHandler);
     }
 
+    JvmVersionDetector createJvmVersionDetector(JvmMetadataDetector detector) {
+        return new DefaultJvmVersionDetector(detector);
+    }
 
     DefaultFileLockContentionHandler createFileLockContentionHandler(ExecutorFactory executorFactory, InetAddressFactory inetAddressFactory) {
         return new DefaultFileLockContentionHandler(
@@ -92,9 +95,7 @@ public class BasicGlobalScopeServices {
         return new CachingJvmMetadataDetector(new DefaultJvmMetadataDetector(execHandleFactory, temporaryFileProvider));
     }
 
-    JvmVersionDetector createJvmVersionDetector(JvmMetadataDetector detector) {
-        return new DefaultJvmVersionDetector(detector);
-    }
+
 
     ExecFactory createExecFactory(FileResolver fileResolver, FileCollectionFactory fileCollectionFactory, ExecutorFactory executorFactory, TemporaryFileProvider temporaryFileProvider) {
         return DefaultExecActionFactory.of(fileResolver, fileCollectionFactory, executorFactory, temporaryFileProvider);

@@ -15,7 +15,6 @@
  */
 package org.gradle.internal.management;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import groovy.lang.Closure;
 import org.gradle.api.Action;
