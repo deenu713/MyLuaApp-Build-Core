@@ -34,7 +34,6 @@
             <option value="$PROJECT_DIR$/subprojects/functional" />
             <option value="$PROJECT_DIR$/subprojects/hashing" />
             <option value="$PROJECT_DIR$/subprojects/jvm-services" />
-            <option value="$PROJECT_DIR$/subprojects/language-groovy" />
             <option value="$PROJECT_DIR$/subprojects/language-java" />
             <option value="$PROJECT_DIR$/subprojects/language-jvm" />
             <option value="$PROJECT_DIR$/subprojects/launcher" />
@@ -54,7 +53,6 @@
             <option value="$PROJECT_DIR$/subprojects/resources" />
             <option value="$PROJECT_DIR$/subprojects/resources-http" />
             <option value="$PROJECT_DIR$/subprojects/snapshots" />
-            <option value="$PROJECT_DIR$/subprojects/worker-processes" />
             <option value="$PROJECT_DIR$/subprojects/workers" />
           </set>
         </option>

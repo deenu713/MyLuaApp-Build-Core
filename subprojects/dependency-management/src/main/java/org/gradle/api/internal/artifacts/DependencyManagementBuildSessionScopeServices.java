@@ -15,6 +15,7 @@
  */
 package org.gradle.api.internal.artifacts;
 
+/*
 import org.gradle.api.internal.cache.StringInterner;
 import org.gradle.api.internal.catalog.DependenciesAccessorsWorkspaceProvider;
 import org.gradle.cache.CacheRepository;
@@ -30,3 +31,4 @@ public class DependencyManagementBuildSessionScopeServices {
     }
 
 }
+*/

@@ -33,7 +33,7 @@ dependencies {
     implementation(project(":snapshots"))
     implementation(project(":file-watching"))
     implementation(project(":execution"))
-    implementation(project(":worker-processes"))
+    //implementation(project(":worker-processes"))
     implementation(project(":normalization-java"))
 
 
@@ -42,44 +42,45 @@ dependencies {
     implementation("org.codehaus.groovy:groovy-astbuilder:3.0.9") {
         exclude(group = "org.codehaus.groovy", module = "groovy")
     }
-    implementation("org.codehaus.groovy:groovy-console:3.0.9") {
-        exclude(group = "org.codehaus.groovy", module = "groovy")
-    }
     implementation("org.codehaus.groovy:groovy-templates:3.0.9") {
-        exclude(group = "org.codehaus.groovy", module = "groovy")
-    }
-    implementation("org.codehaus.groovy:groovy-json:3.0.9") {
         exclude(group = "org.codehaus.groovy", module = "groovy")
     }
     implementation("org.codehaus.groovy:groovy-xml:3.0.9") {
         exclude(group = "org.codehaus.groovy", module = "groovy")
     }
-    implementation("org.codehaus.groovy:groovy-dateutil:3.0.9") {
-        exclude(group = "org.codehaus.groovy", module = "groovy")
-    }
-    implementation("org.codehaus.groovy:groovy-datetime:3.0.9") {
-        exclude(group = "org.codehaus.groovy", module = "groovy")
-    }
-    implementation("org.codehaus.groovy:groovy-groovydoc:3.0.9") {
-        exclude(group = "org.codehaus.groovy", module = "groovy")
-    }
+    /* implementation("org.codehaus.groovy:groovy-console:3.0.9") {
+         exclude(group = "org.codehaus.groovy", module = "groovy")
+     }
 
+     implementation("org.codehaus.groovy:groovy-json:3.0.9") {
+         exclude(group = "org.codehaus.groovy", module = "groovy")
+     }
 
+     implementation("org.codehaus.groovy:groovy-dateutil:3.0.9") {
+         exclude(group = "org.codehaus.groovy", module = "groovy")
+     }
+     implementation("org.codehaus.groovy:groovy-datetime:3.0.9") {
+         exclude(group = "org.codehaus.groovy", module = "groovy")
+     }
+     implementation("org.codehaus.groovy:groovy-groovydoc:3.0.9") {
+         exclude(group = "org.codehaus.groovy", module = "groovy")
+     }
+     */
     implementation("org.codehaus.groovy:groovy-json:3.0.9") {
         exclude(group = "org.codehaus.groovy", module = "groovy")
     }
-    implementation("org.codehaus.groovy:groovy-nio:3.0.9")
-    {
-        exclude(group = "org.codehaus.groovy", module = "groovy")
-    }
-    implementation("org.codehaus.groovy:groovy-sql:3.0.9")
-    {
-        exclude(group = "org.codehaus.groovy", module = "groovy")
-    }
-    implementation("org.codehaus.groovy:groovy-test:3.0.9")
-    {
-        exclude(group = "org.codehaus.groovy", module = "groovy")
-    }
+    /* implementation("org.codehaus.groovy:groovy-nio:3.0.9")
+     {
+         exclude(group = "org.codehaus.groovy", module = "groovy")
+     }
+     implementation("org.codehaus.groovy:groovy-sql:3.0.9")
+     {
+         exclude(group = "org.codehaus.groovy", module = "groovy")
+     }
+     implementation("org.codehaus.groovy:groovy-test:3.0.9")
+     {
+         exclude(group = "org.codehaus.groovy", module = "groovy")
+     }*/
 
 
     implementation("org.ow2.asm:asm:9.3")
@@ -90,7 +91,7 @@ dependencies {
     implementation("net.rubygrapefruit:native-platform:0.22-milestone-23")
     implementation("org.ow2.asm:asm-commons:9.3")
 
-    implementation("org.tomlj:tomlj:1.0.0")
+
     implementation("org.apache.commons:commons-compress:1.21")
 
 

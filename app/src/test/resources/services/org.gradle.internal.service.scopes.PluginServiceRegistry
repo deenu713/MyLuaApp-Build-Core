@@ -6,12 +6,11 @@ org.gradle.internal.resource.transport.http.HttpResourcesPluginServiceRegistry
 org.gradle.api.internal.artifacts.DependencyServices
 org.gradle.plugin.internal.PluginUsePluginServiceRegistry
 org.gradle.platform.base.internal.registry.ComponentModelBaseServiceRegistry
-org.gradle.workers.internal.WorkersServices
 org.gradle.jvm.internal.services.PlatformJvmServices
 org.gradle.language.jvm.internal.JvmPluginServiceRegistry
 org.gradle.language.java.internal.JavaToolChainServiceRegistry
 org.gradle.language.java.internal.JavaLanguagePluginServiceRegistry
 org.gradle.composite.internal.CompositeBuildServices
-org.gradle.api.internal.tasks.compile.GroovyServices
 org.gradle.configurationcache.ConfigurationCacheServices
 org.gradle.api.plugins.internal.PluginAuthorServices
+org.gradle.api.internal.tasks.CompileServices

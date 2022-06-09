@@ -52,17 +52,14 @@ import org.gradle.api.internal.artifacts.dsl.dependencies.ProjectFinder;
 import org.gradle.api.internal.artifacts.ivyservice.DefaultConfigurationResolver;
 import org.gradle.api.internal.artifacts.ivyservice.ErrorHandlingConfigurationResolver;
 import org.gradle.api.internal.artifacts.ivyservice.IvyContextManager;
-import org.gradle.api.internal.artifacts.ivyservice.IvyContextualArtifactPublisher;
 import org.gradle.api.internal.artifacts.ivyservice.ShortCircuitEmptyConfigurationResolver;
 import org.gradle.api.internal.artifacts.ivyservice.dependencysubstitution.DependencySubstitutionRules;
 import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.ResolveIvyFactory;
 import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.parser.GradleModuleMetadataParser;
 import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.parser.GradlePomModuleDescriptorParser;
 import org.gradle.api.internal.artifacts.ivyservice.ivyresolve.strategy.VersionSelectorScheme;
-
 import org.gradle.api.internal.artifacts.ivyservice.modulecache.FileStoreAndIndexProvider;
 import org.gradle.api.internal.artifacts.ivyservice.moduleconverter.LocalComponentMetadataBuilder;
-import org.gradle.api.internal.artifacts.ivyservice.moduleconverter.dependencies.LocalConfigurationMetadataBuilder;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.result.AttributeContainerSerializer;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.result.ComponentSelectionDescriptorFactory;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.store.ResolutionResultsStoreFactory;
@@ -112,8 +109,6 @@ import org.gradle.configuration.internal.UserCodeApplicationContext;
 import org.gradle.initialization.internal.InternalBuildFinishedListener;
 import org.gradle.internal.authentication.AuthenticationSchemeRegistry;
 import org.gradle.internal.build.BuildState;
-import org.gradle.internal.component.external.ivypublish.DefaultArtifactPublisher;
-import org.gradle.internal.component.external.ivypublish.DefaultIvyModuleDescriptorWriter;
 import org.gradle.internal.component.external.model.JavaEcosystemVariantDerivationStrategy;
 import org.gradle.internal.component.external.model.ModuleComponentArtifactMetadata;
 import org.gradle.internal.component.model.ComponentAttributeMatcher;
@@ -144,10 +139,11 @@ import org.gradle.internal.typeconversion.NotationParser;
 import org.gradle.internal.vfs.FileSystemAccess;
 import org.gradle.util.internal.SimpleMapInterner;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 public class DefaultDependencyManagementServices implements DependencyManagementServices {
 
@@ -525,9 +521,7 @@ public class DefaultDependencyManagementServices implements DependencyManagement
                     currentBuild.getBuildIdentifier()));
         }
 
-        ArtifactPublicationServices createArtifactPublicationServices(ServiceRegistry services) {
-            return new DefaultArtifactPublicationServices(services);
-        }
+
 
         DependencyResolutionServices createDependencyResolutionServices(ServiceRegistry services) {
             return new DefaultDependencyResolutionServices(services, domainObjectContext);
@@ -615,30 +609,4 @@ public class DefaultDependencyManagementServices implements DependencyManagement
         }
     }
 
-    private static class DefaultArtifactPublicationServices implements ArtifactPublicationServices {
-
-        private final ServiceRegistry services;
-
-        public DefaultArtifactPublicationServices(ServiceRegistry services) {
-            this.services = services;
-        }
-
-        @Override
-        public RepositoryHandler createRepositoryHandler() {
-            Instantiator instantiator = services.get(Instantiator.class);
-            BaseRepositoryFactory baseRepositoryFactory = services.get(BaseRepositoryFactory.class);
-            CollectionCallbackActionDecorator callbackDecorator = services.get(CollectionCallbackActionDecorator.class);
-            return instantiator.newInstance(DefaultRepositoryHandler.class, baseRepositoryFactory, instantiator, callbackDecorator);
-        }
-
-        @Override
-        public ArtifactPublisher createArtifactPublisher() {
-            DefaultArtifactPublisher publisher = new DefaultArtifactPublisher(
-                    services.get(LocalConfigurationMetadataBuilder.class),
-                    new DefaultIvyModuleDescriptorWriter(services.get(ComponentSelectorConverter.class))
-            );
-            return new IvyContextualArtifactPublisher(services.get(IvyContextManager.class), publisher);
-        }
-
-    }
 }

@@ -16,7 +16,6 @@
 
 package org.gradle.api.tasks.util.internal;
 
-import org.gradle.api.Action;
 import org.gradle.api.file.FileTreeElement;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.specs.Specs;

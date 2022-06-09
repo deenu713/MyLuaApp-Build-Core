@@ -19,7 +19,6 @@ package org.gradle.language.java.internal;
 import org.gradle.api.internal.component.ArtifactType;
 import org.gradle.api.internal.component.ComponentTypeRegistry;
 import org.gradle.api.internal.tasks.compile.processing.AnnotationProcessorDetector;
-import org.gradle.api.internal.tasks.compile.tooling.JavaCompileTaskSuccessResultPostProcessor;
 import org.gradle.api.logging.configuration.LoggingConfiguration;
 import org.gradle.api.logging.configuration.ShowStacktrace;
 import org.gradle.api.tasks.javadoc.internal.JavadocToolAdapter;
@@ -35,10 +34,6 @@ import org.gradle.language.java.artifact.JavadocArtifact;
 import org.gradle.process.internal.ExecActionFactory;
 /*import org.gradle.tooling.events.OperationType;*/
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-
-import static java.util.Collections.emptyList;
 
 public class JavaLanguagePluginServiceRegistry extends AbstractPluginServiceRegistry {
     @Override

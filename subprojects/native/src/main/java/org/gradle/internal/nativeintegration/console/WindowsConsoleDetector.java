@@ -18,10 +18,6 @@ package org.gradle.internal.nativeintegration.console;
 
 /*import org.fusesource.jansi.WindowsAnsiPrintStream;*/
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-
 public class WindowsConsoleDetector implements ConsoleDetector {
     @Override
     public ConsoleMetaData getConsole() {

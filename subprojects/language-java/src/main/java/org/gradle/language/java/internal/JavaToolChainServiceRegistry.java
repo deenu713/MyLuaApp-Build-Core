@@ -24,10 +24,6 @@ import org.gradle.internal.service.scopes.AbstractPluginServiceRegistry;
 import org.gradle.jvm.toolchain.internal.JavaCompilerFactory;
 import org.gradle.process.internal.ExecHandleFactory;
 import org.gradle.process.internal.JavaForkOptionsFactory;
-import org.gradle.process.internal.worker.child.WorkerDirectoryProvider;
-import org.gradle.workers.internal.ActionExecutionSpecFactory;
-import org.gradle.workers.internal.WorkerDaemonFactory;
-
 public class JavaToolChainServiceRegistry extends AbstractPluginServiceRegistry {
     @Override
     public void registerProjectServices(ServiceRegistration registration) {
@@ -35,8 +31,8 @@ public class JavaToolChainServiceRegistry extends AbstractPluginServiceRegistry 
     }
 
     private static class ProjectScopeCompileServices {
-        JavaCompilerFactory createJavaCompilerFactory(WorkerDaemonFactory workerDaemonFactory, JavaForkOptionsFactory forkOptionsFactory, WorkerDirectoryProvider workerDirectoryProvider, ExecHandleFactory execHandleFactory, AnnotationProcessorDetector processorDetector, ClassPathRegistry classPathRegistry, ActionExecutionSpecFactory actionExecutionSpecFactory) {
-            return new DefaultJavaCompilerFactory(workerDirectoryProvider, workerDaemonFactory, forkOptionsFactory, execHandleFactory, processorDetector, classPathRegistry, actionExecutionSpecFactory);
+        JavaCompilerFactory createJavaCompilerFactory(JavaForkOptionsFactory forkOptionsFactory, ExecHandleFactory execHandleFactory, AnnotationProcessorDetector processorDetector, ClassPathRegistry classPathRegistry) {
+            return new DefaultJavaCompilerFactory(forkOptionsFactory, execHandleFactory, processorDetector, classPathRegistry);
         }
 
     }

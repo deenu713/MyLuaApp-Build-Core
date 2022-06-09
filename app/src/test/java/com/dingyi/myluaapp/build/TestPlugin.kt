@@ -13,47 +13,21 @@ class TestPlugin : Plugin<Project> {
         target.logger.info("test plugin")
         target.task("sync") { task ->
 
-            target
-                .configurations
-                .forEach {
-                    target.logger.info("configuration: ${it.name}")
-
-                }
-
-            /*target
-                .configurations
-                .matching {
-                    it.isCanBeResolved
-                }
-                .forEach { configuration ->
-                    configuration.dependencies.forEach {
-                        task.inputs
-                            .property("${it.group}:${it.name}:${it.version}", it.toString())
-
-
-                        task.outputs
-                            .file(it)
-
-                    }
-                }
-
             task.doLast {
-                target.logger.info("start sync task")
-                target.configurations
+                target
+                    .configurations
                     .matching {
                         it.isCanBeResolved
                     }
-                    .forEach { configuration ->
-                        //resolve dependencies
-                        configuration.resolve()
-
+                    .forEach {
+                        it.resolve()
                     }
+                target.logger.info("sync task")
             }
-*/
-        }
+
             //config input
 
-
+        }
     }
 }
 

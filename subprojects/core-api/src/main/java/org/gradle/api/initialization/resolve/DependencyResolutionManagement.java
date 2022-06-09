@@ -58,21 +58,6 @@ public interface DependencyResolutionManagement {
     ComponentMetadataHandler getComponents();
 
     /**
-     * Configures the version catalogs which will be used to generate type safe accessors for dependencies.
-     * @param spec the spec to configure the dependencies
-     *
-     * @since 7.0
-     */
-    void versionCatalogs(Action<? super MutableVersionCatalogContainer> spec);
-
-    /**
-     * Returns the configurable version catalogs.
-     *
-     * @since 7.0
-     */
-    MutableVersionCatalogContainer getVersionCatalogs();
-
-    /**
      * Returns the name of the extension generated for type-safe project accessors.
      * Defaults to "projects"
      *

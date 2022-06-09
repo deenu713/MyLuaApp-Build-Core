@@ -19,7 +19,6 @@ package org.gradle.api.internal.artifacts.repositories;
 import org.gradle.api.Action;
 import org.gradle.api.artifacts.repositories.AuthenticationContainer;
 import org.gradle.api.artifacts.repositories.PasswordCredentials;
-import org.gradle.api.credentials.AwsCredentials;
 import org.gradle.api.credentials.Credentials;
 import org.gradle.api.credentials.HttpHeaderCredentials;
 import org.gradle.api.model.ObjectFactory;
@@ -30,7 +29,6 @@ import org.gradle.authentication.Authentication;
 import org.gradle.internal.Cast;
 import org.gradle.internal.authentication.AllSchemesAuthentication;
 import org.gradle.internal.authentication.AuthenticationInternal;
-import org.gradle.internal.credentials.DefaultAwsCredentials;
 import org.gradle.internal.credentials.DefaultHttpHeaderCredentials;
 import org.gradle.internal.credentials.DefaultPasswordCredentials;
 import org.gradle.internal.reflect.Instantiator;
@@ -143,24 +141,20 @@ public class AuthenticationSupporter {
     private static <T extends Credentials> Class<? extends T> getCredentialsImplType(Class<T> publicType) {
         if (publicType == PasswordCredentials.class) {
             return Cast.uncheckedCast(DefaultPasswordCredentials.class);
-        } else if (publicType == AwsCredentials.class) {
-            return Cast.uncheckedCast(DefaultAwsCredentials.class);
         } else if (publicType == HttpHeaderCredentials.class) {
             return Cast.uncheckedCast(DefaultHttpHeaderCredentials.class);
         } else {
-            throw new IllegalArgumentException(String.format("Unknown credentials type: '%s' (supported types: %s, %s and %s).", publicType.getName(), PasswordCredentials.class.getName(), AwsCredentials.class.getName(), HttpHeaderCredentials.class.getName()));
+            throw new IllegalArgumentException(String.format("Unknown credentials type: '%s' (supported types: %s, %s and %s).", publicType.getName(), PasswordCredentials.class.getName(), "AwsCredentials", HttpHeaderCredentials.class.getName()));
         }
     }
 
     private static <T extends Credentials> Class<? super T> getCredentialsPublicType(Class<T> implType) {
         if (PasswordCredentials.class.isAssignableFrom(implType)) {
             return Cast.uncheckedCast(PasswordCredentials.class);
-        } else if (AwsCredentials.class.isAssignableFrom(implType)) {
-            return Cast.uncheckedCast(AwsCredentials.class);
-        } else if (HttpHeaderCredentials.class.isAssignableFrom(implType)) {
+        }  else if (HttpHeaderCredentials.class.isAssignableFrom(implType)) {
             return Cast.uncheckedCast(HttpHeaderCredentials.class);
         } else {
-            throw new IllegalArgumentException(String.format("Unknown credentials implementation type: '%s' (supported types: %s, %s and %s).", implType.getName(), DefaultPasswordCredentials.class.getName(), DefaultAwsCredentials.class.getName(), DefaultHttpHeaderCredentials.class.getName()));
+            throw new IllegalArgumentException(String.format("Unknown credentials implementation type: '%s' (supported types: %s, %s and %s).", implType.getName(), DefaultPasswordCredentials.class.getName(), "DefaultAwsCredentials", DefaultHttpHeaderCredentials.class.getName()));
         }
     }
 

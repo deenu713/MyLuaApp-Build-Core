@@ -103,12 +103,6 @@ import org.gradle.model.internal.manage.schema.extract.ModelSchemaAspectExtracti
 import org.gradle.model.internal.manage.schema.extract.ModelSchemaAspectExtractor;
 import org.gradle.model.internal.manage.schema.extract.ModelSchemaExtractionStrategy;
 import org.gradle.model.internal.manage.schema.extract.ModelSchemaExtractor;
-import org.gradle.process.internal.health.memory.DefaultJvmMemoryInfo;
-import org.gradle.process.internal.health.memory.DefaultMemoryManager;
-import org.gradle.process.internal.health.memory.DefaultOsMemoryInfo;
-import org.gradle.process.internal.health.memory.JvmMemoryInfo;
-import org.gradle.process.internal.health.memory.MemoryManager;
-import org.gradle.process.internal.health.memory.OsMemoryInfo;
 
 import java.util.List;
 
@@ -234,17 +228,7 @@ public class GlobalScopeServices extends WorkerSharedGlobalScopeServices {
         return new DefaultGradleUserHomeScopeServiceRegistry(globalServices, new GradleUserHomeScopeServices(globalServices));
     }
 
-    OsMemoryInfo createOsMemoryInfo() {
-        return new DefaultOsMemoryInfo();
-    }
 
-    JvmMemoryInfo createJvmMemoryInfo() {
-        return new DefaultJvmMemoryInfo();
-    }
-
-    MemoryManager createMemoryManager(OsMemoryInfo osMemoryInfo, JvmMemoryInfo jvmMemoryInfo, ListenerManager listenerManager, ExecutorFactory executorFactory) {
-        return new DefaultMemoryManager(osMemoryInfo, jvmMemoryInfo, listenerManager, executorFactory);
-    }
 
     ObjectFactory createObjectFactory(InstantiatorFactory instantiatorFactory, ServiceRegistry services, DirectoryFileTreeFactory directoryFileTreeFactory, Factory<PatternSet> patternSetFactory,
                                       PropertyFactory propertyFactory, FilePropertyFactory filePropertyFactory, FileCollectionFactory fileCollectionFactory,
