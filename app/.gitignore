@@ -1,3 +1,4 @@
 /build
 /src/main/resources/TestProject/.gradle
 /src/main/resources/TestProject/.gradle_home
+/src/main/resources/TestProject/build
