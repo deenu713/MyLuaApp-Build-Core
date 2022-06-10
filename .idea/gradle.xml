@@ -50,10 +50,10 @@
             <option value="$PROJECT_DIR$/subprojects/plugins" />
             <option value="$PROJECT_DIR$/subprojects/problems" />
             <option value="$PROJECT_DIR$/subprojects/process-services" />
+            <option value="$PROJECT_DIR$/subprojects/reporting" />
             <option value="$PROJECT_DIR$/subprojects/resources" />
             <option value="$PROJECT_DIR$/subprojects/resources-http" />
             <option value="$PROJECT_DIR$/subprojects/snapshots" />
-            <option value="$PROJECT_DIR$/subprojects/worker-processes" />
             <option value="$PROJECT_DIR$/subprojects/workers" />
           </set>
         </option>

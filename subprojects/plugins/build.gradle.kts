@@ -19,7 +19,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":workers"))
     implementation(project(":dependency-management"))
-   /* implementation(project(":reporting"))*/
+    implementation(project(":reporting"))
     implementation(project(":platform-base"))
     implementation(project(":platform-jvm"))
     implementation(project(":language-jvm"))
