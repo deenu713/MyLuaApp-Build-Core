@@ -38,6 +38,7 @@ public class JavaHomeBasedJavaCompilerFactory implements Factory<JavaCompiler>, 
         this.compilerPluginsClasspath = compilerPluginsClasspath;
     }
 
+    //dingyi modify: use custom
     @Override
     public JavaCompiler create() {
         JdkTools jdkTools = JavaHomeBasedJavaCompilerFactory.JDK_TOOLS.computeIfAbsent(compilerPluginsClasspath, JavaHomeBasedJavaCompilerFactory::createJdkTools);

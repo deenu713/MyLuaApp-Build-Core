@@ -34,7 +34,6 @@ public class PlatformJvmServices extends AbstractPluginServiceRegistry {
 
     private void registerJavaInstallationSuppliers(ServiceRegistration registration) {
 
-
     }
 
     @Override

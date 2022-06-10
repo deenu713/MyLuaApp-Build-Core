@@ -217,6 +217,9 @@ public class FilteringClassLoader extends ClassLoader implements ClassLoaderHier
             addAll(this.resourceNames, resourceNames);
             addAll(this.disallowedClassNames, disallowedClassNames);
             addAll(this.disallowedPackagePrefixes, disallowedPackagePrefixes);
+
+            //dingyi modify: allow gradle package
+            allowPackage("org.gradle");
         }
 
         private static void addAll(Collection<String> collection, Iterable<String> elements) {

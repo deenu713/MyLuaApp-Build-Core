@@ -81,7 +81,7 @@ class GradleTest {
                 it.projectDir = projectPath
                 it.gradleUserHomeDir = projectPath.resolve(".gradle_home")
                 it.projectCacheDir =  projectPath.resolve(".gradle")
-
+                it.isRefreshDependencies = true
             }
 
 
@@ -92,7 +92,7 @@ class GradleTest {
                     println("gradle: $gradle")
                 }
             }*/
-            .execute("sync")
+            .execute("assemble")
     }
 
 

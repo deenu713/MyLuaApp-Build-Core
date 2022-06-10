@@ -65,6 +65,7 @@ public class JdkTools {
 
     private Class<JavaCompiler.CompilationTask> incrementalCompileTaskClass;
 
+    // dingyi modify: use customized ClassLoader
     JdkTools(Jvm jvm, List<File> compilerPlugins) {
         DefaultClassLoaderFactory defaultClassLoaderFactory = new DefaultClassLoaderFactory();
         JavaVersion javaVersion = jvm.getJavaVersion();
@@ -90,6 +91,7 @@ public class JdkTools {
         FilteringClassLoader.Spec filterSpec = new FilteringClassLoader.Spec();
         filterSpec.allowPackage("com.sun.tools");
         filterSpec.allowPackage("com.sun.source");
+
         return classLoaderFactory.createFilteringClassLoader(getSystemClassLoader(), filterSpec);
     }
 
