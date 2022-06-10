@@ -92,7 +92,7 @@ class GradleTest {
                     println("gradle: $gradle")
                 }
             }*/
-            .execute("assemble")
+            .execute("dependencies")
     }
 
 

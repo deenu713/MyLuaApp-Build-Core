@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":core-api"))
     implementation(project(":functional"))
     implementation(project(":dependency-management"))
-/*    implementation(project(":diagnostics"))*/
+   implementation(project(":diagnostics"))
     implementation(project(":execution"))
     implementation(project(":file-collections"))
     implementation(project(":jvm-services"))
