@@ -48,9 +48,10 @@ import org.gradle.internal.nativeintegration.filesystem.services.FallbackFileMet
 import org.gradle.internal.nativeintegration.filesystem.services.FileSystemServices;
 import org.gradle.internal.nativeintegration.filesystem.services.NativePlatformBackedFileMetadataAccessor;
 import org.gradle.internal.nativeintegration.filesystem.services.UnavailablePosixFiles;
-import org.gradle.internal.nativeintegration.jansi.JansiBootPathConfigurer;
+/*import org.gradle.internal.nativeintegration.jansi.JansiBootPathConfigurer;*/
 import org.gradle.internal.nativeintegration.jna.UnsupportedEnvironment;
 import org.gradle.internal.nativeintegration.network.HostnameLookup;
+import org.gradle.internal.nativeintegration.processenvironment.AndroidProcessEnvironment;
 import org.gradle.internal.nativeintegration.processenvironment.NativePlatformBackedProcessEnvironment;
 import org.gradle.internal.os.OperatingSystem;
 import org.gradle.internal.service.DefaultServiceRegistry;
@@ -106,14 +107,14 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
         JANSI {
             @Override
             public boolean initialize(File nativeBaseDir, boolean canUseNativeIntegrations) {
-                JANSI_BOOT_PATH_CONFIGURER.configure(nativeBaseDir);
+               /* JANSI_BOOT_PATH_CONFIGURER.configure(nativeBaseDir);*/
                 LOGGER.info("Initialized jansi services in: {}", nativeBaseDir);
                 return true;
             }
         };
 
-        private static final JansiBootPathConfigurer JANSI_BOOT_PATH_CONFIGURER = new JansiBootPathConfigurer();
-
+       /* private static final JansiBootPathConfigurer JANSI_BOOT_PATH_CONFIGURER = new JansiBootPathConfigurer();
+*/
         public abstract boolean initialize(File nativeBaseDir, boolean canUseNativeIntegrations);
     }
 
@@ -270,6 +271,10 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
             } catch (NativeIntegrationUnavailableException ex) {
                 LOGGER.debug("Native-platform process integration is not available. Continuing with fallback.");
             }
+        }
+
+        if (OperatingSystem.current().isAndroid()) {
+            return new AndroidProcessEnvironment();
         }
 
         return new UnsupportedEnvironment();

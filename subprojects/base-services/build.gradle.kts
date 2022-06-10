@@ -20,6 +20,10 @@ dependencies {
     implementation("commons-lang:commons-lang:2.6")
     implementation("javax.inject:javax.inject:1")
 
+
+    //use for check is android environment
+    compileOnly("org.codehaus.groovy:groovy:3.0.9:grooid")
+
     implementation("org.ow2.asm:asm:9.3")
 
 

@@ -17,6 +17,9 @@ package org.gradle.api;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import org.codehaus.groovy.reflection.android.AndroidSupport;
+import org.gradle.internal.os.OperatingSystem;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -160,8 +163,13 @@ public enum JavaVersion {
      * @return The version of the current JVM.
      */
     public static JavaVersion current() {
+        //dingyi modify: always return VERSION_1_8 on Android
         if (currentJavaVersion == null) {
-            currentJavaVersion = toVersion(System.getProperty("java.version"));
+            if (OperatingSystem.current().isAndroid()) {
+                currentJavaVersion = VERSION_1_8;
+            } else {
+                currentJavaVersion = toVersion(System.getProperty("java.version"));
+            }
         }
         return currentJavaVersion;
     }

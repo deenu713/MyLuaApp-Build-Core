@@ -16,10 +16,12 @@
 
 package org.gradle.internal.classloader;
 
+import org.codehaus.groovy.reflection.android.AndroidSupport;
 import org.gradle.api.GradleException;
 import org.gradle.internal.UncheckedException;
 import org.gradle.internal.classpath.ClassPath;
 import org.gradle.internal.classpath.DefaultClassPath;
+import org.gradle.internal.os.OperatingSystem;
 import org.gradle.internal.reflect.JavaMethod;
 
 import java.io.File;
@@ -29,6 +31,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -93,11 +96,16 @@ public class ClasspathUtil {
     public static File getClasspathForClass(Class<?> targetClass) {
         URI location;
         try {
-            CodeSource codeSource = targetClass.getProtectionDomain().getCodeSource();
-            if (codeSource != null && codeSource.getLocation() != null) {
-                location = toURI(codeSource.getLocation());
-                if (location.getScheme().equals("file")) {
-                    return new File(location);
+
+            ProtectionDomain protectionDomain = targetClass.getProtectionDomain();
+            //dingyi modify: In android, the protectionDomain always is null
+            if (protectionDomain != null) {
+                CodeSource codeSource = protectionDomain.getCodeSource();
+                if (codeSource != null && codeSource.getLocation() != null) {
+                    location = toURI(codeSource.getLocation());
+                    if (location.getScheme().equals("file")) {
+                        return new File(location);
+                    }
                 }
             }
             if (targetClass.getClassLoader() != null) {
@@ -107,6 +115,11 @@ public class ClasspathUtil {
                     return getClasspathForResource(resource, resourceName);
                 }
             }
+
+            if (OperatingSystem.current().isAndroid()) {
+                return new File(System.getProperty("java.class.path"));
+            }
+
             throw new GradleException(String.format("Cannot determine classpath for class %s.", targetClass.getName()));
         } catch (URISyntaxException e) {
             throw UncheckedException.throwAsUncheckedException(e);

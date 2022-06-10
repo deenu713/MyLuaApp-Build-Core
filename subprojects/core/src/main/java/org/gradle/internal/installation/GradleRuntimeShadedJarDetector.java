@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -40,9 +41,12 @@ public class GradleRuntimeShadedJarDetector {
             throw new IllegalArgumentException("Need to provide valid class reference");
         }
 
-        CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
+        //dingyi modify: add check for protection domain
 
-        if (codeSource != null) {
+        ProtectionDomain protectionDomain = clazz.getProtectionDomain();
+
+        if (protectionDomain != null) {
+            CodeSource codeSource = protectionDomain.getCodeSource();
             URL location = codeSource.getLocation();
 
             if (isJarUrl(location)) {

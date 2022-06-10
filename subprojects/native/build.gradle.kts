@@ -10,6 +10,8 @@ java {
 dependencies {
     api(project(":files"))
 
+    compileOnly(project(":android-stubs"))
+
     implementation(project(":base-services"))
     implementation(project(":file-temp"))
 

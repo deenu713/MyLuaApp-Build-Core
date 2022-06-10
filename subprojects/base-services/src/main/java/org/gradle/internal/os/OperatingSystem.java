@@ -15,6 +15,7 @@
  */
 package org.gradle.internal.os;
 
+import org.codehaus.groovy.reflection.android.AndroidSupport;
 import org.gradle.internal.scan.UsedByScanPlugin;
 
 import javax.annotation.Nullable;
@@ -27,13 +28,13 @@ import java.util.regex.Pattern;
 
 import static org.gradle.internal.FileUtils.withExtension;
 
+//dingyi modify:add android system property
 public abstract class OperatingSystem {
     public static final Windows WINDOWS = new Windows();
-    public static final MacOs MAC_OS = new MacOs();
-    public static final Solaris SOLARIS = new Solaris();
     public static final Linux LINUX = new Linux();
     public static final FreeBSD FREE_BSD = new FreeBSD();
     public static final Unix UNIX = new Unix();
+    public static final Android ANDROID = new Android();
     private static OperatingSystem currentOs;
     private final String toStringValue;
     private final String osName;
@@ -46,8 +47,13 @@ public abstract class OperatingSystem {
     }
 
     public static OperatingSystem current() {
+
         if (currentOs == null) {
-            currentOs = forName(System.getProperty("os.name"));
+            if (AndroidSupport.isRunningAndroid()) {
+                currentOs = ANDROID;
+            } else {
+                currentOs = forName(System.getProperty("os.name"));
+            }
         }
         return currentOs;
     }
@@ -61,10 +67,6 @@ public abstract class OperatingSystem {
         String osName = os.toLowerCase();
         if (osName.contains("windows")) {
             return WINDOWS;
-        } else if (osName.contains("mac os x") || osName.contains("darwin") || osName.contains("osx")) {
-            return MAC_OS;
-        } else if (osName.contains("sunos") || osName.contains("solaris")) {
-            return SOLARIS;
         } else if (osName.contains("linux")) {
             return LINUX;
         } else if (osName.contains("freebsd")) {
@@ -105,6 +107,8 @@ public abstract class OperatingSystem {
         return false;
     }
 
+    public boolean isAndroid() { return false;}
+
     public abstract String getNativePrefix();
 
     public abstract String getScriptName(String scriptPath);
@@ -124,6 +128,8 @@ public abstract class OperatingSystem {
     public abstract String getLinkLibrarySuffix();
 
     public abstract String getLinkLibraryName(String libraryPath);
+
+
 
     @UsedByScanPlugin
     public abstract String getFamilyName();
@@ -260,6 +266,8 @@ public abstract class OperatingSystem {
             return "Path";
         }
     }
+
+
 
     static class Unix extends OperatingSystem {
         private final String nativePrefix;
@@ -402,6 +410,18 @@ public abstract class OperatingSystem {
         @Override
         public String getFamilyName() {
             return "linux";
+        }
+    }
+
+    static class Android extends Linux {
+        @Override
+        public boolean isAndroid() {
+            return true;
+        }
+
+        @Override
+        public String getFamilyName() {
+            return "android";
         }
     }
 

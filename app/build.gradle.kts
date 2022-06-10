@@ -1,3 +1,5 @@
+import java.io.FileWriter
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -21,7 +23,7 @@ android {
     sourceSets {
         getByName("main") {
             java.srcDirs("src/main/kotlin")
-           /* resources.srcDirs("src/main/res")*/
+            /* resources.srcDirs("src/main/res")*/
 
         }
         getByName("test") {
@@ -45,7 +47,9 @@ android {
 
         debug {
             isMinifyEnabled = false
-
+            ndk {
+                this.abiFilters.addAll(arrayOf("armeabi-v7a", "arm64-v8a"))
+            }
         }
     }
     kotlinOptions {
@@ -54,6 +58,11 @@ android {
     packagingOptions {
         resources.excludes.addAll(listOf("META-INF/**", "xsd/*", "license/*"))
         resources.pickFirsts.add("kotlin/**")
+        if (isBuildForAndroid()) {
+            resources
+                .excludes
+                .addAll(listOf("net/**", "org/fusesource/**"))
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -63,25 +72,18 @@ android {
 
 }
 
-tasks
-    .register("test2") {
-        doFirst {
-            println(java)
-            println("test2")
-            println(
-                project
-                    .tasks
-                    .getByName("assemble")
-            )
 
-        }
+fun isBuildForAndroid(): Boolean {
+    val taskNames = project
+        .gradle
+        .startParameter
+        .taskNames
 
-    }
-
-
+    return taskNames.any { it.indexOf("assemble") != -1 || it.indexOf("clean") != -1 }
+}
 
 dependencies {
-    //implementation(project(":build-core"))
+//implementation(project(":build-core"))
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("com.google.android.material:material:1.4.0")
@@ -98,10 +100,11 @@ dependencies {
     implementation(project(":core-api"))
     implementation(project(":configuration-cache"))
     implementation(project(":base-services"))
+
     implementation("io.github.dingyi222666:groovy-android:1.0.2")
-    //implementation(project(":configuration-cache"))
 
 
+//implementation(project(":configuration-cache"))
 
 
 //    implementation ("com.esotericsoftware:kryo:5.3.0")

@@ -16,6 +16,7 @@
 
 package org.gradle.cache.internal.locklistener;
 
+import org.gradle.internal.os.OperatingSystem;
 import org.gradle.internal.remote.internal.inet.InetAddressFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,9 @@ public class FileLockCommunicator {
     public FileLockCommunicator(InetAddressFactory addressFactory) {
         this.addressFactory = addressFactory;
         try {
+
             socket = new DatagramSocket(0, addressFactory.getWildcardBindingAddress());
+
         } catch (SocketException e) {
             throw throwAsUncheckedException(e);
         }
