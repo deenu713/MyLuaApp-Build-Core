@@ -53,6 +53,7 @@ public class BuildSessionLifecycleBuildActionExecuter implements BuildActionExec
         try (CrossBuildSessionState crossBuildSessionState = new CrossBuildSessionState(globalServices, startParameter)) {
             try (BuildSessionState buildSessionState = new BuildSessionState(userHomeServiceRegistry, crossBuildSessionState, startParameter, requestContext, actionParameters.getInjectedPluginClasspath(), requestContext.getCancellationToken(), requestContext.getClient(), requestContext.getEventConsumer())) {
                 return buildSessionState.run(context -> {
+                    //dingyi modify:
                     BuildActionRunner.Result result = context.execute(action);
                     if (result.getBuildFailure() == null) {
                         return BuildActionResult.of(result.getClientResult());

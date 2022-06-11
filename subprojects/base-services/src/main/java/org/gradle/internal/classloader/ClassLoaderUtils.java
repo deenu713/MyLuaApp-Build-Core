@@ -15,27 +15,62 @@
  */
 package org.gradle.internal.classloader;
 
+import android.os.Build;
+
+import com.android.dex.DexFormat;
+import com.android.dx.AppDataDirGuesser;
+import com.android.dx.cf.direct.DirectClassFile;
+import com.android.dx.cf.direct.StdAttributeFactory;
+import com.android.dx.command.dexer.DxContext;
+import com.android.dx.dex.DexOptions;
+import com.android.dx.dex.cf.CfOptions;
+import com.android.dx.dex.cf.CfTranslator;
+import com.android.dx.dex.file.ClassDefItem;
+import com.android.dx.dex.file.DexFile;
+import com.google.common.io.Files;
+
+import org.checkerframework.checker.units.qual.C;
 import org.gradle.api.JavaVersion;
+import org.gradle.internal.Cast;
 import org.gradle.internal.Factory;
 import org.gradle.internal.UncheckedException;
 import org.gradle.internal.concurrent.CompositeStoppable;
+import org.gradle.internal.os.OperatingSystem;
 import org.gradle.internal.reflect.JavaMethod;
 
 import javax.annotation.Nullable;
+
+import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+import dalvik.system.DexClassLoader;
+import dalvik.system.InMemoryDexClassLoader;
+
+
+//dingyi modify: add android class load definer
 public abstract class ClassLoaderUtils {
     private static final ClassDefiner CLASS_DEFINER;
 
     private static final ClassLoaderPackagesFetcher CLASS_LOADER_PACKAGES_FETCHER;
 
     static {
-        CLASS_DEFINER = JavaVersion.current().isJava9Compatible() ? new LookupClassDefiner() : new ReflectionClassDefiner();
+
+        if (OperatingSystem.current().isAndroid()) {
+            CLASS_DEFINER = new DexClassDefiner();
+        } else {
+            CLASS_DEFINER = JavaVersion.current().isJava9Compatible() ? new LookupClassDefiner() : new ReflectionClassDefiner();
+        }
         CLASS_LOADER_PACKAGES_FETCHER = JavaVersion.current().isJava9Compatible() ? new LookupPackagesFetcher() : new ReflectionPackagesFetcher();
     }
 
@@ -173,6 +208,126 @@ public abstract class ClassLoaderUtils {
         @SuppressWarnings("unchecked")
         public <T> Class<T> defineClass(ClassLoader classLoader, String className, byte[] classBytes) {
             return (Class<T>) defineClassMethod.invoke(classLoader, className, classBytes, 0, classBytes.length);
+        }
+
+        @Override
+        public <T> Class<T> defineDecoratorClass(Class<?> decoratedClass, ClassLoader classLoader, String className, byte[] classBytes) {
+            return defineClass(classLoader, className, classBytes);
+        }
+    }
+
+    private static class DexClassDefiner implements ClassDefiner {
+
+
+        private DexOptions options;
+
+
+        private Map<String, ByteBuffer> classByteList = new HashMap<>();
+
+        DexClassDefiner() {
+            if (options == null) {
+                options = new DexOptions();
+                options.minSdkVersion = DexFormat.API_NO_EXTENDED_OPCODES;
+            }
+
+        }
+
+
+        private DirectClassFile toClassFile(byte[] classBytes, String className) {
+            DirectClassFile classFile = new DirectClassFile(classBytes, className.replace(".", "/") + ".class", false);
+
+            classFile.setAttributeFactory(StdAttributeFactory.THE_ONE);
+            classFile.getMagic(); // Force parsing to happen.
+
+
+            return classFile;
+        }
+
+        private byte[] toDexBytes(byte[] classBytes, String className) {
+
+
+            classByteList.put(className, ByteBuffer.wrap(classBytes));
+
+            toClassFile(classBytes, className);
+
+            DxContext context = new DxContext();
+
+            CfOptions cfOptions = new CfOptions();
+
+
+            DexFile outputDex = new DexFile(options);
+
+            for (Map.Entry<String, ByteBuffer> entry : classByteList.entrySet()) {
+                String targetClassName = entry.getKey();
+                ByteBuffer classByteBuffer = entry.getValue();
+                outputDex.add(
+                        CfTranslator.translate(
+                                context,
+                                toClassFile(classByteBuffer.array(), targetClassName),
+                                null,
+                                cfOptions,
+                                options, outputDex
+                        )
+                );
+            }
+
+
+            try {
+                return outputDex.toDex(null, false);
+
+            } catch (IOException e) {
+                throw UncheckedException.throwAsUncheckedException(e);
+            }
+
+        }
+
+
+        private ClassLoader loadDexInMemory(ClassLoader classLoader, String className, byte[] classBytes) {
+
+            byte[] dexBytes = toDexBytes(classBytes, className);
+
+            InMemoryDexClassLoader dexClassLoader = new InMemoryDexClassLoader(
+                    ByteBuffer.wrap(dexBytes), classLoader);
+
+            return dexClassLoader;
+        }
+
+        private ClassLoader loadDexInFile(ClassLoader classLoader, String className, byte[] classBytes) {
+            String randomDexFileName = "dex_" + UUID.randomUUID() + ".dex";
+
+            byte[] dexBytes = toDexBytes(classBytes, className);
+
+            File outputFile = new File(new AppDataDirGuesser().guess(), randomDexFileName);
+            try {
+                Files.write(dexBytes, outputFile);
+            } catch (IOException e) {
+                throw UncheckedException.throwAsUncheckedException(e);
+            }
+
+            DexClassLoader dexClassLoader = new DexClassLoader(
+                    outputFile.getAbsolutePath(), null, null, classLoader);
+
+            return dexClassLoader;
+
+        }
+
+        @Override
+        public <T> Class<T> defineClass(ClassLoader classLoader, String className, byte[] classBytes) {
+
+            ClassLoader dexClassLoader;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                dexClassLoader = loadDexInMemory(classLoader, className, classBytes);
+            } else {
+                dexClassLoader = loadDexInFile(classLoader, className, classBytes);
+            }
+
+
+            try {
+                Class<T> targetClass = Cast.uncheckedCast(dexClassLoader.loadClass(className));
+                return Cast.uncheckedCast(targetClass);
+            } catch (ClassNotFoundException e) {
+                throw UncheckedException.throwAsUncheckedException(e);
+            }
         }
 
         @Override

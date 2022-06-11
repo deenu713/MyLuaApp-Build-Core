@@ -56,6 +56,7 @@ public class MultiParentClassLoader extends ClassLoader implements ClassLoaderHi
     }
 
     public void addParent(ClassLoader parent) {
+
         parents.add(parent);
     }
 

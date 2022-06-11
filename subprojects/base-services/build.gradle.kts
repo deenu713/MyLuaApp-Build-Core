@@ -12,6 +12,7 @@ dependencies {
     api(project(":hashing"))
     api(project(":build-operations"))
 
+    compileOnly(project(":android-stubs"))
     implementation("com.google.guava:guava:30.1.1-jre")
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
     implementation("commons-io:commons-io:2.11.0")
@@ -26,5 +27,8 @@ dependencies {
 
     implementation("org.ow2.asm:asm:9.3")
 
+    implementation ("com.jakewharton.android.repackaged:dalvik-dx:9.0.0_r3") {
+        because("transform class to dex")
+    }
 
 }
