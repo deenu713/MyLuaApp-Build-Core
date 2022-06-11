@@ -27,7 +27,7 @@ import static org.gradle.internal.filewatch.FileWatcherEvent.Type.*;
 
 public class DefaultFileWatcherEventListener implements FileWatcherEventListener {
     public static final int SHOW_INDIVIDUAL_CHANGES_LIMIT = 3;
-    private static final boolean IS_MAC_OSX = OperatingSystem.current().isMacOsX();
+
     private final Map<File, FileWatcherEvent.Type> aggregatedEvents = Maps.newLinkedHashMap();
     private int moreChangesCount;
 
@@ -57,9 +57,9 @@ public class DefaultFileWatcherEventListener implements FileWatcherEventListener
     }
 
     protected boolean shouldIncreaseChangesCount(FileWatcherEvent event) {
-        if (IS_MAC_OSX) {
+      /*  if (IS_MAC_OSX) {
             return true; // count every event on OSX
-        }
+        }*/
 
         // Only count non-CREATE events, since creation also causes a modification event, unless the event is for a directory.
         return event.getType() != CREATE || event.getFile().isDirectory();

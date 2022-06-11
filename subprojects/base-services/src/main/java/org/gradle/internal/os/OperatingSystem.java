@@ -49,7 +49,9 @@ public abstract class OperatingSystem {
     public static OperatingSystem current() {
 
         if (currentOs == null) {
-            if (AndroidSupport.isRunningAndroid()) {
+            boolean isRunningAndroid = System.getProperty("java.vm.name", "")
+                    .contains("Dalvik");
+            if (isRunningAndroid) {
                 currentOs = ANDROID;
             } else {
                 currentOs = forName(System.getProperty("os.name"));
@@ -99,9 +101,6 @@ public abstract class OperatingSystem {
         return false;
     }
 
-    public boolean isMacOsX() {
-        return false;
-    }
 
     public boolean isLinux() {
         return false;
@@ -379,27 +378,6 @@ public abstract class OperatingSystem {
         }
     }
 
-    static class MacOs extends Unix {
-        @Override
-        public boolean isMacOsX() {
-            return true;
-        }
-
-        @Override
-        public String getFamilyName() {
-            return "os x";
-        }
-
-        @Override
-        public String getSharedLibrarySuffix() {
-            return ".dylib";
-        }
-
-        @Override
-        public String getNativePrefix() {
-            return "darwin";
-        }
-    }
 
     static class Linux extends Unix {
         @Override
@@ -428,24 +406,5 @@ public abstract class OperatingSystem {
     static class FreeBSD extends Unix {
     }
 
-    static class Solaris extends Unix {
-        @Override
-        public String getFamilyName() {
-            return "solaris";
-        }
 
-        @Override
-        protected String getOsPrefix() {
-            return "sunos";
-        }
-
-        @Override
-        protected String getArch() {
-            String arch = System.getProperty("os.arch");
-            if (arch.equals("i386") || arch.equals("x86")) {
-                return "x86";
-            }
-            return super.getArch();
-        }
-    }
 }

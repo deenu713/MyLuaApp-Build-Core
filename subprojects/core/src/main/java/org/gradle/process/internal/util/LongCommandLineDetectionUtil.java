@@ -37,9 +37,9 @@ public class LongCommandLineDetectionUtil {
 
     private static int getMaxCommandLineLength() {
         int defaultMax = MAX_COMMAND_LINE_LENGTH_NIX;
-        if (OperatingSystem.current().isMacOsX()) {
+       /* if (OperatingSystem.current().isMacOsX()) {
             defaultMax = MAX_COMMAND_LINE_LENGTH_OSX;
-        } else if (OperatingSystem.current().isWindows()) {
+        } else */if (OperatingSystem.current().isWindows()) {
             defaultMax = MAX_COMMAND_LINE_LENGTH_WINDOWS;
         }
         // in chars

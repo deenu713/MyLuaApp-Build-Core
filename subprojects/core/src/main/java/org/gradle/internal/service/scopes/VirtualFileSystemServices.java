@@ -87,7 +87,6 @@ import org.gradle.internal.vfs.impl.DefaultFileSystemAccess;
 import org.gradle.internal.vfs.impl.DefaultSnapshotHierarchy;
 import org.gradle.internal.vfs.impl.VfsRootReference;
 import org.gradle.internal.watch.registry.FileWatcherRegistryFactory;
-import org.gradle.internal.watch.registry.impl.DarwinFileWatcherRegistryFactory;
 import org.gradle.internal.watch.registry.impl.LinuxFileWatcherRegistryFactory;
 import org.gradle.internal.watch.registry.impl.WindowsFileWatcherRegistryFactory;
 import org.gradle.internal.watch.vfs.BuildLifecycleAwareVirtualFileSystem;
@@ -285,9 +284,9 @@ public class VirtualFileSystemServices extends AbstractPluginServiceRegistry {
         private Optional<FileWatcherRegistryFactory> determineWatcherRegistryFactory(OperatingSystem operatingSystem, NativeCapabilities nativeCapabilities, WatchableFileSystemDetector watchableFileSystemDetector, Predicate<String> watchFilter) {
             if (nativeCapabilities.useFileSystemWatching()) {
                 try {
-                    if (operatingSystem.isMacOsX()) {
+                   /* if (operatingSystem.isMacOsX()) {
                         return Optional.of(new DarwinFileWatcherRegistryFactory(watchableFileSystemDetector, watchFilter));
-                    } else if (operatingSystem.isWindows()) {
+                    } else*/ if (operatingSystem.isWindows()) {
                         return Optional.of(new WindowsFileWatcherRegistryFactory(watchableFileSystemDetector, watchFilter));
                     } else if (operatingSystem.isLinux()) {
                         return Optional.of(new LinuxFileWatcherRegistryFactory(watchableFileSystemDetector, watchFilter));
