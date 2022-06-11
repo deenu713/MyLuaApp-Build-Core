@@ -17,6 +17,8 @@
 package org.gradle.groovy.scripts.internal;
 
 import groovy.lang.GroovyClassLoader;
+import groovyjarjarasm.asm.ClassVisitor;
+
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.classgen.GeneratorContext;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -27,6 +29,7 @@ import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.control.SourceUnit;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
+import org.gradle.internal.os.OperatingSystem;
 
 import java.lang.reflect.Field;
 import java.security.CodeSource;
@@ -41,6 +44,7 @@ class CustomCompilationUnit extends CompilationUnit {
         this.resolveVisitor = new GradleResolveVisitor(this, simpleNameToFQN);
         installCustomCodegen(customVerifier);
     }
+
 
     private void installCustomCodegen(Action<? super ClassNode> customVerifier) {
         final IPrimaryClassNodeOperation nodeOperation = prepareCustomCodegen(customVerifier);

@@ -16,10 +16,13 @@
 
 package org.gradle.groovy.scripts.internal;
 
+import groovy.lang.DynamicGrooidDexClassLoader;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyCodeSource;
 import groovy.lang.GroovyResourceLoader;
 import groovy.lang.Script;
+
+import org.apache.groovy.util.SystemUtil;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -29,6 +32,7 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.control.messages.SyntaxErrorMessage;
+import org.codehaus.groovy.reflection.GroovyClassValue;
 import org.codehaus.groovy.syntax.SyntaxException;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
@@ -44,6 +48,7 @@ import org.gradle.internal.classloader.VisitableURLClassLoader;
 import org.gradle.internal.classpath.ClassPath;
 import org.gradle.internal.file.Deleter;
 import org.gradle.internal.hash.HashCode;
+import org.gradle.internal.os.OperatingSystem;
 import org.gradle.internal.serialize.Serializer;
 import org.gradle.internal.serialize.kryo.KryoBackedDecoder;
 import org.gradle.internal.serialize.kryo.KryoBackedEncoder;
@@ -113,22 +118,47 @@ public class DefaultScriptCompilationHandler implements ScriptCompilationHandler
 
         final EmptyScriptDetector emptyScriptDetector = new EmptyScriptDetector();
         final PackageStatementDetector packageDetector = new PackageStatementDetector();
-        GroovyClassLoader groovyClassLoader = new GroovyClassLoader(classLoader, configuration, false) {
-            @Override
-            protected CompilationUnit createCompilationUnit(CompilerConfiguration compilerConfiguration,
-                                                            CodeSource codeSource) {
 
-                CompilationUnit compilationUnit = new CustomCompilationUnit(compilerConfiguration, codeSource, customVerifier, this, simpleNameToFQN);
+        GroovyClassLoader groovyClassLoader;
 
-                if (transformer != null) {
-                    transformer.register(compilationUnit);
+        //dingyi modify:use dynamic classloader
+        if (OperatingSystem.current().isAndroid()) {
+            groovyClassLoader = new DynamicGrooidDexClassLoader(getClass().getClassLoader(), configuration, false) {
+                @Override
+                protected CompilationUnit createCompilationUnit(CompilerConfiguration compilerConfiguration,
+                                                                CodeSource codeSource) {
+
+                    CompilationUnit compilationUnit = new CustomCompilationUnit(compilerConfiguration, codeSource, customVerifier, this, simpleNameToFQN);
+
+                    if (transformer != null) {
+                        transformer.register(compilationUnit);
+                    }
+
+                    compilationUnit.addPhaseOperation(packageDetector, Phases.CANONICALIZATION);
+                    compilationUnit.addPhaseOperation(emptyScriptDetector, Phases.CANONICALIZATION);
+                    return compilationUnit;
                 }
+            };
+            SystemUtil.setSystemPropertyFromSafe("groovy.use.classpath=false");
+        } else {
 
-                compilationUnit.addPhaseOperation(packageDetector, Phases.CANONICALIZATION);
-                compilationUnit.addPhaseOperation(emptyScriptDetector, Phases.CANONICALIZATION);
-                return compilationUnit;
-            }
-        };
+            groovyClassLoader = new GroovyClassLoader(classLoader, configuration, false) {
+                @Override
+                protected CompilationUnit createCompilationUnit(CompilerConfiguration compilerConfiguration,
+                                                                CodeSource codeSource) {
+
+                    CompilationUnit compilationUnit = new CustomCompilationUnit(compilerConfiguration, codeSource, customVerifier, this, simpleNameToFQN);
+
+                    if (transformer != null) {
+                        transformer.register(compilationUnit);
+                    }
+
+                    compilationUnit.addPhaseOperation(packageDetector, Phases.CANONICALIZATION);
+                    compilationUnit.addPhaseOperation(emptyScriptDetector, Phases.CANONICALIZATION);
+                    return compilationUnit;
+                }
+            };
+        }
 
         groovyClassLoader.setResourceLoader(NO_OP_GROOVY_RESOURCE_LOADER);
         String scriptText = source.getResource().getText();
@@ -137,6 +167,7 @@ public class DefaultScriptCompilationHandler implements ScriptCompilationHandler
         try {
             try {
                 groovyClassLoader.parseClass(codeSource, false);
+                SystemUtil.setSystemPropertyFromSafe("groovy.use.classpath=false");
             } catch (MultipleCompilationErrorsException e) {
                 wrapCompilationFailure(source, e);
             } catch (CompilationFailedException e) {

@@ -20,6 +20,7 @@ dependencyResolutionManagement {
         maven("https://maven.aliyun.com/repository/gradle-plugin")
         google()
         mavenCentral()
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
         maven("https://jitpack.io")
         maven("https://repo.gradle.org/gradle/libs-releases")
         maven("https://maven.repository.redhat.com/ga/")

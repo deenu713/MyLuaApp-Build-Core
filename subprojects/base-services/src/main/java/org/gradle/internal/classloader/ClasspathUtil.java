@@ -16,7 +16,7 @@
 
 package org.gradle.internal.classloader;
 
-import org.codehaus.groovy.reflection.android.AndroidSupport;
+
 import org.gradle.api.GradleException;
 import org.gradle.internal.UncheckedException;
 import org.gradle.internal.classpath.ClassPath;

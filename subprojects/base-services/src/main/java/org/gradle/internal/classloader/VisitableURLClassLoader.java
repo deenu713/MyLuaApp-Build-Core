@@ -16,18 +16,35 @@
 
 package org.gradle.internal.classloader;
 
+import com.android.dx.AppDataDirGuesser;
+import com.android.tools.r8.CompilationFailedException;
+import com.android.tools.r8.D8;
+import com.android.tools.r8.D8Command;
+import com.android.tools.r8.OutputMode;
+import com.android.tools.r8.origin.Origin;
+import com.dingyi.groovy.android.DexClassLoader;
+
 import org.gradle.internal.Cast;
 import org.gradle.internal.Factory;
 import org.gradle.internal.classpath.ClassPath;
+import org.gradle.internal.os.OperatingSystem;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+//dingyi modify: support load class file in android
 public class VisitableURLClassLoader extends URLClassLoader implements ClassLoaderHierarchy {
     static {
         try {
@@ -37,13 +54,16 @@ public class VisitableURLClassLoader extends URLClassLoader implements ClassLoad
         }
     }
 
+    private List<ClassLoader> allDexLoader;
+
     private final Map<Object, Object> userData = new HashMap<Object, Object>();
 
     /**
      * This method can be used to store user data that should live among with this classloader
+     *
      * @param consumerId the consumer
-     * @param onMiss called to create the initial data, when not found
-     * @param <T> the type of data
+     * @param onMiss     called to create the initial data, when not found
+     * @param <T>        the type of data
      * @return user data
      */
     public synchronized <T> T getUserData(Object consumerId, Factory<T> onMiss) {
@@ -69,6 +89,185 @@ public class VisitableURLClassLoader extends URLClassLoader implements ClassLoad
     private VisitableURLClassLoader(String name, URL[] classpath, ClassLoader parent) {
         super(classpath, parent);
         this.name = name;
+
+        if (OperatingSystem.current().isAndroid()) {
+            allDexLoader = new ArrayList<>();
+            loadDexForClassPath(classpath);
+        }
+
+    }
+
+
+    ClassLoader loadDexFromFile(ClassLoader classLoader, URL[] urls) {
+        String randomDexFileName = "Generated_" + UUID.randomUUID() + ".jar";
+
+
+        File outputFile = new File(new AppDataDirGuesser().guess(), randomDexFileName);
+
+        D8Command.Builder builder = D8Command.builder()
+                .setOutput(outputFile.toPath(), OutputMode.DexIndexed);
+
+        for (URL url : urls) {
+            builder.addProgramFiles(new File(url.getPath()).toPath());
+        }
+
+        try {
+            D8.run(builder.build());
+        } catch (CompilationFailedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new DexClassLoader(
+                outputFile.getAbsolutePath(), null, null, classLoader);
+
+    }
+
+    private void loadDexForClassPath(URL[] classPath) {
+
+        if (classPath.length == 0) {
+            return;
+        }
+
+        ClassLoader dexClassLoader = loadDexFromFile(getParent(), classPath);
+
+        allDexLoader.add(dexClassLoader);
+
+
+    }
+
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        if (OperatingSystem.current().isAndroid()) {
+            for (ClassLoader classLoader : allDexLoader) {
+                try {
+                    Class<?> classInDex =  classLoader.loadClass(name);
+                    if (classInDex != null) {
+                        return classInDex;
+                    }
+                } catch (ClassNotFoundException e) {
+                    // ignore
+                }
+            }
+        }
+        return super.findClass(name);
+    }
+
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        if (OperatingSystem.current().isAndroid()) {
+            for (ClassLoader classLoader : allDexLoader) {
+                try {
+                    Class<?> classInDex =  classLoader.loadClass(name);
+                    if (classInDex != null) {
+                        return classInDex;
+                    }
+                } catch (ClassNotFoundException e) {
+                    // ignore
+                }
+            }
+        }
+        return super.loadClass(name);
+    }
+
+    @Override
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        if (OperatingSystem.current().isAndroid()) {
+            for (ClassLoader classLoader : allDexLoader) {
+                try {
+                    Class<?> classInDex =  classLoader.loadClass(name);
+                    if (classInDex != null) {
+                        return classInDex;
+                    }
+                } catch (ClassNotFoundException e) {
+                    // ignore
+                }
+            }
+        }
+        return super.loadClass(name, resolve);
+    }
+
+    @Override
+    protected Class<?> findClass(String moduleName, String name) {
+        if (OperatingSystem.current().isAndroid()) {
+            for (ClassLoader classLoader : allDexLoader) {
+                try {
+                    Class<?> classInDex =  classLoader.loadClass(name);
+                    if (classInDex != null) {
+                        return classInDex;
+                    }
+                } catch (ClassNotFoundException e) {
+                    // ignore
+                }
+            }
+        }
+        return super.findClass(moduleName, name);
+    }
+
+    @Override
+    protected URL findResource(String moduleName, String name) throws IOException {
+        if (OperatingSystem.current().isAndroid()) {
+            for (ClassLoader classLoader : allDexLoader) {
+                URL url = classLoader.getResource(name);
+                if (url != null) {
+                    return url;
+                }
+            }
+        }
+        return super.findResource(moduleName, name);
+    }
+
+    @Override
+    public Enumeration<URL> findResources(String name) throws IOException {
+        if (OperatingSystem.current().isAndroid()) {
+            for (ClassLoader classLoader : allDexLoader) {
+                Enumeration<URL> urls = classLoader.getResources(name);
+                if (urls.hasMoreElements()) {
+                    return urls;
+                }
+            }
+        }
+        return super.findResources(name);
+    }
+
+    @Override
+    public URL findResource(String name) {
+        if (OperatingSystem.current().isAndroid()) {
+            for (ClassLoader classLoader : allDexLoader) {
+                URL url = classLoader.getResource(name);
+                if (url != null) {
+                    return url;
+                }
+            }
+        }
+        return super.findResource(name);
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String name) throws IOException {
+        if (OperatingSystem.current().isAndroid()) {
+            for (ClassLoader classLoader : allDexLoader) {
+                Enumeration<URL> urls = classLoader.getResources(name);
+                if (urls.hasMoreElements()) {
+                    return urls;
+                }
+            }
+        }
+        return super.getResources(name);
+    }
+
+    @Nullable
+    @Override
+    public URL getResource(String name) {
+        if (OperatingSystem.current().isAndroid()) {
+            for (ClassLoader classLoader : allDexLoader) {
+                URL url = classLoader.getResource(name);
+                if (url != null) {
+                    return url;
+                }
+            }
+        }
+        return super.getResource(name);
     }
 
     public String getName() {
@@ -78,12 +277,14 @@ public class VisitableURLClassLoader extends URLClassLoader implements ClassLoad
     @Override
     public void addURL(URL url) {
         super.addURL(url);
+        loadDexForClassPath(new URL[]{url});
     }
 
     @Override
     public String toString() {
         return VisitableURLClassLoader.class.getSimpleName() + "(" + name + ")";
     }
+
 
     @Override
     public void visit(ClassLoaderVisitor visitor) {

@@ -15,21 +15,16 @@
  */
 package org.gradle.internal.classloader;
 
-import android.os.Build;
 
-import com.android.dex.DexFormat;
 import com.android.dx.AppDataDirGuesser;
-import com.android.dx.cf.direct.DirectClassFile;
-import com.android.dx.cf.direct.StdAttributeFactory;
-import com.android.dx.command.dexer.DxContext;
-import com.android.dx.dex.DexOptions;
-import com.android.dx.dex.cf.CfOptions;
-import com.android.dx.dex.cf.CfTranslator;
-import com.android.dx.dex.file.ClassDefItem;
-import com.android.dx.dex.file.DexFile;
-import com.google.common.io.Files;
+import com.android.tools.r8.CompilationFailedException;
+import com.android.tools.r8.D8;
+import com.android.tools.r8.D8Command;
+import com.android.tools.r8.OutputMode;
+import com.android.tools.r8.origin.Origin;
+import com.dingyi.groovy.android.DexClassLoader;
 
-import org.checkerframework.checker.units.qual.C;
+import org.codehaus.groovy.reflection.GroovyClassValue;
 import org.gradle.api.JavaVersion;
 import org.gradle.internal.Cast;
 import org.gradle.internal.Factory;
@@ -47,15 +42,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
-import dalvik.system.DexClassLoader;
-import dalvik.system.InMemoryDexClassLoader;
+
 
 
 //dingyi modify: add android class load definer
@@ -219,95 +208,31 @@ public abstract class ClassLoaderUtils {
     private static class DexClassDefiner implements ClassDefiner {
 
 
-        private DexOptions options;
-
-
-        private Map<String, ByteBuffer> classByteList = new HashMap<>();
+        private CachingClassLoader cachingClassLoader;
 
         DexClassDefiner() {
-            if (options == null) {
-                options = new DexOptions();
-                options.minSdkVersion = DexFormat.API_NO_EXTENDED_OPCODES;
-            }
-
+            cachingClassLoader = new CachingClassLoader(ClassLoader.getSystemClassLoader());
         }
 
 
-        private DirectClassFile toClassFile(byte[] classBytes, String className) {
-            DirectClassFile classFile = new DirectClassFile(classBytes, className.replace(".", "/") + ".class", false);
+         ClassLoader loadDexInFile(ClassLoader classLoader, byte[] classBytes) throws CompilationFailedException {
+            String randomDexFileName = "Generated_" + UUID.randomUUID() + ".jar";
 
-            classFile.setAttributeFactory(StdAttributeFactory.THE_ONE);
-            classFile.getMagic(); // Force parsing to happen.
-
-
-            return classFile;
-        }
-
-        private byte[] toDexBytes(byte[] classBytes, String className) {
-
-
-            classByteList.put(className, ByteBuffer.wrap(classBytes));
-
-            toClassFile(classBytes, className);
-
-            DxContext context = new DxContext();
-
-            CfOptions cfOptions = new CfOptions();
-
-
-            DexFile outputDex = new DexFile(options);
-
-            for (Map.Entry<String, ByteBuffer> entry : classByteList.entrySet()) {
-                String targetClassName = entry.getKey();
-                ByteBuffer classByteBuffer = entry.getValue();
-                outputDex.add(
-                        CfTranslator.translate(
-                                context,
-                                toClassFile(classByteBuffer.array(), targetClassName),
-                                null,
-                                cfOptions,
-                                options, outputDex
-                        )
-                );
-            }
-
-
-            try {
-                return outputDex.toDex(null, false);
-
-            } catch (IOException e) {
-                throw UncheckedException.throwAsUncheckedException(e);
-            }
-
-        }
-
-
-        private ClassLoader loadDexInMemory(ClassLoader classLoader, String className, byte[] classBytes) {
-
-            byte[] dexBytes = toDexBytes(classBytes, className);
-
-            InMemoryDexClassLoader dexClassLoader = new InMemoryDexClassLoader(
-                    ByteBuffer.wrap(dexBytes), classLoader);
-
-            return dexClassLoader;
-        }
-
-        private ClassLoader loadDexInFile(ClassLoader classLoader, String className, byte[] classBytes) {
-            String randomDexFileName = "dex_" + UUID.randomUUID() + ".dex";
-
-            byte[] dexBytes = toDexBytes(classBytes, className);
 
             File outputFile = new File(new AppDataDirGuesser().guess(), randomDexFileName);
-            try {
-                Files.write(dexBytes, outputFile);
-            } catch (IOException e) {
-                throw UncheckedException.throwAsUncheckedException(e);
-            }
 
-            DexClassLoader dexClassLoader = new DexClassLoader(
+            D8Command builder = D8Command.builder()
+                    .setOutput(outputFile.toPath(), OutputMode.DexIndexed)
+                    .addClassProgramData(classBytes, Origin.unknown())
+                    .build();
+
+            D8.run(builder);
+
+
+
+
+            return new DexClassLoader(
                     outputFile.getAbsolutePath(), null, null, classLoader);
-
-            return dexClassLoader;
 
         }
 
@@ -315,15 +240,22 @@ public abstract class ClassLoaderUtils {
         public <T> Class<T> defineClass(ClassLoader classLoader, String className, byte[] classBytes) {
 
             ClassLoader dexClassLoader;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                dexClassLoader = loadDexInMemory(classLoader, className, classBytes);
-            } else {
-                dexClassLoader = loadDexInFile(classLoader, className, classBytes);
+
+            try {
+                dexClassLoader = loadDexInFile(new MultiParentClassLoader(
+                        classLoader,
+                        cachingClassLoader
+                ), classBytes);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
 
+            //wrapper dexclassloder
+            dexClassLoader = new CachingClassLoader(dexClassLoader);
 
             try {
                 Class<T> targetClass = Cast.uncheckedCast(dexClassLoader.loadClass(className));
+                cachingClassLoader.addCacheClass(className, targetClass);
                 return Cast.uncheckedCast(targetClass);
             } catch (ClassNotFoundException e) {
                 throw UncheckedException.throwAsUncheckedException(e);

@@ -100,8 +100,13 @@ dependencies {
     implementation(project(":core-api"))
     implementation(project(":configuration-cache"))
     implementation(project(":base-services"))
-
-    implementation("io.github.dingyi222666:groovy-android:1.0.2")
+    implementation(project(":plugins"))
+    implementation(project(":plugin-use"))
+    implementation(project(":resources-http"))
+    implementation(project(":jvm-services"))
+    implementation(project(":diagnostics"))
+    implementation(project(":platform-jvm"))
+    implementation("io.github.dingyi222666:groovy-android:1.0.4-SNAPSHOT")
 
 
 //implementation(project(":configuration-cache"))

@@ -15,7 +15,7 @@
  */
 package org.gradle.internal.os;
 
-import org.codehaus.groovy.reflection.android.AndroidSupport;
+
 import org.gradle.internal.scan.UsedByScanPlugin;
 
 import javax.annotation.Nullable;

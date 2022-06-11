@@ -17,7 +17,7 @@ package org.gradle.api;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.codehaus.groovy.reflection.android.AndroidSupport;
+
 import org.gradle.internal.os.OperatingSystem;
 
 import java.util.ArrayList;

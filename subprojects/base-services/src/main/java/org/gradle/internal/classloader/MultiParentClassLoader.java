@@ -34,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Note: It's usually a good idea to add a {@link CachingClassLoader} between this ClassLoader and any
  * ClassLoaders that use it as a parent, to prevent every path in the ClassLoader graph being searched.
  */
+//dingyi modify: open some method
 public class MultiParentClassLoader extends ClassLoader implements ClassLoaderHierarchy {
 
     private final List<ClassLoader> parents;
@@ -58,6 +59,37 @@ public class MultiParentClassLoader extends ClassLoader implements ClassLoaderHi
     public void addParent(ClassLoader parent) {
 
         parents.add(parent);
+    }
+
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        return super.findClass(name);
+    }
+
+    @Override
+    protected Class<?> findClass(String moduleName, String name) {
+        return super.findClass(moduleName, name);
+    }
+
+    @Override
+    protected URL findResource(String moduleName, String name) throws IOException {
+        return super.findResource(moduleName, name);
+    }
+
+    @Override
+    protected URL findResource(String name) {
+        return super.findResource(name);
+    }
+
+    @Override
+    protected Enumeration<URL> findResources(String name) throws IOException {
+        return super.findResources(name);
+    }
+
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return super.loadClass(name);
     }
 
     public List<ClassLoader> getParents() {

@@ -33,7 +33,7 @@ dependencies {
         because("We need it for BuildOutputCleanupRegistry")
     }
 
-    implementation("org.codehaus.groovy:groovy-templates:3.0.9") {
+    implementation("org.codehaus.groovy:groovy-templates:3.0.7") {
         exclude(group = "org.codehaus.groovy", module = "groovy")
     }
 

@@ -43,6 +43,11 @@ public class CachingClassLoader extends ClassLoader implements ClassLoaderHierar
         this.parent = parent;
     }
 
+    //dingyi modify: create for add cache class
+    void addCacheClass(String className, Class<?> clazz) {
+        loadedClasses.put(className, clazz);
+    }
+
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         Object cachedValue = loadedClasses.get(name);

@@ -23,7 +23,7 @@ dependencies {
     implementation(project(":base-services-groovy"))
     implementation(project(":build-option"))
 
-    implementation("org.codehaus.groovy:groovy-json:3.0.9") {
+    implementation("org.codehaus.groovy:groovy-json:3.0.7") {
         exclude(group = "org.codehaus.groovy", module = "groovy")
     }
 
