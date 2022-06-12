@@ -91,7 +91,14 @@ public class TaskNodeFactory {
 
         @Nullable
         private File jarFileFor(Class<?> pluginClass) {
-            return clazzToFile.computeIfAbsent(pluginClass, clazz -> toFile(pluginClass.getProtectionDomain().getCodeSource().getLocation()));
+            return clazzToFile.computeIfAbsent(pluginClass, clazz -> {
+                        //dingyi modify: in android always is null
+                        if (pluginClass.getProtectionDomain() == null) {
+                            return null;
+                        }
+                        return toFile(pluginClass.getProtectionDomain().getCodeSource().getLocation());
+                    }
+            );
         }
 
         @Nullable

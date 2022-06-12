@@ -1,4 +1,4 @@
-package om.dingyi.myluaapp.build.api
+package com.dingyi.myluaapp.build
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -77,6 +77,9 @@ class MainActivity : AppCompatActivity() {
             }
 
 
+
+        val test = classLoader.getResource("META-INF/gradle-plugins/org.gradle-help-tasks.properties");
+        println(test)
 
         launcher
             /*.apply {

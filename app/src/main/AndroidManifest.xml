@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyLuaAppBuildApi">
         <activity
-            android:name="om.dingyi.myluaapp.build.api.MainActivity"
+            android:name="com.dingyi.myluaapp.build.MainActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter android:label="@string/app_name">

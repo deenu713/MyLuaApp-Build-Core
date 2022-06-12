@@ -56,12 +56,12 @@ android {
         jvmTarget = "11"
     }
     packagingOptions {
-        resources.excludes.addAll(listOf("META-INF/**", "xsd/*", "license/*"))
-        resources.pickFirsts.add("kotlin/**")
+        resources.excludes.addAll(arrayOf("xsd/*", "license/*"))
+        resources.pickFirsts.addAll(arrayOf("kotlin/**","META-INF/**"))
         if (isBuildForAndroid()) {
             resources
                 .excludes
-                .addAll(listOf("net/**", "org/fusesource/**"))
+                .addAll(arrayOf("net/**", "org/fusesource/**"))
         }
     }
     compileOptions {
@@ -100,13 +100,8 @@ dependencies {
     implementation(project(":core-api"))
     implementation(project(":configuration-cache"))
     implementation(project(":base-services"))
-    implementation(project(":plugins"))
-    implementation(project(":plugin-use"))
-    implementation(project(":resources-http"))
-    implementation(project(":jvm-services"))
-    implementation(project(":diagnostics"))
-    implementation(project(":platform-jvm"))
-    implementation("io.github.dingyi222666:groovy-android:1.0.4-SNAPSHOT")
+
+    /*implementation("io.github.dingyi222666:groovy-android:1.0.4")*/
 
 
 //implementation(project(":configuration-cache"))
