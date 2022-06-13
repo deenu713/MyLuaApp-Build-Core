@@ -5,11 +5,12 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 
-import com.dingyi.terminal.emulator.terminal.TerminalEmulator;
-import com.dingyi.terminal.emulator.terminal.TerminalBuffer;
-import com.dingyi.terminal.emulator.terminal.TerminalRow;
-import com.dingyi.terminal.emulator.terminal.TextStyle;
-import com.dingyi.terminal.emulator.terminal.WcWidth;
+import com.dingyi.terminal.TerminalBuffer;
+import com.dingyi.terminal.TerminalEmulator;
+import com.dingyi.terminal.TerminalRow;
+import com.dingyi.terminal.TextStyle;
+import com.dingyi.terminal.WcWidth;
+
 
 /**
  * Renderer of a {@link TerminalEmulator} into a {@link Canvas}.

@@ -6,7 +6,7 @@ android {
     compileSdk = 31
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 26
         targetSdk = 32
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -23,5 +23,7 @@ android {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
+
     implementation("androidx.annotation:annotation:1.3.0")
 }

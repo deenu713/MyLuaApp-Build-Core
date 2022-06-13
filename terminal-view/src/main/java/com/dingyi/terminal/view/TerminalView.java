@@ -32,11 +32,11 @@ import android.widget.Scroller;
 
 import androidx.annotation.RequiresApi;
 
-import com.dingyi.terminal.emulator.terminal.TerminalEmulator;
-import com.dingyi.terminal.emulator.terminal.TerminalSessionClient;
+
+import com.dingyi.terminal.KeyHandler;
+import com.dingyi.terminal.TerminalEmulator;
+import com.dingyi.terminal.TerminalSession;
 import com.dingyi.terminal.view.textselection.TextSelectionCursorController;
-import com.dingyi.terminal.emulator.terminal.KeyHandler;
-import com.dingyi.terminal.emulator.terminal.TerminalSession;
 
 /** View displaying and interacting with a {@link TerminalSession}. */
 public final class TerminalView extends View {

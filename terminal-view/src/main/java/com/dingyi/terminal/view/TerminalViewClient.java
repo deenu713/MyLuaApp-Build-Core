@@ -5,7 +5,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import com.dingyi.terminal.emulator.terminal.TerminalSession;
+import com.dingyi.terminal.TerminalSession;
+
 
 /**
  * The interface for communication between {@link TerminalView} and its client. It allows for getting
@@ -26,7 +27,7 @@ public interface TerminalViewClient {
     /**
      * On a single tap on the terminal if terminal mouse reporting not enabled.
      */
-    void onSingleTapUp(MotionEvent e);
+     void onSingleTapUp(MotionEvent e);
 
     boolean shouldBackButtonBeMappedToEscape();
 
