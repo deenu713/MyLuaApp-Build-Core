@@ -28,7 +28,7 @@ dependencyResolutionManagement {
 }
 
 include(":app")
-
+include("terminal-view")
 
 rootProject.name = "MyLuaApp-Build-Core"
 

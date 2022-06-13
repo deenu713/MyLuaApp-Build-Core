@@ -7,7 +7,7 @@
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="Android Studio default JDK" />
+        <option name="gradleJvm" value="11" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -57,6 +57,7 @@
             <option value="$PROJECT_DIR$/subprojects/resources-http" />
             <option value="$PROJECT_DIR$/subprojects/snapshots" />
             <option value="$PROJECT_DIR$/subprojects/workers" />
+            <option value="$PROJECT_DIR$/terminal-view" />
           </set>
         </option>
       </GradleProjectSettings>

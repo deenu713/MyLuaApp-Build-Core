@@ -101,6 +101,8 @@ dependencies {
     implementation(project(":configuration-cache"))
     implementation(project(":base-services"))
 
+    implementation(project(":terminal-view"))
+
     /*implementation("io.github.dingyi222666:groovy-android:1.0.4")*/
 
 
