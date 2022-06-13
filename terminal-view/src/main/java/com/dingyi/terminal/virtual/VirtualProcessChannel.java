@@ -5,6 +5,8 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class VirtualProcessChannel {
@@ -13,46 +15,35 @@ public class VirtualProcessChannel {
     OutputStream processOutputStream;
     OutputStream processErrorStream;
 
+    public String[] args;
+
+    public String cwd;
+
+    Map<String, String> env = new HashMap<>();
 
     Integer exitValue = null;
 
-    VirtualProcessChannel(InputStream processInputStream, OutputStream processOutputStream, OutputStream processErrorStream) {
+    public VirtualProcessChannel(InputStream processInputStream, OutputStream processOutputStream, OutputStream processErrorStream) {
         this.processInputStream = processInputStream;
         this.processOutputStream = processOutputStream;
         this.processErrorStream = processErrorStream;
     }
 
 
-    VirtualProcessChannel(InputStream processInputStream) {
-        this(processInputStream, new UnClosableOutputStream(System.out), new UnClosableOutputStream(System.err));
+    public VirtualProcessChannel(InputStream processInputStream) {
+        this(processInputStream, System.out, System.err);
     }
 
-    VirtualProcessChannel() {
-        this(new UnCloseableInputStream(System.in));
+    public VirtualProcessChannel() {
+        this(System.in);
     }
 
-    static class UnCloseableInputStream extends FilterInputStream {
-        public UnCloseableInputStream(InputStream in) {
-            super(in);
-        }
 
-        @Override
-        public void close() throws IOException {
-            in.close();
+    public Map<String, String> getEnv() {
+        if (env == null) {
+            env = new HashMap<String, String>();
         }
-    }
-
-    static class UnClosableOutputStream extends FilterOutputStream {
-
-        public UnClosableOutputStream(OutputStream out) {
-            super(out);
-        }
-
-        @Override
-        public void close() throws IOException {
-            out.flush();
-            out.close();
-        }
+        return env;
     }
 
     public void destroy() throws IOException {
@@ -75,6 +66,7 @@ public class VirtualProcessChannel {
 
     public void write(byte[] b) throws IOException {
         processOutputStream.write(b);
+        processOutputStream.flush();
     }
 
     void writeError(byte[] b) throws IOException {

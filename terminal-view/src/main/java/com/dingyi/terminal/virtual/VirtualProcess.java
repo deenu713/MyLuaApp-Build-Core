@@ -40,6 +40,7 @@ public class VirtualProcess {
         this.cmd = cmd;
         this.cwd = cwd;
         this.args = args;
+        parseEnv(envVars);
     }
 
     VirtualProcess(String cmd) {
@@ -87,6 +88,8 @@ public class VirtualProcess {
         return processChannel;
     }
 
+
+
     /**
      * Return the process is alive or not.
      *
@@ -97,6 +100,9 @@ public class VirtualProcess {
     }
 
     public void waitFor() throws InterruptedException {
+        while (binaryExecutor == null) {
+            Thread.sleep(1000);
+        }
         binaryExecutor.latch.await();
     }
 
@@ -110,7 +116,10 @@ public class VirtualProcess {
         binaryExecutor.interrupt();
     }
 
-    void setProcessChannel(VirtualProcessChannel processChannel) {
+    public void setProcessChannel(VirtualProcessChannel processChannel) {
+        if (isStart) {
+            return;
+        }
         this.processChannel = processChannel;
     }
 
@@ -122,6 +131,10 @@ public class VirtualProcess {
         if (processChannel == null) {
             processChannel = new VirtualProcessChannel();
         }
+        processChannel
+                .cwd = cwd;
+        processChannel.env = env;
+        processChannel.args = args;
         VirtualBinary binary = VirtualBinarySystem.getInstance().createBinary(cmd, processChannel);
         if (binary == null) {
             throw new RuntimeException("Can't find binary");

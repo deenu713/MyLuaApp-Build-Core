@@ -7,12 +7,17 @@ import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 
+import com.dingyi.terminal.virtual.VirtualProcess;
+import com.dingyi.terminal.virtual.VirtualProcessChannel;
+import com.dingyi.terminal.virtual.VirtualProcessSystem;
+
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -58,12 +63,16 @@ public final class TerminalSession extends TerminalOutput {
 
     /** The exit status of the shell process. Only valid if ${@link #mShellPid} is -1. */
     int mShellExitStatus;
+/*
 
-    /**
+    */
+/**
      * The file descriptor referencing the master half of a pseudo-terminal pair, resulting from calling
      * {@link JNI#createSubprocess(String, String, String[], String[], int[], int, int)}.
-     */
+     *//*
+
     private int mTerminalFileDescriptor;
+*/
 
     /** Set by the application for user identification of session, not by terminal. */
     public String mSessionName;
@@ -101,12 +110,13 @@ public final class TerminalSession extends TerminalOutput {
 
     /** Inform the attached pty of the new size and reflow or initialize the emulator. */
     public void updateSize(int columns, int rows) {
-        if (mEmulator == null) {
+        //no support for resizing
+        /*if (mEmulator == null) {
             initializeEmulator(columns, rows);
         } else {
             JNI.setPtyWindowSize(mTerminalFileDescriptor, rows, columns);
             mEmulator.resize(columns, rows);
-        }
+        }*/
     }
 
     /** The terminal title as set through escape sequences or null if none set. */
@@ -123,17 +133,19 @@ public final class TerminalSession extends TerminalOutput {
     public void initializeEmulator(int columns, int rows) {
         mEmulator = new TerminalEmulator(this, columns, rows, mTranscriptRows, mClient);
 
-        int[] processId = new int[1];
-        mTerminalFileDescriptor = JNI.createSubprocess(mShellPath, mCwd, mArgs, mEnv, processId, rows, columns);
-        mShellPid = processId[0];
+        //dingyi modify: use virtual process
+
+        VirtualProcess mProcess = VirtualProcessSystem
+                .createProcess(mShellPath, mCwd, mArgs, mEnv);
+        mShellPid = mProcess.getProcessId();
         mClient.setTerminalShellPid(this, mShellPid);
 
-        final FileDescriptor terminalFileDescriptorWrapped = wrapFileDescriptor(mTerminalFileDescriptor, mClient);
-
+        mProcess.setProcessChannel(new VirtualProcessChannel());
+        mProcess.start();
         new Thread("TermSessionInputReader[pid=" + mShellPid + "]") {
             @Override
             public void run() {
-                try (InputStream termIn = new FileInputStream(terminalFileDescriptorWrapped)) {
+                try (InputStream termIn = mProcess.getProcessChannel().getInputStream()) {
                     final byte[] buffer = new byte[4096];
                     while (true) {
                         int read = termIn.read(buffer);
@@ -151,7 +163,7 @@ public final class TerminalSession extends TerminalOutput {
             @Override
             public void run() {
                 final byte[] buffer = new byte[4096];
-                try (FileOutputStream termOut = new FileOutputStream(terminalFileDescriptorWrapped)) {
+                try (OutputStream termOut = mProcess.getProcessChannel().getOutputStream()) {
                     while (true) {
                         int bytesToWrite = mTerminalToProcessIOQueue.read(buffer, true);
                         if (bytesToWrite == -1) return;
@@ -166,10 +178,16 @@ public final class TerminalSession extends TerminalOutput {
         new Thread("TermSessionWaiter[pid=" + mShellPid + "]") {
             @Override
             public void run() {
-                int processExitCode = JNI.waitFor(mShellPid);
+                try {
+                    mProcess.waitFor();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                int processExitCode = mProcess.exitValue();
                 mMainThreadHandler.sendMessage(mMainThreadHandler.obtainMessage(MSG_PROCESS_EXITED, processExitCode));
             }
         }.start();
+
 
     }
 
@@ -234,11 +252,8 @@ public final class TerminalSession extends TerminalOutput {
     /** Finish this terminal session by sending SIGKILL to the shell. */
     public void finishIfRunning() {
         if (isRunning()) {
-            try {
-                Os.kill(mShellPid, OsConstants.SIGKILL);
-            } catch (ErrnoException e) {
-                Logger.logWarn(mClient, LOG_TAG, "Failed sending SIGKILL: " + e.getMessage());
-            }
+            VirtualProcessSystem.killProcess(mShellPid);
+            /*Os.kill(mShellPid, OsConstants.SIGKILL);*/
         }
     }
 
@@ -252,7 +267,7 @@ public final class TerminalSession extends TerminalOutput {
         // Stop the reader and writer threads, and close the I/O streams
         mTerminalToProcessIOQueue.close();
         mProcessToTerminalIOQueue.close();
-        JNI.close(mTerminalFileDescriptor);
+        /*JNI.close(mTerminalFileDescriptor);*/
     }
 
     @Override
@@ -299,7 +314,7 @@ public final class TerminalSession extends TerminalOutput {
             return null;
         }
         try {
-            final String cwdSymlink = String.format("/proc/%s/cwd/", mShellPid);
+           /* final String cwdSymlink = String.format("/proc/%s/cwd/", mShellPid);
             String outputPath = new File(cwdSymlink).getCanonicalPath();
             String outputPathWithTrailingSlash = outputPath;
             if (!outputPath.endsWith("/")) {
@@ -307,13 +322,17 @@ public final class TerminalSession extends TerminalOutput {
             }
             if (!cwdSymlink.equals(outputPathWithTrailingSlash)) {
                 return outputPath;
-            }
-        } catch (IOException | SecurityException e) {
+            }*/
+            //dingyi modify:replace to use virtual process
+            return VirtualProcessSystem.getProcess(mShellPid).getProcessChannel()
+                    .cwd;
+        } catch (SecurityException e) {
             Logger.logStackTraceWithMessage(mClient, LOG_TAG, "Error getting current directory", e);
         }
         return null;
     }
 
+/*
     private static FileDescriptor wrapFileDescriptor(int fileDescriptor, TerminalSessionClient client) {
         FileDescriptor result = new FileDescriptor();
         try {
@@ -332,6 +351,7 @@ public final class TerminalSession extends TerminalOutput {
         }
         return result;
     }
+*/
 
     @SuppressLint("HandlerLeak")
     class MainThreadHandler extends Handler {

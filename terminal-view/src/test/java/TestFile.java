@@ -40,16 +40,13 @@ public class TestFile {
         protected int start(String[] args) throws IOException {
             for (String a : args) {
                 mProcessChannel
-                        .getOutputStream()
                         .write(a.getBytes(StandardCharsets.UTF_8));
 
                 mProcessChannel
-                        .getOutputStream()
                         .write(" ".getBytes(StandardCharsets.UTF_8));
             }
             mProcessChannel
-                    .getOutputStream()
-                    .write("\b".getBytes(StandardCharsets.UTF_8));
+                    .write("\n".getBytes(StandardCharsets.UTF_8));
             return 0;
         }
     }

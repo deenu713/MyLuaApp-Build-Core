@@ -34,8 +34,15 @@ public class VirtualProcessSystem {
     }
 
 
-    public static VirtualProcess createProcess(String cmd,String... args) {
-        return getInstance().createProcessFor(new VirtualProcess(cmd,args));
+    public static VirtualProcess createProcess(String cmd, String... args) {
+        return getInstance().createProcessFor(new VirtualProcess(cmd, args));
+    }
+
+    public static VirtualProcess createProcess(String cmd,
+                                               String cwd,
+                                               String[] args,
+                                               String[] envVars) {
+        return getInstance().createProcessFor(new VirtualProcess(cmd, cwd, args, envVars));
     }
 
     public VirtualProcess createProcessFor(VirtualProcess process) {
@@ -70,6 +77,29 @@ public class VirtualProcessSystem {
         return process;
     }
 
+
+    public static VirtualProcess getProcess(int processId) {
+        return getInstance().getProcessFor(processId);
+    }
+
+    public VirtualProcess getProcessFor(int processId) {
+        return mProcesses.get(processId);
+    }
+
+    public static void waitFor(int processId) {
+        try {
+            getInstance().waitForImpl(processId);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void waitForImpl(int processId) throws InterruptedException {
+        VirtualProcess process = getProcessFor(processId);
+        if (process != null) {
+            process.waitFor();
+        }
+    }
 
     public static boolean killProcess(int processId) {
         return getInstance().killProcessFor(processId);

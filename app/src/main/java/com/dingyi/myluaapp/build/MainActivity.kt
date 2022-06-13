@@ -5,8 +5,8 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.dingyi.myluaapp.build.api.R
-import com.dingyi.terminal.emulator.terminal.TerminalSession
-import com.dingyi.terminal.emulator.terminal.TerminalSessionClient
+import com.dingyi.terminal.TerminalSession
+import com.dingyi.terminal.TerminalSessionClient
 import com.dingyi.terminal.view.TerminalView
 import com.dingyi.terminal.view.TerminalViewClient
 import org.gradle.api.logging.LogLevel
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main)
 
         terminalView = findViewById(R.id.terminalView)
-
+        terminalView.setBackgroundColor(0xff000000.toInt())
         createTerminal()
 
         thread {
@@ -44,15 +44,16 @@ class MainActivity : AppCompatActivity() {
     private fun createTerminal() {
 
         val session = TerminalSession(
+            "echo",
             "",
-            "",
-            arrayOfNulls(0),
+            arrayOf("Test"),
             arrayOfNulls(0),
             0,
             object :
                 TerminalSessionClient {
                 override fun onTextChanged(changedSession: TerminalSession) {
-
+                    terminalView
+                        .postInvalidate()
                 }
 
                 override fun onTitleChanged(changedSession: TerminalSession) {
@@ -133,10 +134,12 @@ class MainActivity : AppCompatActivity() {
         )
 
 
+
         terminalView.setTextSize(20)
         terminalView.setTerminalViewClient(object :
             TerminalViewClient {
             override fun onScale(scale: Float): Float {
+                terminalView.updateSize()
                 return scale
             }
 
@@ -234,15 +237,14 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        session.initializeEmulator(99,99)
+        session.initializeEmulator(20,20)
 
         terminalView.attachSession(session)
 
-
-        terminalView
+      /*  terminalView
             .mEmulator
             .append("Hello World".toByteArray(), 0)
-        terminalView.postInvalidate()
+        terminalView.postInvalidate()*/
     }
 
     private fun extractProjectFromApk() {
