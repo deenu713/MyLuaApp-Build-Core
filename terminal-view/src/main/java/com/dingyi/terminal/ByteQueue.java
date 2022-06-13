@@ -1,7 +1,7 @@
 package com.dingyi.terminal;
 
 /** A circular byte buffer allowing one producer and one consumer thread. */
-final class ByteQueue {
+public final class ByteQueue {
 
     private final byte[] mBuffer;
     private int mHead;
@@ -52,7 +52,7 @@ final class ByteQueue {
     }
 
     /**
-     * Attempt to write the specified portion of the provided buffer to the queue.
+     * Attempt to processWrite the specified portion of the provided buffer to the queue.
      * <p/>
      * Returns whether the output was totally written, false if it was closed before.
      */

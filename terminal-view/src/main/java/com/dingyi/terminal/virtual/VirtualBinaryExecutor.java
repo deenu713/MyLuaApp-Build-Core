@@ -36,6 +36,12 @@ class VirtualBinaryExecutor implements Runnable {
 
         mProcess.getProcessChannel()
                 .exit(ret);
+        try {
+            mProcess.getProcessChannel()
+                    .destroy();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         latch.countDown();
 

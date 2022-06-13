@@ -3,22 +3,14 @@ package com.dingyi.terminal;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
-import android.system.ErrnoException;
-import android.system.Os;
-import android.system.OsConstants;
 
 import com.dingyi.terminal.virtual.VirtualProcess;
 import com.dingyi.terminal.virtual.VirtualProcessChannel;
 import com.dingyi.terminal.virtual.VirtualProcessSystem;
 
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -52,7 +44,7 @@ public final class TerminalSession extends TerminalOutput {
      * writing to the {@link #mTerminalFileDescriptor}.
      */
     final ByteQueue mTerminalToProcessIOQueue = new ByteQueue(4096);
-    /** Buffer to write translate code points into utf8 before writing to mTerminalToProcessIOQueue */
+    /** Buffer to processWrite translate code points into utf8 before writing to mTerminalToProcessIOQueue */
     private final byte[] mUtf8InputBuffer = new byte[5];
 
     /** Callback which gets notified when a session finishes or changes title. */
@@ -65,14 +57,7 @@ public final class TerminalSession extends TerminalOutput {
     int mShellExitStatus;
 /*
 
-    */
-/**
-     * The file descriptor referencing the master half of a pseudo-terminal pair, resulting from calling
-     * {@link JNI#createSubprocess(String, String, String[], String[], int[], int, int)}.
-     *//*
 
-    private int mTerminalFileDescriptor;
-*/
 
     /** Set by the application for user identification of session, not by terminal. */
     public String mSessionName;
@@ -145,7 +130,7 @@ public final class TerminalSession extends TerminalOutput {
         new Thread("TermSessionInputReader[pid=" + mShellPid + "]") {
             @Override
             public void run() {
-                try (InputStream termIn = mProcess.getProcessChannel().getInputStream()) {
+                try (InputStream termIn = mProcess.getProcessChannel().getClientInputStream()) {
                     final byte[] buffer = new byte[4096];
                     while (true) {
                         int read = termIn.read(buffer);
@@ -163,7 +148,7 @@ public final class TerminalSession extends TerminalOutput {
             @Override
             public void run() {
                 final byte[] buffer = new byte[4096];
-                try (OutputStream termOut = mProcess.getProcessChannel().getOutputStream()) {
+                try (OutputStream termOut = mProcess.getProcessChannel().getClientOutputStream()) {
                     while (true) {
                         int bytesToWrite = mTerminalToProcessIOQueue.read(buffer, true);
                         if (bytesToWrite == -1) return;

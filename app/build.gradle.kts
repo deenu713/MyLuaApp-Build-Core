@@ -48,7 +48,7 @@ android {
         debug {
             isMinifyEnabled = false
             ndk {
-                this.abiFilters.addAll(arrayOf("armeabi-v7a", "arm64-v8a"))
+//                this.abiFilters.addAll(arrayOf("armeabi-v7a", "arm64-v8a"))
             }
         }
     }

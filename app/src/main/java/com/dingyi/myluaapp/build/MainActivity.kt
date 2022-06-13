@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         val session = TerminalSession(
             "echo",
             "",
-            arrayOf("Test"),
+            arrayOf("Hello"),
             arrayOfNulls(0),
             0,
             object :
@@ -80,11 +80,13 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onColorsChanged(session: TerminalSession) {
-
+                    terminalView
+                        .postInvalidate()
                 }
 
                 override fun onTerminalCursorStateChange(state: Boolean) {
-
+                    terminalView
+                        .postInvalidate()
                 }
 
                 override fun setTerminalShellPid(
@@ -237,7 +239,7 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        session.initializeEmulator(20,20)
+        session.initializeEmulator(90,90)
 
         terminalView.attachSession(session)
 
