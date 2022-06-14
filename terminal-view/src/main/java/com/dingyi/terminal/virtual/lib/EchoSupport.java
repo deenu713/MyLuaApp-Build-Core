@@ -15,18 +15,18 @@ public class EchoSupport extends VirtualBinary {
     protected int start(String[] args) throws IOException {
         for (String a : args) {
             mProcessChannel
-                    .getProcessOutputStream()
-                    .write(("\033[31m" + a + "\033[0m").getBytes(StandardCharsets.UTF_8));
+                    .getOutputStream()
+                    .write(a.getBytes(StandardCharsets.UTF_8));
 
             mProcessChannel
-                    .getProcessOutputStream()
+                    .getOutputStream()
                     .write(" ".getBytes(StandardCharsets.UTF_8));
             mProcessChannel
-                    .getProcessOutputStream()
+                    .getOutputStream()
                     .flush();
         }
         mProcessChannel
-                .processWrite("\n".getBytes(StandardCharsets.UTF_8));
+                .write("\n".getBytes(StandardCharsets.UTF_8));
         return 0;
     }
 }

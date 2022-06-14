@@ -52,7 +52,7 @@ public final class ByteQueue {
     }
 
     /**
-     * Attempt to processWrite the specified portion of the provided buffer to the queue.
+     * Attempt to write the specified portion of the provided buffer to the queue.
      * <p/>
      * Returns whether the output was totally written, false if it was closed before.
      */
