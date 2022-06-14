@@ -1,8 +1,9 @@
-package com.dingyi.terminal.virtual;
+package com.dingyi.terminal.virtualprocess;
+
+import android.util.ArrayMap;
+import android.util.SparseArray;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class VirtualProcessSystem {
 
@@ -20,8 +21,9 @@ public class VirtualProcessSystem {
         return INSTANCE;
     }
 
+    private ArrayMap<Long,Integer> mTidToPidMap = new ArrayMap<>();
 
-    private Map<Integer, VirtualProcess> mProcesses = new HashMap<Integer, VirtualProcess>();
+    private SparseArray<VirtualProcess> mProcesses = new SparseArray<>();
 
     private int currentProcessId = 0;
 
@@ -69,7 +71,6 @@ public class VirtualProcessSystem {
                 remove(process);
             }
 
-
             void remove(VirtualProcess process) {
                 mProcesses.remove(process.getProcessId());
             }
@@ -82,7 +83,34 @@ public class VirtualProcessSystem {
         return getInstance().getProcessFor(processId);
     }
 
-    public VirtualProcess getProcessFor(int processId) {
+    void putProcessWithThread(Thread thread,int processId) {
+        mTidToPidMap.put(thread.getId(), processId);
+    }
+
+    int deleteProcessWithThread(Thread thread) {
+        int processId = mTidToPidMap
+                .getOrDefault(thread.getId(),-1);
+        if (processId == -1) {
+            return -1;
+        }
+        mTidToPidMap.remove(thread.getId());
+        return processId;
+    }
+
+    public synchronized VirtualProcess getProcessFor(int processId) {
+        return mProcesses.get(processId);
+    }
+
+
+    public synchronized static VirtualProcess currentProcess() {
+        return getInstance().getCurrentProcessFor();
+    }
+
+    private VirtualProcess getCurrentProcessFor() {
+        int processId = mTidToPidMap.getOrDefault(Thread.currentThread().getId(),-1);
+        if (processId == -1) {
+            return null;
+        }
         return mProcesses.get(processId);
     }
 

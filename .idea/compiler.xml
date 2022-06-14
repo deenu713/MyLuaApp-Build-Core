@@ -31,6 +31,8 @@
       <module name="MyLuaApp-Build-Api.resources" target="11" />
       <module name="MyLuaApp-Build-Api.snapshots" target="11" />
       <module name="MyLuaApp-Build-Api.worker-processes" target="11" />
+      <module name="subprojects.MyLuaApp-Build-Core.hashing.main" target="11" />
+      <module name="subprojects.MyLuaApp-Build-Core.hashing.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

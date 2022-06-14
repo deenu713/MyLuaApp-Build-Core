@@ -1,21 +1,22 @@
-package com.dingyi.terminal.virtual;
+package com.dingyi.terminal.virtualprocess;
 
-import java.io.FilterInputStream;
+import com.dingyi.terminal.virtualprocess.VirtualProcessEnvironment;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-public class VirtualTerminalChannel {
+public class VirtualTerminalEnvironment {
 
     final PipedInputStream terminalInputStream;
     final PipedOutputStream terminalOutputStream;
     final PipedInputStream terminalErrorStream;
 
-    VirtualProcessChannel processChannel;
+    VirtualProcessEnvironment processChannel;
 
-    public VirtualTerminalChannel() throws IOException {
+    public VirtualTerminalEnvironment() throws IOException {
         terminalInputStream = new PipedInputStream();
         terminalOutputStream = new PipedOutputStream();
         terminalErrorStream = new PipedInputStream();
@@ -29,7 +30,7 @@ public class VirtualTerminalChannel {
         processOutputStream.connect(terminalInputStream);
         processErrorStream.connect(terminalErrorStream);
 
-        processChannel = new VirtualProcessChannel(
+        processChannel = new VirtualProcessEnvironment(
                 processInputStream, processOutputStream, processErrorStream);
 
     }
@@ -53,7 +54,7 @@ public class VirtualTerminalChannel {
         processChannel.destroy();
     }
 
-    public VirtualProcessChannel getProcessChannel() {
+    public VirtualProcessEnvironment getProcessEnvironment() {
         return processChannel;
     }
 }

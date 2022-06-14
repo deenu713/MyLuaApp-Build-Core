@@ -1,4 +1,4 @@
-package com.dingyi.terminal.virtual;
+package com.dingyi.terminal.virtualprocess;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -20,13 +20,17 @@ class VirtualExecutableExecutor implements Runnable {
     public void run() {
         int ret;
 
+        VirtualProcessSystem
+                .getInstance()
+                .putProcessWithThread(Thread.currentThread(), mProcess.getProcessId());
+
         try {
             ret = mBinary.start(mProcess.args);
         } catch (Exception e) {
             ret = -1;
             try {
                 mProcess
-                        .getProcessChannel()
+                        .getProcessEnvironment()
                         .processErrorStream
                         .write(dumpException(e));
             } catch (IOException ex) {
@@ -34,14 +38,18 @@ class VirtualExecutableExecutor implements Runnable {
             }
         }
 
-        mProcess.getProcessChannel()
+        mProcess.getProcessEnvironment()
                 .exit(ret);
         try {
-            mProcess.getProcessChannel()
+            mProcess.getProcessEnvironment()
                     .destroy();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        VirtualProcessSystem
+                .getInstance()
+                .deleteProcessWithThread(Thread.currentThread());
 
         latch.countDown();
 
@@ -54,7 +62,4 @@ class VirtualExecutableExecutor implements Runnable {
         return e.getMessage().getBytes();
     }
 
-    public void interrupt() {
-        Thread.currentThread().interrupt();
-    }
 }

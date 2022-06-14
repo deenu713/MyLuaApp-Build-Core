@@ -1,4 +1,4 @@
-package com.dingyi.terminal.virtual;
+package com.dingyi.terminal.virtualprocess;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,17 +13,15 @@ import java.util.Map;
 public class VirtualProcess {
 
 
-    private Map<String, String> env = new HashMap<String, String>();
+    private final Map<String, String> env = new HashMap<String, String>();
 
     final String cwd;
     final String cmd;
     final String[] args;
 
+    boolean isStart = false;
 
-
-     boolean isStart = false;
-
-    private VirtualProcessChannel processChannel;
+    private VirtualProcessEnvironment processChannel;
 
     private VirtualExecutableExecutor binaryExecutor;
 
@@ -79,10 +77,9 @@ public class VirtualProcess {
     }
 
 
-    public VirtualProcessChannel getProcessChannel() {
+    public VirtualProcessEnvironment getProcessEnvironment() {
         return processChannel;
     }
-
 
 
     /**
@@ -108,10 +105,14 @@ public class VirtualProcess {
     }
 
     public void killProcess() {
-        binaryExecutor.interrupt();
+        try {
+            destroy();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setProcessChannel(VirtualProcessChannel processChannel) {
+    public void setProcessEnvironment(VirtualProcessEnvironment processChannel) {
         if (isStart) {
             return;
         }
@@ -124,12 +125,12 @@ public class VirtualProcess {
 
     public void start() {
         if (processChannel == null) {
-            processChannel = new VirtualProcessChannel();
+            processChannel = new VirtualProcessEnvironment();
         }
         processChannel
-                .cwd = cwd;
-        processChannel.env = env;
-        processChannel.args = args;
+                .setCurrentWorkDir(cwd);
+        processChannel.putEnvironments(env);
+        processChannel.setArguments(args);
         VirtualExecutable binary = VirtualExecutableSystem.getInstance().createBinary(cmd, processChannel);
         if (binary == null) {
             throw new RuntimeException("Can't find binary");

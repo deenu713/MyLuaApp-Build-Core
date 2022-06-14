@@ -5,11 +5,11 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 
-import com.dingyi.terminal.TerminalBuffer;
-import com.dingyi.terminal.TerminalEmulator;
-import com.dingyi.terminal.TerminalRow;
-import com.dingyi.terminal.TextStyle;
-import com.dingyi.terminal.WcWidth;
+import com.dingyi.terminal.support.TerminalBuffer;
+import com.dingyi.terminal.support.TerminalEmulator;
+import com.dingyi.terminal.support.TerminalRow;
+import com.dingyi.terminal.support.TextStyle;
+import com.dingyi.terminal.support.WcWidth;
 
 
 /**

@@ -1,13 +1,12 @@
-package com.dingyi.terminal;
+package com.dingyi.terminal.support;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 
-import com.dingyi.terminal.virtual.VirtualProcess;
-import com.dingyi.terminal.virtual.VirtualProcessChannel;
-import com.dingyi.terminal.virtual.VirtualProcessSystem;
-import com.dingyi.terminal.virtual.VirtualTerminalChannel;
+import com.dingyi.terminal.virtualprocess.VirtualProcess;
+import com.dingyi.terminal.virtualprocess.VirtualProcessSystem;
+import com.dingyi.terminal.virtualprocess.VirtualTerminalEnvironment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,11 +63,16 @@ public final class TerminalSession extends TerminalOutput {
      * The exit status of the shell process. Only valid if ${@link #mShellPid} is -1.
      */
     int mShellExitStatus;
-/*
 
+    /**
+     * The process channel for the shell process.
+     * <p>
+     **/
+    VirtualTerminalEnvironment terminalChannel;
 
-
-    /** Set by the application for user identification of session, not by terminal. */
+    /**
+     * Set by the application for user identification of session, not by terminal.
+     */
     public String mSessionName;
 
     final Handler mMainThreadHandler = new MainThreadHandler();
@@ -132,14 +136,14 @@ public final class TerminalSession extends TerminalOutput {
                 .createProcess(mShellPath, mCwd, mArgs, mEnv);
         mShellPid = mProcess.getProcessId();
         mClient.setTerminalShellPid(this, mShellPid);
-        VirtualTerminalChannel terminalChannel;
+
         try {
-            terminalChannel = new VirtualTerminalChannel();
+            terminalChannel = new VirtualTerminalEnvironment();
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
-        mProcess.setProcessChannel(terminalChannel.getProcessChannel());
+        mProcess.setProcessEnvironment(terminalChannel.getProcessEnvironment());
         mProcess.start();
         new Thread("TermSessionInputReader[pid=" + mShellPid + "]") {
             @Override
@@ -252,6 +256,11 @@ public final class TerminalSession extends TerminalOutput {
     public void finishIfRunning() {
         if (isRunning()) {
             VirtualProcessSystem.killProcess(mShellPid);
+            try {
+                terminalChannel.destroy();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             /*Os.kill(mShellPid, OsConstants.SIGKILL);*/
         }
     }
@@ -266,6 +275,11 @@ public final class TerminalSession extends TerminalOutput {
         // Stop the reader and writer threads, and close the I/O streams
         mTerminalToProcessIOQueue.close();
         mProcessToTerminalIOQueue.close();
+        try {
+            terminalChannel.destroy();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         /*JNI.close(mTerminalFileDescriptor);*/
     }
 
@@ -323,34 +337,14 @@ public final class TerminalSession extends TerminalOutput {
                 return outputPath;
             }*/
             //dingyi modify:replace to use virtual process
-            return VirtualProcessSystem.getProcess(mShellPid).getProcessChannel()
-                    .cwd;
+            return VirtualProcessSystem.getProcess(mShellPid).getProcessEnvironment()
+                    .getCwd();
         } catch (SecurityException e) {
             Logger.logStackTraceWithMessage(mClient, LOG_TAG, "Error getting current directory", e);
         }
         return null;
     }
 
-/*
-    private static FileDescriptor wrapFileDescriptor(int fileDescriptor, TerminalSessionClient client) {
-        FileDescriptor result = new FileDescriptor();
-        try {
-            Field descriptorField;
-            try {
-                descriptorField = FileDescriptor.class.getDeclaredField("descriptor");
-            } catch (NoSuchFieldException e) {
-                // For desktop java:
-                descriptorField = FileDescriptor.class.getDeclaredField("fd");
-            }
-            descriptorField.setAccessible(true);
-            descriptorField.set(result, fileDescriptor);
-        } catch (NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
-            Logger.logStackTraceWithMessage(client, LOG_TAG, "Error accessing FileDescriptor#descriptor private field", e);
-            System.exit(1);
-        }
-        return result;
-    }
-*/
 
     @SuppressLint("HandlerLeak")
     class MainThreadHandler extends Handler {

@@ -1,31 +1,31 @@
-package com.dingyi.terminal.virtual.lib;
+package com.dingyi.terminal.virtualprocess.lib;
 
-import com.dingyi.terminal.virtual.VirtualExecutable;
-import com.dingyi.terminal.virtual.VirtualProcessChannel;
+import com.dingyi.terminal.virtualprocess.VirtualExecutable;
+import com.dingyi.terminal.virtualprocess.VirtualProcessEnvironment;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class EchoSupport extends VirtualExecutable {
-    public EchoSupport(VirtualProcessChannel currentProcess) {
+    public EchoSupport(VirtualProcessEnvironment currentProcess) {
         super(currentProcess);
     }
 
     @Override
     protected int start(String[] args) throws IOException {
         for (String a : args) {
-            mProcessChannel
+            mProcessEnvironment
                     .getOutputStream()
                     .write(a.getBytes(StandardCharsets.UTF_8));
 
-            mProcessChannel
+            mProcessEnvironment
                     .getOutputStream()
                     .write(" ".getBytes(StandardCharsets.UTF_8));
-            mProcessChannel
+            mProcessEnvironment
                     .getOutputStream()
                     .flush();
         }
-        mProcessChannel
+        mProcessEnvironment
                 .write("\n".getBytes(StandardCharsets.UTF_8));
         return 0;
     }

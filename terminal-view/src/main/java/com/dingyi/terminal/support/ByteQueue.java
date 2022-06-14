@@ -1,4 +1,4 @@
-package com.dingyi.terminal;
+package com.dingyi.terminal.support;
 
 /** A circular byte buffer allowing one producer and one consumer thread. */
 public final class ByteQueue {

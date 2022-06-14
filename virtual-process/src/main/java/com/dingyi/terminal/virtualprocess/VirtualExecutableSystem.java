@@ -1,4 +1,4 @@
-package com.dingyi.terminal.virtual;
+package com.dingyi.terminal.virtualprocess;
 
 
 import java.io.InputStream;
@@ -32,7 +32,7 @@ public class VirtualExecutableSystem {
         mBinaryClasses.put(name, clazz);
     }
 
-    public VirtualExecutable createBinary(String name, VirtualProcessChannel processChannel) {
+    public VirtualExecutable createBinary(String name, VirtualProcessEnvironment processChannel) {
         Class<?> clazz = mBinaryClasses.get(name);
         if (clazz == null) {
             clazz = tryLoadBinaryForResources(name);
@@ -42,7 +42,7 @@ public class VirtualExecutableSystem {
         }
         mBinaryClasses.putIfAbsent(name, clazz);
         try {
-            return (VirtualExecutable) clazz.getConstructor(VirtualProcessChannel.class)
+            return (VirtualExecutable) clazz.getConstructor(VirtualProcessEnvironment.class)
                     .newInstance(processChannel);
         } catch (Exception e) {
             e.printStackTrace();

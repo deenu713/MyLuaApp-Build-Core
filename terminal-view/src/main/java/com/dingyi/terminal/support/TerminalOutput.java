@@ -1,4 +1,4 @@
-package com.dingyi.terminal;
+package com.dingyi.terminal.support;
 
 import java.nio.charset.StandardCharsets;
 

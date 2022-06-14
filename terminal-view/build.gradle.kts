@@ -25,4 +25,5 @@ android {
 dependencies {
     testImplementation("junit:junit:4.13.2")
     implementation("androidx.annotation:annotation:1.3.0")
+    api(project(":virtual-process"))
 }

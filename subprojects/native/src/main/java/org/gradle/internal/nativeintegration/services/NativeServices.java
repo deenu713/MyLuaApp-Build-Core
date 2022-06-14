@@ -53,6 +53,7 @@ import org.gradle.internal.nativeintegration.jna.UnsupportedEnvironment;
 import org.gradle.internal.nativeintegration.network.HostnameLookup;
 import org.gradle.internal.nativeintegration.processenvironment.AndroidProcessEnvironment;
 import org.gradle.internal.nativeintegration.processenvironment.NativePlatformBackedProcessEnvironment;
+import org.gradle.internal.nativeintegration.processenvironment.VirtualProcessEnvironment;
 import org.gradle.internal.os.OperatingSystem;
 import org.gradle.internal.service.DefaultServiceRegistry;
 import org.gradle.internal.service.ServiceCreationException;
@@ -70,6 +71,8 @@ import java.net.UnknownHostException;
 import java.util.EnumSet;
 
 import static org.gradle.internal.nativeintegration.filesystem.services.JdkFallbackHelper.newInstanceOrFallback;
+
+import com.dingyi.terminal.virtualprocess.VirtualProcess;
 
 /**
  * Provides various native platform integration services.
@@ -272,7 +275,12 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
                 LOGGER.debug("Native-platform process integration is not available. Continuing with fallback.");
             }
         }
-
+        try {
+            Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessSystem", false, getClass().getClassLoader());
+            return new VirtualProcessEnvironment();
+        } catch (ClassNotFoundException e) {
+            //ignore
+        }
         if (OperatingSystem.current().isAndroid()) {
             return new AndroidProcessEnvironment();
         }

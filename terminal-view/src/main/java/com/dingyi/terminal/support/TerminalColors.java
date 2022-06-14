@@ -1,4 +1,4 @@
-package com.dingyi.terminal;
+package com.dingyi.terminal.support;
 
 /** Current terminal colors (if different from default). */
 public final class TerminalColors {

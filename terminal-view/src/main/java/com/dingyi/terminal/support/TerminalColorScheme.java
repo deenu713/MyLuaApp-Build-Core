@@ -1,4 +1,7 @@
-package com.dingyi.terminal;
+package com.dingyi.terminal.support;
+
+import com.dingyi.terminal.support.TerminalColors;
+import com.dingyi.terminal.support.TextStyle;
 
 import java.util.Map;
 import java.util.Properties;

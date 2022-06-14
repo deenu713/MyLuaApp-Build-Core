@@ -27,8 +27,7 @@ dependencyResolutionManagement {
     }
 }
 
-include(":app")
-include("terminal-view")
+include(":app", ":terminal-view", ":virtual-process")
 
 rootProject.name = "MyLuaApp-Build-Core"
 
@@ -40,4 +39,7 @@ file("subprojects")
         project(":${dir.name}")
             .projectDir = dir
     }
+
+
+
 

@@ -58,6 +58,7 @@
             <option value="$PROJECT_DIR$/subprojects/snapshots" />
             <option value="$PROJECT_DIR$/subprojects/workers" />
             <option value="$PROJECT_DIR$/terminal-view" />
+            <option value="$PROJECT_DIR$/virtual-process" />
           </set>
         </option>
       </GradleProjectSettings>

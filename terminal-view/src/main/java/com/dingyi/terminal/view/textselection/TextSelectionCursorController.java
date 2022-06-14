@@ -12,8 +12,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.dingyi.myluaapp.view.terminal.R;
-import com.dingyi.terminal.TerminalBuffer;
-import com.dingyi.terminal.WcWidth;
+import com.dingyi.terminal.support.TerminalBuffer;
+import com.dingyi.terminal.support.WcWidth;
 import com.dingyi.terminal.view.TerminalView;
 
 public class TextSelectionCursorController implements CursorController {

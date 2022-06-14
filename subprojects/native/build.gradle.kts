@@ -11,6 +11,7 @@ dependencies {
     api(project(":files"))
 
     compileOnly(project(":android-stubs"))
+    compileOnly(project(":virtual-process"))
 
     implementation(project(":base-services"))
     implementation(project(":file-temp"))

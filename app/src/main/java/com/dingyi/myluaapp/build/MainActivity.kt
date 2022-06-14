@@ -5,15 +5,10 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.dingyi.myluaapp.build.api.R
-import com.dingyi.terminal.TerminalSession
-import com.dingyi.terminal.TerminalSessionClient
+import com.dingyi.terminal.support.TerminalSession
+import com.dingyi.terminal.support.TerminalSessionClient
 import com.dingyi.terminal.view.TerminalView
 import com.dingyi.terminal.view.TerminalViewClient
-import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.ConsoleOutput
-import org.gradle.api.logging.configuration.ShowStacktrace
-import org.gradle.api.logging.configuration.WarningMode
-import org.gradle.launcher.TestGradleLauncher
 import java.io.File
 import java.lang.Exception
 import java.util.zip.ZipFile

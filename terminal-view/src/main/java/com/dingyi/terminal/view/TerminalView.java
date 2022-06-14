@@ -33,9 +33,9 @@ import android.widget.Scroller;
 import androidx.annotation.RequiresApi;
 
 
-import com.dingyi.terminal.KeyHandler;
-import com.dingyi.terminal.TerminalEmulator;
-import com.dingyi.terminal.TerminalSession;
+import com.dingyi.terminal.support.KeyHandler;
+import com.dingyi.terminal.support.TerminalEmulator;
+import com.dingyi.terminal.support.TerminalSession;
 import com.dingyi.terminal.view.textselection.TextSelectionCursorController;
 
 /** View displaying and interacting with a {@link TerminalSession}. */

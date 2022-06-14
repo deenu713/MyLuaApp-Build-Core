@@ -1,7 +1,7 @@
 package com.dingyi.myluaapp.build
 
-import com.dingyi.terminal.virtual.VirtualExecutable
-import com.dingyi.terminal.virtual.VirtualProcessChannel
+import com.dingyi.terminal.virtualprocess.VirtualExecutable
+import com.dingyi.terminal.virtualprocess.VirtualProcessEnvironment
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.ConsoleOutput
 import org.gradle.api.logging.configuration.ShowStacktrace
@@ -9,11 +9,11 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.launcher.TestGradleLauncher
 import java.io.File
 
-class GradleSupport(processChannel: VirtualProcessChannel) : VirtualExecutable(processChannel) {
+class GradleSupport(processChannel: VirtualProcessEnvironment) : VirtualExecutable(processChannel) {
     override fun start(args: Array<out String>): Int {
 
         val projectPath =
-            File(mProcessChannel.cwd)
+            File(mProcessEnvironment.cwd)
 
         System.setProperty("org.gradle.native", "false");
         val launcher = TestGradleLauncher
@@ -43,8 +43,8 @@ class GradleSupport(processChannel: VirtualProcessChannel) : VirtualExecutable(p
                     println("gradle: $gradle")
                 }
             }*/
-                .redirectOutputStream(mProcessChannel.outputStream)
-                .redirectErrorStream(mProcessChannel.errorStream)
+                .redirectOutputStream(mProcessEnvironment.outputStream)
+                .redirectErrorStream(mProcessEnvironment.errorStream)
                 .execute(*args)
             0
         }.getOrElse {

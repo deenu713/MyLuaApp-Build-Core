@@ -1,9 +1,9 @@
-import com.dingyi.terminal.virtual.VirtualExecutable;
-import com.dingyi.terminal.virtual.VirtualExecutableExecutorPool;
-import com.dingyi.terminal.virtual.VirtualExecutableSystem;
-import com.dingyi.terminal.virtual.VirtualProcess;
-import com.dingyi.terminal.virtual.VirtualProcessChannel;
-import com.dingyi.terminal.virtual.VirtualProcessSystem;
+import com.dingyi.terminal.virtualprocess.VirtualExecutable;
+import com.dingyi.terminal.virtualprocess.VirtualExecutableExecutorPool;
+import com.dingyi.terminal.virtualprocess.VirtualExecutableSystem;
+import com.dingyi.terminal.virtualprocess.VirtualProcess;
+import com.dingyi.terminal.virtualprocess.VirtualProcessEnvironment;
+import com.dingyi.terminal.virtualprocess.VirtualProcessSystem;
 
 import org.junit.Test;
 
@@ -32,20 +32,20 @@ public class TestFile {
 
     public static class echo extends VirtualExecutable {
 
-        public echo(VirtualProcessChannel currentProcess) {
+        public echo(VirtualProcessEnvironment currentProcess) {
             super(currentProcess);
         }
 
         @Override
         protected int start(String[] args) throws IOException {
             for (String a : args) {
-                mProcessChannel
+                mProcessEnvironment
                         .write(a.getBytes(StandardCharsets.UTF_8));
 
-                mProcessChannel
+                mProcessEnvironment
                         .write(" ".getBytes(StandardCharsets.UTF_8));
             }
-            mProcessChannel
+            mProcessEnvironment
                     .write("\n".getBytes(StandardCharsets.UTF_8));
             return 0;
         }
