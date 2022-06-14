@@ -760,7 +760,7 @@ public final class TerminalView extends View {
 
         int oldCombiningAccent = mCombiningAccent;
         if ((result & KeyCharacterMap.COMBINING_ACCENT) != 0) {
-            // If entered combining accent previously, processWrite it out:
+            // If entered combining accent previously, write it out:
             if (mCombiningAccent != 0)
                 inputCodePoint(event.getDeviceId(), mCombiningAccent, controlDown, leftAltDown);
             mCombiningAccent = result & KeyCharacterMap.COMBINING_ACCENT_MASK;

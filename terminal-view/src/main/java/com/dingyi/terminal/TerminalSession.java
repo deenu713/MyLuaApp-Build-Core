@@ -7,6 +7,7 @@ import android.os.Message;
 import com.dingyi.terminal.virtual.VirtualProcess;
 import com.dingyi.terminal.virtual.VirtualProcessChannel;
 import com.dingyi.terminal.virtual.VirtualProcessSystem;
+import com.dingyi.terminal.virtual.VirtualTerminalChannel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,16 +45,24 @@ public final class TerminalSession extends TerminalOutput {
      * writing to the {@link #mTerminalFileDescriptor}.
      */
     final ByteQueue mTerminalToProcessIOQueue = new ByteQueue(4096);
-    /** Buffer to processWrite translate code points into utf8 before writing to mTerminalToProcessIOQueue */
+    /**
+     * Buffer to write translate code points into utf8 before writing to mTerminalToProcessIOQueue
+     */
     private final byte[] mUtf8InputBuffer = new byte[5];
 
-    /** Callback which gets notified when a session finishes or changes title. */
+    /**
+     * Callback which gets notified when a session finishes or changes title.
+     */
     TerminalSessionClient mClient;
 
-    /** The pid of the shell process. 0 if not started and -1 if finished running. */
+    /**
+     * The pid of the shell process. 0 if not started and -1 if finished running.
+     */
     int mShellPid;
 
-    /** The exit status of the shell process. Only valid if ${@link #mShellPid} is -1. */
+    /**
+     * The exit status of the shell process. Only valid if ${@link #mShellPid} is -1.
+     */
     int mShellExitStatus;
 /*
 
@@ -124,13 +133,19 @@ public final class TerminalSession extends TerminalOutput {
                 .createProcess(mShellPath, mCwd, mArgs, mEnv);
         mShellPid = mProcess.getProcessId();
         mClient.setTerminalShellPid(this, mShellPid);
-
-        mProcess.setProcessChannel(new VirtualProcessChannel());
+        VirtualTerminalChannel terminalChannel;
+        try {
+            terminalChannel = new VirtualTerminalChannel();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        mProcess.setProcessChannel(terminalChannel.getProcessChannel());
         mProcess.start();
         new Thread("TermSessionInputReader[pid=" + mShellPid + "]") {
             @Override
             public void run() {
-                try (InputStream termIn = mProcess.getProcessChannel().getClientInputStream()) {
+                try (InputStream termIn = terminalChannel.getInputStream()) {
                     final byte[] buffer = new byte[4096];
                     while (true) {
                         int read = termIn.read(buffer);
@@ -148,7 +163,7 @@ public final class TerminalSession extends TerminalOutput {
             @Override
             public void run() {
                 final byte[] buffer = new byte[4096];
-                try (OutputStream termOut = mProcess.getProcessChannel().getClientOutputStream()) {
+                try (OutputStream termOut = terminalChannel.getOutputStream()) {
                     while (true) {
                         int bytesToWrite = mTerminalToProcessIOQueue.read(buffer, true);
                         if (bytesToWrite == -1) return;
