@@ -44,9 +44,9 @@ class MainActivity : AppCompatActivity() {
     private fun createTerminal() {
 
         val session = TerminalSession(
-            "echo",
-            "",
-            arrayOf("Hello"),
+            "gradle",
+            File(getDefaultProjectDir(), "TestProject").path,
+            arrayOf("help"),
             arrayOfNulls(0),
             0,
             object :
@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        terminalView.setTextSize(20)
+        terminalView.setTextSize(30)
         terminalView.setTerminalViewClient(object :
             TerminalViewClient {
             override fun onScale(scale: Float): Float {
@@ -239,14 +239,15 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        session.initializeEmulator(90,90)
 
         terminalView.attachSession(session)
+        terminalView.updateSize()
 
-      /*  terminalView
-            .mEmulator
-            .append("Hello World".toByteArray(), 0)
-        terminalView.postInvalidate()*/
+
+        /*  terminalView
+              .mEmulator
+              .append("Hello World".toByteArray(), 0)
+          terminalView.postInvalidate()*/
     }
 
     private fun extractProjectFromApk() {
@@ -278,43 +279,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun runGradle() {
-
-        val projectPath =
-            File(getDefaultProjectDir(), "TestProject")
-
-        System.setProperty("org.gradle.native", "false");
-        val launcher = TestGradleLauncher
-            .createLauncher {
-                it.showStacktrace = ShowStacktrace.ALWAYS_FULL;
-                /* setConfigurationCache(BuildOption.Value.value(true));
-                 startParameter.setConfigurationCacheDebug(true);*/
-                it.warningMode = WarningMode.All;
-                it.consoleOutput = ConsoleOutput.Plain
-                it.logLevel = LogLevel.INFO;
-                it.isBuildCacheEnabled = true
-                it.isBuildCacheDebugLogging = true
-                it.projectDir = projectPath
-                it.gradleUserHomeDir = projectPath.resolve(".gradle_home")
-                it.projectCacheDir = projectPath.resolve(".gradle")
-                it.isRefreshDependencies = true
-            }
-
-
-
-        val test = classLoader.getResource("META-INF/gradle-plugins/org.gradle-help-tasks.properties");
-        println(test)
-
-        launcher
-            /*.apply {
-                onCreateGradle { gradle ->
-                    println("get gradle")
-                    println("gradle: $gradle")
-                }
-            }*/
-            .execute("help")
-
-    }
 
 
 }

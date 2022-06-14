@@ -3,14 +3,14 @@ package com.dingyi.terminal.virtual;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
-class VirtualBinaryExecutor implements Runnable {
+class VirtualExecutableExecutor implements Runnable {
 
-    private final VirtualBinary mBinary;
+    private final VirtualExecutable mBinary;
     private final VirtualProcess mProcess;
 
     final CountDownLatch latch = new CountDownLatch(1);
 
-    VirtualBinaryExecutor(VirtualBinary binary, VirtualProcess process) {
+    VirtualExecutableExecutor(VirtualExecutable binary, VirtualProcess process) {
         mBinary = binary;
         mProcess = process;
     }

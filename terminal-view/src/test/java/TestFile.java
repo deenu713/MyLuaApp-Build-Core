@@ -1,6 +1,6 @@
-import com.dingyi.terminal.virtual.VirtualBinary;
-import com.dingyi.terminal.virtual.VirtualBinaryExecutorPool;
-import com.dingyi.terminal.virtual.VirtualBinarySystem;
+import com.dingyi.terminal.virtual.VirtualExecutable;
+import com.dingyi.terminal.virtual.VirtualExecutableExecutorPool;
+import com.dingyi.terminal.virtual.VirtualExecutableSystem;
 import com.dingyi.terminal.virtual.VirtualProcess;
 import com.dingyi.terminal.virtual.VirtualProcessChannel;
 import com.dingyi.terminal.virtual.VirtualProcessSystem;
@@ -14,7 +14,7 @@ public class TestFile {
 
     @Test
     public void test() {
-        VirtualBinarySystem.getInstance()
+        VirtualExecutableSystem.getInstance()
                 .registerBinary("echo", echo.class);
 
         VirtualProcess process= VirtualProcessSystem
@@ -22,7 +22,7 @@ public class TestFile {
 
         process.start();
         try {
-            VirtualBinaryExecutorPool
+            VirtualExecutableExecutorPool
                     .getInstance()
                     .waitFor();
         } catch (InterruptedException e) {
@@ -30,7 +30,7 @@ public class TestFile {
         }
     }
 
-    public static class echo extends VirtualBinary {
+    public static class echo extends VirtualExecutable {
 
         public echo(VirtualProcessChannel currentProcess) {
             super(currentProcess);

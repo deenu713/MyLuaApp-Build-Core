@@ -1,5 +1,6 @@
 package com.dingyi.terminal.virtual;
 
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,6 +19,7 @@ public class VirtualTerminalChannel {
         terminalInputStream = new PipedInputStream();
         terminalOutputStream = new PipedOutputStream();
         terminalErrorStream = new PipedInputStream();
+
 
         PipedInputStream processInputStream = new PipedInputStream();
         PipedOutputStream processOutputStream = new PipedOutputStream();

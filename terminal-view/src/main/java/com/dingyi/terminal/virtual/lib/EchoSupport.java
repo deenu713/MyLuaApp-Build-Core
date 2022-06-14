@@ -1,12 +1,12 @@
 package com.dingyi.terminal.virtual.lib;
 
-import com.dingyi.terminal.virtual.VirtualBinary;
+import com.dingyi.terminal.virtual.VirtualExecutable;
 import com.dingyi.terminal.virtual.VirtualProcessChannel;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public class EchoSupport extends VirtualBinary {
+public class EchoSupport extends VirtualExecutable {
     public EchoSupport(VirtualProcessChannel currentProcess) {
         super(currentProcess);
     }

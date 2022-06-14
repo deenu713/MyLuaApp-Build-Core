@@ -3,11 +3,11 @@ package com.dingyi.terminal.virtual;
 /**
  * A virtual binary to used for virtual process.
  */
-public abstract class VirtualBinary {
+public abstract class VirtualExecutable {
 
     public final VirtualProcessChannel mProcessChannel;
 
-    public VirtualBinary(VirtualProcessChannel processChannel) {
+    public VirtualExecutable(VirtualProcessChannel processChannel) {
         mProcessChannel = processChannel;
     }
 

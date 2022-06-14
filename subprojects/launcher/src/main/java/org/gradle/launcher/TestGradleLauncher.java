@@ -17,6 +17,7 @@ import org.gradle.internal.logging.DefaultLoggingConfiguration;
 import org.gradle.internal.logging.LoggingManagerInternal;
 import org.gradle.internal.logging.services.LoggingServiceRegistry;
 import org.gradle.internal.logging.text.StyledTextOutputFactory;
+import org.gradle.internal.nativeintegration.console.ConsoleMetaData;
 import org.gradle.internal.nativeintegration.services.NativeServices;
 import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.ServiceRegistryBuilder;
@@ -37,6 +38,7 @@ import org.gradle.launcher.exec.BuildExecuter;
 import org.gradle.launcher.exec.DefaultBuildActionParameters;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,6 +50,9 @@ public class TestGradleLauncher {
     private ServiceRegistry globalServices;
     private ServiceRegistry loggingServices;
 
+    private OutputStream gradleOutputStream = System.out;
+    private OutputStream gradleErrorStream = System.err;
+
     TestGradleLauncher(StartParameterInternal startParameter) {
         this.startParameter = startParameter;
     }
@@ -57,7 +62,7 @@ public class TestGradleLauncher {
     }
 
     private ServiceRegistry createLoggingServices() {
-        return LoggingServiceRegistry.newCommandLineProcessLogging();
+        return LoggingServiceRegistry.newNestedLogging();
     }
 
 
@@ -102,7 +107,6 @@ public class TestGradleLauncher {
         long buildStartedTime = System.currentTimeMillis();
 
         startParameter.setTaskNames(List.of(taskNames));
-        System.out.println( globalServices.get(BuildExecuter.class));
         Action<ExecutionListener> executionAction = (listener) -> {
             runBuildAndCloseServices(
                     startParameter,
@@ -122,6 +126,7 @@ public class TestGradleLauncher {
                 .setShowStacktrace(startParameter.getShowStacktrace());
         loggingConfiguration
                 .setConsoleOutput(startParameter.getConsoleOutput());
+
         loggingConfiguration
                 .setLogLevel(startParameter.getLogLevel());
         loggingConfiguration
@@ -145,7 +150,7 @@ public class TestGradleLauncher {
 
         LoggingManagerInternal loggingManager = loggingServices.getFactory(LoggingManagerInternal.class).create();
         loggingManager.setLevelInternal(loggingConfiguration.getLogLevel());
-        loggingManager.attachProcessConsole(loggingConfiguration.getConsoleOutput());
+        loggingManager.attachConsole(gradleOutputStream, gradleErrorStream, loggingConfiguration.getConsoleOutput());
         loggingManager.start();
         try {
             Action<ExecutionListener> exceptionReportingAction =
@@ -157,6 +162,18 @@ public class TestGradleLauncher {
         } finally {
             loggingManager.stop();
         }
+    }
+
+
+    public TestGradleLauncher redirectOutputStream(OutputStream stream) {
+        gradleOutputStream = stream;
+        return this;
+    }
+
+
+    public TestGradleLauncher redirectErrorStream(OutputStream errorStream) {
+        gradleErrorStream = errorStream;
+        return this;
     }
 
 

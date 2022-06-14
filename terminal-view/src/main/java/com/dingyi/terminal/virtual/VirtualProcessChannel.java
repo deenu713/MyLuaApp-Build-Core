@@ -26,6 +26,8 @@ public class VirtualProcessChannel {
     OutputStream processErrorStream;
 
 
+
+
     public String[] args;
 
     public String cwd;

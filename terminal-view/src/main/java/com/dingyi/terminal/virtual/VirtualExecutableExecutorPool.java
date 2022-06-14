@@ -2,29 +2,28 @@ package com.dingyi.terminal.virtual;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class VirtualBinaryExecutorPool {
+public class VirtualExecutableExecutorPool {
 
 
-    private static VirtualBinaryExecutorPool INSTANCE;
+    private static VirtualExecutableExecutorPool INSTANCE;
 
     private AtomicInteger threadAtomic;
 
-    private VirtualBinaryExecutorPool() {
+    private VirtualExecutableExecutorPool() {
     }
 
     private Timer checkExecutorPoolTimer;
 
-    public static VirtualBinaryExecutorPool getInstance() {
-        synchronized (VirtualBinaryExecutorPool.class) {
+    public static VirtualExecutableExecutorPool getInstance() {
+        synchronized (VirtualExecutableExecutorPool.class) {
             if (INSTANCE == null) {
-                INSTANCE = new VirtualBinaryExecutorPool();
+                INSTANCE = new VirtualExecutableExecutorPool();
             }
         }
         return INSTANCE;
@@ -60,7 +59,7 @@ public class VirtualBinaryExecutorPool {
         threadAtomic.set(0);
     }
 
-    synchronized void execBinaryExecutor(VirtualBinaryExecutor binaryExecutor) {
+    synchronized void execBinaryExecutor(VirtualExecutableExecutor binaryExecutor) {
         if (executorPool == null) {
             createExecutorPool();
         }

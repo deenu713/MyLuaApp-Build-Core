@@ -6,20 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class VirtualBinarySystem {
+public class VirtualExecutableSystem {
 
 
-    private static VirtualBinarySystem INSTANCE;
+    private static VirtualExecutableSystem INSTANCE;
 
-    private VirtualBinarySystem() {
+    private VirtualExecutableSystem() {
 
     }
 
 
-    public static VirtualBinarySystem getInstance() {
-        synchronized (VirtualBinarySystem.class) {
+    public static VirtualExecutableSystem getInstance() {
+        synchronized (VirtualExecutableSystem.class) {
             if (INSTANCE == null) {
-                INSTANCE = new VirtualBinarySystem();
+                INSTANCE = new VirtualExecutableSystem();
             }
         }
         return INSTANCE;
@@ -32,7 +32,7 @@ public class VirtualBinarySystem {
         mBinaryClasses.put(name, clazz);
     }
 
-    public VirtualBinary createBinary(String name, VirtualProcessChannel processChannel) {
+    public VirtualExecutable createBinary(String name, VirtualProcessChannel processChannel) {
         Class<?> clazz = mBinaryClasses.get(name);
         if (clazz == null) {
             clazz = tryLoadBinaryForResources(name);
@@ -42,7 +42,7 @@ public class VirtualBinarySystem {
         }
         mBinaryClasses.putIfAbsent(name, clazz);
         try {
-            return (VirtualBinary) clazz.getConstructor(VirtualProcessChannel.class)
+            return (VirtualExecutable) clazz.getConstructor(VirtualProcessChannel.class)
                     .newInstance(processChannel);
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,7 +51,7 @@ public class VirtualBinarySystem {
     }
 
     private Class<?> tryLoadBinaryForResources(String name) {
-        String path = "META-INF/shell-lib/" + name + ".implement.properties";
+        String path = "META-INF/shell-lib/" + name + ".properties";
         try {
             InputStream stream = getClass().getClassLoader()
                     .getResourceAsStream(path);

@@ -1,14 +1,9 @@
 package com.dingyi.terminal.virtual;
 
-import android.os.Process;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * A virtual process is a process that is not actually running in the system.
@@ -30,7 +25,7 @@ public class VirtualProcess {
 
     private VirtualProcessChannel processChannel;
 
-    private VirtualBinaryExecutor binaryExecutor;
+    private VirtualExecutableExecutor binaryExecutor;
 
     private static final String[] NULL_ARRAY = new String[0];
 
@@ -135,14 +130,14 @@ public class VirtualProcess {
                 .cwd = cwd;
         processChannel.env = env;
         processChannel.args = args;
-        VirtualBinary binary = VirtualBinarySystem.getInstance().createBinary(cmd, processChannel);
+        VirtualExecutable binary = VirtualExecutableSystem.getInstance().createBinary(cmd, processChannel);
         if (binary == null) {
             throw new RuntimeException("Can't find binary");
         }
-        binaryExecutor = new VirtualBinaryExecutor(
+        binaryExecutor = new VirtualExecutableExecutor(
                 binary, this
         );
-        VirtualBinaryExecutorPool
+        VirtualExecutableExecutorPool
                 .getInstance()
                 .execBinaryExecutor(binaryExecutor);
         isStart = true;
