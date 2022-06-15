@@ -121,7 +121,7 @@ public class DefaultScriptCompilationHandler implements ScriptCompilationHandler
 
         GroovyClassLoader groovyClassLoader;
 
-        //dingyi modify:use dynamic classloader
+        //dingyi modify: use dynamic classloader
         if (OperatingSystem.current().isAndroid()) {
             groovyClassLoader = new DynamicGrooidDexClassLoader(getClass().getClassLoader(), configuration, false) {
                 @Override

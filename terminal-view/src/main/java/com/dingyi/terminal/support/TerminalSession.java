@@ -344,7 +344,7 @@ public final class TerminalSession extends TerminalOutput {
             if (!cwdSymlink.equals(outputPathWithTrailingSlash)) {
                 return outputPath;
             }*/
-            //dingyi modify:replace to use virtual process
+            //dingyi modify: replace to use virtual process
             return VirtualProcessSystem.getProcess(mShellPid).getProcessEnvironment()
                     .getCurrentWorkDir();
         } catch (SecurityException e) {

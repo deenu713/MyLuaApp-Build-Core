@@ -53,7 +53,7 @@ public class BuildSessionLifecycleBuildActionExecuter implements BuildActionExec
         try (CrossBuildSessionState crossBuildSessionState = new CrossBuildSessionState(globalServices, startParameter)) {
             try (BuildSessionState buildSessionState = new BuildSessionState(userHomeServiceRegistry, crossBuildSessionState, startParameter, requestContext, actionParameters.getInjectedPluginClasspath(), requestContext.getCancellationToken(), requestContext.getClient(), requestContext.getEventConsumer())) {
                 return buildSessionState.run(context -> {
-                    //dingyi modify:
+                    //dingyi modify: In this modified gradle, all actions are in the same jvm runtime environment, and there is no need to serialize return values.
                     BuildActionRunner.Result result = context.execute(action);
                     if (result.getBuildFailure() == null) {
                         return BuildActionResult.of(result.getClientResult());

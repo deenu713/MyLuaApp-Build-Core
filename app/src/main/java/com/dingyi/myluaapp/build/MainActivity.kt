@@ -28,11 +28,14 @@ class MainActivity : AppCompatActivity() {
 
         terminalView = findViewById(R.id.terminalView)
         terminalView.setBackgroundColor(0xff000000.toInt())
-        createTerminal()
+
 
         thread {
             extractProjectFromApk()
-           /* runGradle()*/
+            /* runGradle()*/
+            runOnUiThread {
+                createTerminal()
+            }
         }
     }
 
@@ -43,16 +46,17 @@ class MainActivity : AppCompatActivity() {
             File(getDefaultProjectDir(), "TestProject").path,
             arrayOf("help"),
             arrayOfNulls(0),
-            0,
+            500,
             object :
                 TerminalSessionClient {
                 override fun onTextChanged(changedSession: TerminalSession) {
                     terminalView
-                        .postInvalidate()
+                        .onScreenUpdated()
                 }
 
                 override fun onTitleChanged(changedSession: TerminalSession) {
-
+                    terminalView
+                        .onScreenUpdated()
                 }
 
                 override fun onSessionFinished(finishedSession: TerminalSession) {
@@ -71,17 +75,18 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onBell(session: TerminalSession) {
-
+                    terminalView
+                        .onScreenUpdated()
                 }
 
                 override fun onColorsChanged(session: TerminalSession) {
                     terminalView
-                        .postInvalidate()
+                        .onScreenUpdated()
                 }
 
                 override fun onTerminalCursorStateChange(state: Boolean) {
                     terminalView
-                        .postInvalidate()
+                        .onScreenUpdated()
                 }
 
                 override fun setTerminalShellPid(
@@ -137,7 +142,7 @@ class MainActivity : AppCompatActivity() {
             TerminalViewClient {
             override fun onScale(scale: Float): Float {
                 terminalView.updateSize()
-                return scale
+                return 0f
             }
 
             override fun onSingleTapUp(e: MotionEvent) {

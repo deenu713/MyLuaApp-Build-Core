@@ -21,6 +21,7 @@ class GradleSupport(processChannel: VirtualProcessEnvironment) : VirtualExecutab
                 it.showStacktrace = ShowStacktrace.ALWAYS_FULL;
                 /* setConfigurationCache(BuildOption.Value.value(true));
                  startParameter.setConfigurationCacheDebug(true);*/
+                it.isParallelProjectExecutionEnabled = true;
                 it.warningMode = WarningMode.Fail;
                 it.consoleOutput = ConsoleOutput.Rich
                 it.logLevel = LogLevel.LIFECYCLE;

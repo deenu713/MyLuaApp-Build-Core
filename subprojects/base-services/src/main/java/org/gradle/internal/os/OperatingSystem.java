@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 
 import static org.gradle.internal.FileUtils.withExtension;
 
-//dingyi modify:add android system property
+//dingyi modify: add android system property
 public abstract class OperatingSystem {
     public static final Windows WINDOWS = new Windows();
     public static final Linux LINUX = new Linux();

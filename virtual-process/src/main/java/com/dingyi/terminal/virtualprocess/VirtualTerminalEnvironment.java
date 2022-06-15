@@ -32,20 +32,20 @@ public class VirtualTerminalEnvironment {
         processOutputStream.connect(terminalInputStream);
         processErrorStream.connect(terminalErrorStream);
 
+
+        SimpleTermiosSupport termiosSupport = new SimpleTermiosSupport(processOutputStream, _terminalOutputStream);
+
+        termiosSupport.doWrapper();
+
         processChannel = new VirtualProcessEnvironment(
-                processInputStream, processOutputStream, processErrorStream);
+                processInputStream, termiosSupport
+                .getProcessOutputStream(), processErrorStream);
 
+        processChannel.termiosSupport = termiosSupport;
 
-        processChannel
-                .termiosSupport = new SimpleTermiosSupport(processOutputStream, _terminalOutputStream);
-
-        processChannel.termiosSupport.doWrapper();
-        processChannel.processOutputStream = processChannel.termiosSupport
-                .getProcessOutputStream();
-
-        terminalOutputStream = processChannel
-                .termiosSupport
+        terminalOutputStream = termiosSupport
                 .getTerminalOutputStream();
+
     }
 
     public InputStream getInputStream() {
