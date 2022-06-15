@@ -14,14 +14,14 @@ jobs:
         cache: gradle
     
     - name: Running gradle assembleRelease
-      run: gradle assembleRelease
+      run: gradle assembleDebug
 
     - name: Uploading Apk and Files
       uses: actions/upload-artifact@v2
       with:
-        name: All
+        name: Apk-debug
         path: |
-            app/build/outputs/apk/release
+            app/build/outputs/apk/debug
             app/build/generated
       
     
