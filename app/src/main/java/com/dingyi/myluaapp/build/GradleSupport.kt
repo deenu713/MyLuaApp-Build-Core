@@ -13,20 +13,21 @@ class GradleSupport(processChannel: VirtualProcessEnvironment) : VirtualExecutab
     override fun start(args: Array<out String>): Int {
 
         val projectPath =
-            File(mProcessEnvironment.cwd)
+            File(mProcessEnvironment.currentWorkDir)
 
-        System.setProperty("org.gradle.native", "false");
+        System.setProperty("org.gradle.native", "true");
         val launcher = TestGradleLauncher
             .createLauncher {
-                it.showStacktrace = ShowStacktrace.INTERNAL_EXCEPTIONS;
+                it.showStacktrace = ShowStacktrace.ALWAYS_FULL;
                 /* setConfigurationCache(BuildOption.Value.value(true));
                  startParameter.setConfigurationCacheDebug(true);*/
                 it.warningMode = WarningMode.Fail;
                 it.consoleOutput = ConsoleOutput.Rich
-                it.logLevel = LogLevel.INFO;
+                it.logLevel = LogLevel.LIFECYCLE;
                 it.isBuildCacheEnabled = true
                 it.isBuildCacheDebugLogging = true
                 it.projectDir = projectPath
+                it.currentDir = File(mProcessEnvironment.currentWorkDir)
                 it.gradleUserHomeDir = projectPath.resolve(".gradle_home")
                 it.projectCacheDir = projectPath.resolve(".gradle")
                 it.isRefreshDependencies = true

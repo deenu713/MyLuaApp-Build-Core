@@ -12,6 +12,13 @@ import java.io.File;
 public class VirtualProcessEnvironment extends AbstractProcessEnvironment {
 
 
+    private VirtualProcess currentProcess;
+
+
+    public VirtualProcessEnvironment() {
+        currentProcess = VirtualProcessSystem.currentProcess();
+    }
+
     private File processDir;
 
     @Override
@@ -20,14 +27,17 @@ public class VirtualProcessEnvironment extends AbstractProcessEnvironment {
             processDir = new File(VirtualProcessSystem.currentProcess().getProcessEnvironment()
                     .getCurrentWorkDir());
         }
+
         return processDir;
     }
 
     @Override
     public Long getPid() throws NativeIntegrationException {
-        return (long)VirtualProcessSystem
-                .currentProcess()
-                .getProcessId();
+        return (long) Process.myPid();
+    }
+
+    public VirtualProcess getCurrentProcess() {
+        return currentProcess;
     }
 
     @Override

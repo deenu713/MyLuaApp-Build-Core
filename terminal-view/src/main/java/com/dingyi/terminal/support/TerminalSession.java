@@ -85,6 +85,7 @@ public final class TerminalSession extends TerminalOutput {
 
 
     private static final String LOG_TAG = "TerminalSession";
+    private VirtualProcess mProcess;
 
     public TerminalSession(String shellPath, String cwd, String[] args, String[] env, Integer transcriptRows, TerminalSessionClient client) {
         this.mShellPath = shellPath;
@@ -112,6 +113,9 @@ public final class TerminalSession extends TerminalOutput {
             initializeEmulator(columns, rows);
         } else {
             //JNI.setPtyWindowSize(mTerminalFileDescriptor, rows, columns);
+            mProcess.getProcessEnvironment()
+                    .getTermiosSupport()
+                    .setSize(columns, rows);
             mEmulator.resize(columns, rows);
         }
     }
@@ -132,7 +136,8 @@ public final class TerminalSession extends TerminalOutput {
 
         //dingyi modify: use virtual process
 
-        VirtualProcess mProcess = VirtualProcessSystem
+
+        mProcess = VirtualProcessSystem
                 .createProcess(mShellPath, mCwd, mArgs, mEnv);
         mShellPid = mProcess.getProcessId();
         mClient.setTerminalShellPid(this, mShellPid);
@@ -144,6 +149,9 @@ public final class TerminalSession extends TerminalOutput {
             return;
         }
         mProcess.setProcessEnvironment(terminalChannel.getProcessEnvironment());
+        mProcess.getProcessEnvironment()
+                .getTermiosSupport()
+                .setSize(columns, rows);
         mProcess.start();
         new Thread("TermSessionInputReader[pid=" + mShellPid + "]") {
             @Override
@@ -338,7 +346,7 @@ public final class TerminalSession extends TerminalOutput {
             }*/
             //dingyi modify:replace to use virtual process
             return VirtualProcessSystem.getProcess(mShellPid).getProcessEnvironment()
-                    .getCwd();
+                    .getCurrentWorkDir();
         } catch (SecurityException e) {
             Logger.logStackTraceWithMessage(mClient, LOG_TAG, "Error getting current directory", e);
         }

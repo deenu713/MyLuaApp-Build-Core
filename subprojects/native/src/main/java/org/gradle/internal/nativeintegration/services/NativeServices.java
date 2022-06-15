@@ -15,6 +15,8 @@
  */
 package org.gradle.internal.nativeintegration.services;
 
+import static org.gradle.internal.nativeintegration.filesystem.services.JdkFallbackHelper.newInstanceOrFallback;
+
 import net.rubygrapefruit.platform.Native;
 import net.rubygrapefruit.platform.NativeException;
 import net.rubygrapefruit.platform.NativeIntegrationUnavailableException;
@@ -28,7 +30,7 @@ import net.rubygrapefruit.platform.file.Files;
 import net.rubygrapefruit.platform.file.PosixFiles;
 import net.rubygrapefruit.platform.internal.DefaultProcessLauncher;
 import net.rubygrapefruit.platform.memory.Memory;
-import net.rubygrapefruit.platform.terminal.Terminals;
+
 import org.gradle.api.Action;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.internal.file.temp.GradleUserHomeTemporaryFileProvider;
@@ -40,15 +42,14 @@ import org.gradle.internal.nativeintegration.NativeCapabilities;
 import org.gradle.internal.nativeintegration.ProcessEnvironment;
 import org.gradle.internal.nativeintegration.console.ConsoleDetector;
 import org.gradle.internal.nativeintegration.console.FallbackConsoleDetector;
-import org.gradle.internal.nativeintegration.console.NativePlatformConsoleDetector;
 import org.gradle.internal.nativeintegration.console.TestOverrideConsoleDetector;
+import org.gradle.internal.nativeintegration.console.VirtualProcessConsoleDetector;
 import org.gradle.internal.nativeintegration.console.WindowsConsoleDetector;
 import org.gradle.internal.nativeintegration.filesystem.FileMetadataAccessor;
 import org.gradle.internal.nativeintegration.filesystem.services.FallbackFileMetadataAccessor;
 import org.gradle.internal.nativeintegration.filesystem.services.FileSystemServices;
 import org.gradle.internal.nativeintegration.filesystem.services.NativePlatformBackedFileMetadataAccessor;
 import org.gradle.internal.nativeintegration.filesystem.services.UnavailablePosixFiles;
-/*import org.gradle.internal.nativeintegration.jansi.JansiBootPathConfigurer;*/
 import org.gradle.internal.nativeintegration.jna.UnsupportedEnvironment;
 import org.gradle.internal.nativeintegration.network.HostnameLookup;
 import org.gradle.internal.nativeintegration.processenvironment.AndroidProcessEnvironment;
@@ -69,10 +70,6 @@ import java.lang.reflect.Proxy;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.EnumSet;
-
-import static org.gradle.internal.nativeintegration.filesystem.services.JdkFallbackHelper.newInstanceOrFallback;
-
-import com.dingyi.terminal.virtualprocess.VirtualProcess;
 
 /**
  * Provides various native platform integration services.
@@ -294,7 +291,7 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
 
     private ConsoleDetector backingConsoleDetector(OperatingSystem operatingSystem) {
         if (useNativeIntegrations) {
-            try {
+         /*   try {
                 Terminals terminals = net.rubygrapefruit.platform.Native.get(Terminals.class);
                 return new NativePlatformConsoleDetector(terminals);
             } catch (NativeIntegrationUnavailableException ex) {
@@ -302,6 +299,8 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
             } catch (NativeException ex) {
                 LOGGER.debug("Unable to load from native-platform backed ConsoleDetector. Continuing with fallback. Failure: {}", format(ex));
             }
+*/
+
 
             try {
                 if (operatingSystem.isWindows()) {
@@ -311,6 +310,13 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
                 // Thrown when jna cannot initialize the native stuff
                 LOGGER.debug("Unable to load native library. Continuing with fallback. Failure: {}", format(e));
             }
+        }
+
+        try {
+            Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessSystem", false, getClass().getClassLoader());
+            return new VirtualProcessConsoleDetector();
+        } catch (ClassNotFoundException e) {
+            //ignore
         }
 
         return new FallbackConsoleDetector();

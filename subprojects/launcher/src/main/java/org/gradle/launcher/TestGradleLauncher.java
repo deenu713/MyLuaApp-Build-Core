@@ -17,6 +17,7 @@ import org.gradle.internal.logging.DefaultLoggingConfiguration;
 import org.gradle.internal.logging.LoggingManagerInternal;
 import org.gradle.internal.logging.services.LoggingServiceRegistry;
 import org.gradle.internal.logging.text.StyledTextOutputFactory;
+import org.gradle.internal.nativeintegration.console.ConsoleDetector;
 import org.gradle.internal.nativeintegration.console.ConsoleMetaData;
 import org.gradle.internal.nativeintegration.services.NativeServices;
 import org.gradle.internal.service.ServiceRegistry;
@@ -150,7 +151,8 @@ public class TestGradleLauncher {
 
         LoggingManagerInternal loggingManager = loggingServices.getFactory(LoggingManagerInternal.class).create();
         loggingManager.setLevelInternal(loggingConfiguration.getLogLevel());
-        loggingManager.attachConsole(gradleOutputStream, gradleErrorStream, loggingConfiguration.getConsoleOutput());
+        loggingManager.attachConsole(gradleOutputStream, gradleErrorStream, loggingConfiguration.getConsoleOutput(),
+                NativeServices.getInstance().get(ConsoleDetector.class).getConsole());
         loggingManager.start();
         try {
             Action<ExecutionListener> exceptionReportingAction =

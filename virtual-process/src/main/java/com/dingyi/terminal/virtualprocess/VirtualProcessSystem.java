@@ -25,10 +25,10 @@ public class VirtualProcessSystem {
 
     private SparseArray<VirtualProcess> mProcesses = new SparseArray<>();
 
-    private int currentProcessId = 0;
+    private int currentProcessId = 114514;
 
     private int generateProcessId() {
-        return currentProcessId++;
+        return ++currentProcessId;
     }
 
     public static VirtualProcess createProcess(String cmd) {

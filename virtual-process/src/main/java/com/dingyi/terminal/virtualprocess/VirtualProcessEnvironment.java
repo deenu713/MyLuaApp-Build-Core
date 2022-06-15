@@ -15,6 +15,8 @@ public class VirtualProcessEnvironment {
     OutputStream processErrorStream;
 
 
+    SimpleTermiosSupport termiosSupport;
+
     private String[] args;
 
     private String cwd;
@@ -41,6 +43,10 @@ public class VirtualProcessEnvironment {
         return args;
     }
 
+
+    public SimpleTermiosSupport getTermiosSupport() {
+        return termiosSupport;
+    }
 
     public boolean putEnvironment(String key, String value) {
         envLock.lock();
