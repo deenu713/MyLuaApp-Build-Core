@@ -272,13 +272,14 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
                 LOGGER.debug("Native-platform process integration is not available. Continuing with fallback.");
             }
         }
+        //dingyi modify: add VirtualProcessEnvironment support
         try {
             Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessSystem", false, getClass().getClassLoader());
             return new VirtualProcessEnvironment();
         } catch (ClassNotFoundException e) {
             //ignore
         }
-        if (OperatingSystem.current().isAndroid()) {
+        if (operatingSystem.isAndroid()) {
             return new AndroidProcessEnvironment();
         }
 
