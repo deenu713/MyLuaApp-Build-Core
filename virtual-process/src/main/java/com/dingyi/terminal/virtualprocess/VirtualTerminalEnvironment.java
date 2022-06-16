@@ -30,6 +30,7 @@ public class VirtualTerminalEnvironment {
 
         processInputStream.connect(_terminalOutputStream);
         processOutputStream.connect(terminalInputStream);
+        _terminalOutputStream.connect(terminalInputStream);
         processErrorStream.connect(terminalErrorStream);
 
         terminalOutputStream = _terminalOutputStream;

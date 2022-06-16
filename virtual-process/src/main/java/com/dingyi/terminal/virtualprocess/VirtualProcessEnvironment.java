@@ -116,7 +116,7 @@ public class VirtualProcessEnvironment {
 
     public Map<String, String> getEnv() {
         if (env == null) {
-            env = new HashMap<String, String>();
+            env = new HashMap<>();
         }
         return env;
     }

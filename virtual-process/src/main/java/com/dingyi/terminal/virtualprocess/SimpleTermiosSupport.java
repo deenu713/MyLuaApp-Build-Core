@@ -12,6 +12,7 @@ import java.util.Arrays;
 //TODO:Termios Support
 public class SimpleTermiosSupport {
 
+
     private OutputStream processOutputStream;
     private InputStream processInputStream;
 
@@ -29,6 +30,7 @@ public class SimpleTermiosSupport {
         this.processOutputStream = processOutputStream;
         this.processInputStream = processInputStream;
         this.termiosStruct = TermiosStruct.DEFAULT.copy();
+
     }
 
     void doWrapper() {
@@ -76,7 +78,7 @@ public class SimpleTermiosSupport {
 
         public TermiosOutputStream(OutputStream out) {
             super(out);
-            buffer = new ByteArrayBuffer(512);
+            buffer = new ByteArrayBuffer(8);
         }
 
         private ByteArrayBuffer buffer;
@@ -87,40 +89,33 @@ public class SimpleTermiosSupport {
 
         @Override
         public void write(byte[] b) throws IOException {
-            if (check_OPOST()) {
-                writeInternal(b, 0, b.length);
-            } else {
-                out.write(b);
-            }
+
         }
 
 
-        private void writeInternal(byte[] e, int off, int len) throws IOException {
-            if (len == 0) {
-                return;
-            }
-            for (int i = 0; i < len; i++) {
-                byte b = e[off + i];
-                checkAndAppendByte(b);
-            }
-        }
 
-        private void writeInternal(int e) throws IOException {
-            checkAndAppendByte((byte) e);
-        }
-
-        private void checkAndAppendByte(byte b) throws IOException {
+        private void checkAndAppendByte(int b) throws IOException {
             boolean needFlush = false;
-            if (b == TermiosStruct.LF) {
+            if (b == TermiosStruct.CR) {
                 if (TermiosStruct.isSet(termiosStruct.c_oflag, TermiosStruct.ONLCR)) {
-                    buffer.append(TermiosStruct.CR);
+                    buffer.append(b);
                     buffer.append(TermiosStruct.LF);
+                } else if (TermiosStruct.isSet(termiosStruct.c_oflag, TermiosStruct.ONLRET)) {
+                    buffer.append(0);
+                } else {
+                    buffer.append(b);
                 }
-            } else if (b == TermiosStruct.CR) {
-                buffer.append(b);
                 needFlush = true;
-            } else {
+            } else if (b == TermiosStruct.LF) {
+                if (TermiosStruct.isSet(termiosStruct.c_oflag, TermiosStruct.OCRNL)) {
+                    buffer.append(TermiosStruct.CR);
+                } else {
+                    buffer.append(b);
+                }
+            }/* else if (TermiosStruct.isSet(termiosStruct.c_lflag, TermiosStruct.ECHO)) {
                 buffer.append(b);
+            } */else {
+                buffer.append(0);
             }
 
             if (needFlush || buffer.isFull()) {
@@ -129,20 +124,10 @@ public class SimpleTermiosSupport {
 
         }
 
-
-        @Override
-        public void write(byte[] b, int off, int len) throws IOException {
-            if (check_OPOST()) {
-                writeInternal(b, off, len);
-            } else {
-                out.write(b, off, len);
-            }
-        }
-
         @Override
         public void write(int b) throws IOException {
             if (check_OPOST()) {
-                writeInternal(b);
+                checkAndAppendByte(b);
             } else {
                 out.write(b);
             }
