@@ -1,5 +1,7 @@
 package com.dingyi.terminal.virtualprocess;
 
+import com.dingyi.terminal.virtualprocess.util.ByteArrayBuffer;
+
 import java.io.FilterInputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -13,6 +15,7 @@ public class SimpleTermiosSupport {
     private OutputStream processOutputStream;
     private InputStream processInputStream;
 
+    //The column and row are only used for the terminal.
     private int column;
 
     private int row;
@@ -25,7 +28,7 @@ public class SimpleTermiosSupport {
     ) {
         this.processOutputStream = processOutputStream;
         this.processInputStream = processInputStream;
-        this.termiosStruct = new TermiosStruct();
+        this.termiosStruct = TermiosStruct.DEFAULT.copy();
     }
 
     void doWrapper() {
@@ -73,50 +76,88 @@ public class SimpleTermiosSupport {
 
         public TermiosOutputStream(OutputStream out) {
             super(out);
+            buffer = new ByteArrayBuffer(512);
         }
 
-        private byte[] tmpBuffer = new byte[1024];
+        private ByteArrayBuffer buffer;
 
+        private boolean check_OPOST() {
+            return TermiosStruct.isSet(termiosStruct.c_oflag, TermiosStruct.OPOST);
+        }
 
         @Override
         public void write(byte[] b) throws IOException {
-            write(b, 0, b.length);
+            if (check_OPOST()) {
+                writeInternal(b, 0, b.length);
+            } else {
+                out.write(b);
+            }
         }
 
 
-        private void writeTranslate(byte b) throws IOException {
-            if (b == '\n') {
-                tmpBuffer[0] = '\r';
-                tmpBuffer[1] = '\n';
-                out.write(tmpBuffer, 0, 2);
-            }/* else if (b == '\r') {
-                tmpBuffer[0] = '\r';
-                tmpBuffer[1] = '\n';
-                out.write(tmpBuffer, 0, 2);
-            } */ else {
-                tmpBuffer[0] = b;
-                out.write(tmpBuffer, 0, 1);
+        private void writeInternal(byte[] e, int off, int len) throws IOException {
+            if (len == 0) {
+                return;
+            }
+            for (int i = 0; i < len; i++) {
+                byte b = e[off + i];
+                checkAndAppendByte(b);
+            }
+        }
+
+        private void writeInternal(int e) throws IOException {
+            checkAndAppendByte((byte) e);
+        }
+
+        private void checkAndAppendByte(byte b) throws IOException {
+            boolean needFlush = false;
+            if (b == TermiosStruct.LF) {
+                if (TermiosStruct.isSet(termiosStruct.c_oflag, TermiosStruct.ONLCR)) {
+                    buffer.append(TermiosStruct.CR);
+                    buffer.append(TermiosStruct.LF);
+                }
+            } else if (b == TermiosStruct.CR) {
+                buffer.append(b);
+                needFlush = true;
+            } else {
+                buffer.append(b);
+            }
+
+            if (needFlush || buffer.isFull()) {
+                flush();
             }
 
         }
 
+
         @Override
         public void write(byte[] b, int off, int len) throws IOException {
-            for (int i = off; i < off + len; i++) {
-                writeTranslate(b[i]);
+            if (check_OPOST()) {
+                writeInternal(b, off, len);
+            } else {
+                out.write(b, off, len);
             }
         }
 
         @Override
         public void write(int b) throws IOException {
-            tmpBuffer[0] = (byte) b;
-            write(tmpBuffer, 0, 1);
+            if (check_OPOST()) {
+                writeInternal(b);
+            } else {
+                out.write(b);
+            }
         }
 
 
         @Override
         public void flush() throws IOException {
-            super.flush();
+            if (buffer.isEmpty()) {
+                return;
+            }
+            byte[] b = buffer.toByteArray();
+            out.write(b, 0, buffer.length());
+            buffer.clear();
+            out.flush();
         }
     }
 
@@ -127,15 +168,16 @@ public class SimpleTermiosSupport {
         }
     }
 
+    //TODO: add c_cc characters, but i don't want to support it
     static class TermiosStruct {
         public int c_iflag;
         public int c_oflag;
         public int c_lflag;
         public int c_line;
-        public byte[] c_cc = new byte[32];
+        /*  public byte[] c_cc = new byte[32];*/
 
-
-        /* c_cc characters */
+        /*
+         *//* c_cc characters *//*
         public static final int VINTR = 0;
         public static final int VQUIT = 1;
         public static final int VERASE = 2;
@@ -152,15 +194,12 @@ public class SimpleTermiosSupport {
         public static final int VDISCARD = 13;
         public static final int VWERASE = 14;
         public static final int VLNEXT = 15;
-        public static final int VEOL2 = 16;
+        public static final int VEOL2 = 16;*/
 
 
         /* c_iflag bits */
         public static final int IGNBRK = 0x00000001;
         public static final int BRKINT = 0x00000002;
-        public static final int IGNPAR = 0x00000004;
-        public static final int PARMRK = 0x00000008;
-        public static final int INPCK = 0x00000010;
         public static final int ISTRIP = 0x00000020;
         public static final int INLCR = 0x00000040;
         public static final int IGNCR = 0x00000080;
@@ -172,16 +211,9 @@ public class SimpleTermiosSupport {
 
         /* c_oflag bits */
         public static final int OPOST = 0x00000001;
-        public static final int OLCUC = 0x00000002;
         public static final int ONLCR = 0x00000004;
         public static final int OCRNL = 0x00000008;
-        public static final int ONOCR = 0x00000010;
         public static final int ONLRET = 0x00000020;
-        public static final int OFILL = 0x00000040;
-        public static final int OFDEL = 0x00000080;
-        public static final int VTDLY = 0x00000100;
-        public static final int VT0 = 0x00000200;
-        public static final int VT1 = 0x00000400;
 
         /* c_lflag bits */
         public static final int ISIG = 0x00000001;
@@ -189,16 +221,15 @@ public class SimpleTermiosSupport {
         public static final int XCASE = 0x00000004;
         public static final int ECHO = 0x00000008;
         public static final int ECHOE = 0x00000010;
-        public static final int ECHOK = 0x00000020;
-        public static final int ECHONL = 0x00000040;
-        public static final int NOFLSH = 0x00000080;
-        public static final int TOSTOP = 0x00000100;
-        public static final int ECHOCTL = 0x00000200;
-        public static final int ECHOPRT = 0x00000400;
-        public static final int ECHOKE = 0x00000800;
-        public static final int FLUSHO = 0x00001000;
-        public static final int PENDIN = 0x00002000;
-        public static final int IEXTEN = 0x00004000;
+
+
+        public static final byte CR = '\n';
+        public static final byte LF = '\r';
+        public static final byte BACKSPACE = '\b';
+        public static final byte TAB = '\t';
+        public static final byte ESC = '\033';
+        public static final byte SPACE = ' ';
+        public static final byte DEL = 0x7F;
 
 
         public static boolean isSet(int flag, int mask) {
@@ -228,6 +259,45 @@ public class SimpleTermiosSupport {
         }
 
 
+        public static final TermiosStruct DEFAULT;
+
+        static {
+            DEFAULT = new TermiosStruct();
+            DEFAULT.c_iflag = ICRNL | IXON;
+            DEFAULT.c_oflag = OPOST | ONLCR;
+            DEFAULT.c_lflag = ISIG | ICANON | ECHO;
+            DEFAULT.c_line = 0;
+          /*  DEFAULT.c_cc = new byte[32];
+            DEFAULT.c_cc[VINTR] = (byte) '\003';
+            DEFAULT.c_cc[VQUIT] = (byte) '\034';
+            DEFAULT.c_cc[VERASE] = (byte) '\177';
+            DEFAULT.c_cc[VKILL] = (byte) '\025';
+            DEFAULT.c_cc[VEOF] = (byte) '\004';
+            DEFAULT.c_cc[VTIME] = (byte) '\0';
+            DEFAULT.c_cc[VMIN] = (byte) '\1';
+            DEFAULT.c_cc[VSWTC] = (byte) '\0';
+            DEFAULT.c_cc[VSTART] = (byte) '\021';
+            DEFAULT.c_cc[VSTOP] = (byte) '\023';
+            DEFAULT.c_cc[VSUSP] = (byte) '\032';
+            DEFAULT.c_cc[VEOL] = (byte) '\0';
+            DEFAULT.c_cc[VREPRINT] = (byte) '\022';
+            DEFAULT.c_cc[VDISCARD] = (byte) '\017';
+            DEFAULT.c_cc[VWERASE] = (byte) '\027';
+            DEFAULT.c_cc[VLNEXT] = (byte) '\026';
+            DEFAULT.c_cc[VEOL2] = (byte) '\0';*/
+
+        }
+
+
+        public TermiosStruct copy() {
+            TermiosStruct copy = new TermiosStruct();
+            copy.c_iflag = c_iflag;
+            copy.c_oflag = c_oflag;
+            copy.c_lflag = c_lflag;
+            copy.c_line = c_line;
+            /* copy.c_cc = c_cc.clone();*/
+            return copy;
+        }
     }
 
 }
