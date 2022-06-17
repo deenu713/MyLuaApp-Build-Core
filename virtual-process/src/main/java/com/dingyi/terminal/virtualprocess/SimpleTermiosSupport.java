@@ -1,13 +1,12 @@
 package com.dingyi.terminal.virtualprocess;
 
-import com.dingyi.terminal.virtualprocess.util.ByteArrayBuffer;
-
 import java.io.FilterInputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 //TODO:Termios Support
 public class SimpleTermiosSupport {
@@ -34,10 +33,10 @@ public class SimpleTermiosSupport {
     void doWrapper() {
 
         processEnvironment
-                .processOutputStream = new TermiosOutputStream(processEnvironment.processOutputStream);
-        processEnvironment
-                .processInputStream = new TermiosInputStream(processEnvironment.processInputStream);
-
+                .processOutputStream = new ProcessTermiosOutputStream(processEnvironment.processOutputStream);
+        terminalEnvironment
+                .terminalOutputStream = new TerminalTermiosOutputStream(terminalEnvironment.terminalOutputStream, terminalEnvironment
+                .terminalInputStream.blockingQueue);
     }
 
 
@@ -69,9 +68,74 @@ public class SimpleTermiosSupport {
     }
 
 
-    public class TermiosOutputStream extends FilterOutputStream {
+    //TODO:Termios Support
+    static class TerminalTermiosOutputStream extends FilterOutputStream {
 
-        public TermiosOutputStream(OutputStream out) {
+        private final ByteQueue writeQueue;
+        private final BlockingQueue<Integer> blockingQueue;
+
+        private final SafeQueueWriteThread queueReadThread;
+        private final byte[] writeBuffer = new byte[1];
+
+        public TerminalTermiosOutputStream(OutputStream out, ByteQueue queue) {
+            super(out);
+            this.writeQueue = queue;
+            this.blockingQueue = new LinkedBlockingQueue<>(1024);
+            queueReadThread = new SafeQueueWriteThread(blockingQueue, writeQueue);
+            queueReadThread.start();
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            writeBuffer[0] = (byte) (b);
+            write(writeBuffer);
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            for (int i = off; i < off + len; i++) {
+                blockingQueue.offer(b[i] & 0xFF);
+            }
+            out.write(b, off, len);
+        }
+
+
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            queueReadThread.interrupt();
+        }
+
+        static class SafeQueueWriteThread extends Thread {
+
+            private final ByteQueue writerQueue;
+            private final BlockingQueue<Integer> readQueue;
+
+            SafeQueueWriteThread(BlockingQueue<Integer> queue, ByteQueue readQueue) {
+                this.readQueue = queue;
+                this.writerQueue = readQueue;
+            }
+
+            @Override
+            public void run() {
+                byte[] buffer = new byte[1];
+                while (isAlive() || !isInterrupted()) {
+                    try {
+                        int data = readQueue.take();
+                        buffer[0] = (byte) (data & 0xFF);
+                        writerQueue.write(buffer, 0, 1);
+                    } catch (Exception e) {
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    class ProcessTermiosOutputStream extends FilterOutputStream {
+
+        public ProcessTermiosOutputStream(OutputStream out) {
             super(out);
             buffer = new ByteArrayBuffer(8);
         }
@@ -83,7 +147,7 @@ public class SimpleTermiosSupport {
         }
 
 
-        private void checkAndAppendByte(int b) throws IOException {
+        private void checkByte(int b) throws IOException {
             boolean needFlush = false;
             if (b == TermiosStruct.CR) {
                 if (TermiosStruct.isSet(termiosStruct.c_oflag, TermiosStruct.ONLCR)) {
@@ -101,10 +165,8 @@ public class SimpleTermiosSupport {
                 } else {
                     buffer.append(b);
                 }
-            }/* else if (TermiosStruct.isSet(termiosStruct.c_lflag, TermiosStruct.ECHO)) {
+            } else {
                 buffer.append(b);
-            } */else {
-                buffer.append(0);
             }
 
             if (needFlush || buffer.isFull()) {
@@ -116,12 +178,22 @@ public class SimpleTermiosSupport {
         @Override
         public void write(int b) throws IOException {
             if (check_OPOST()) {
-                checkAndAppendByte(b);
+                checkByte(b);
             } else {
                 out.write(b);
             }
         }
 
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            if (check_OPOST()) {
+                for (int i = off; i < off + len; i++) {
+                    checkByte(b[i]);
+                }
+            } else {
+                out.write(b, off, len);
+            }
+        }
 
         @Override
         public void flush() throws IOException {
@@ -130,13 +202,13 @@ public class SimpleTermiosSupport {
             }
             byte[] b = buffer.toByteArray();
             out.write(b, 0, buffer.length());
+            /* out.flush();*/
             buffer.clear();
-            out.flush();
+
         }
     }
 
     public class TermiosInputStream extends FilterInputStream {
-
         protected TermiosInputStream(InputStream in) {
             super(in);
         }

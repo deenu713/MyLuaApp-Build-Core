@@ -5,6 +5,11 @@
 
     <com.dingyi.terminal.view.TerminalView
         android:id="@+id/terminalView"
+        android:defaultFocusHighlightEnabled="false"
+        android:focusableInTouchMode="true"
+        android:scrollbars="vertical"
+        android:importantForAutofill="no"
+        android:autofillHints="password"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,7 @@ package org.gradle.internal.nativeintegration.processenvironment;
 import android.os.Process;
 
 import com.dingyi.terminal.virtualprocess.VirtualProcess;
-import com.dingyi.terminal.virtualprocess.VirtualProcessSystem;
+import com.dingyi.terminal.virtualprocess.VirtualProcessService;
 
 import org.gradle.internal.nativeintegration.NativeIntegrationException;
 
@@ -16,7 +16,7 @@ public class VirtualProcessEnvironment extends AbstractProcessEnvironment {
 
 
     public VirtualProcessEnvironment() {
-        currentProcess = VirtualProcessSystem.currentProcess();
+        currentProcess = VirtualProcessService.currentProcess();
     }
 
     private File processDir;
@@ -24,7 +24,7 @@ public class VirtualProcessEnvironment extends AbstractProcessEnvironment {
     @Override
     public File getProcessDir() throws NativeIntegrationException {
         if (processDir == null) {
-            processDir = new File(VirtualProcessSystem.currentProcess().getProcessEnvironment()
+            processDir = new File(VirtualProcessService.currentProcess().getProcessEnvironment()
                     .getCurrentWorkDir());
         }
 
@@ -47,7 +47,7 @@ public class VirtualProcessEnvironment extends AbstractProcessEnvironment {
 
     @Override
     protected void removeNativeEnvironmentVariable(String name) {
-        VirtualProcessSystem
+        VirtualProcessService
                 .currentProcess()
                 .getProcessEnvironment()
                 .removeEnvironment(name);
@@ -55,7 +55,7 @@ public class VirtualProcessEnvironment extends AbstractProcessEnvironment {
 
     @Override
     protected void setNativeEnvironmentVariable(String name, String value) {
-        VirtualProcessSystem
+        VirtualProcessService
                 .currentProcess()
                 .getProcessEnvironment()
                 .putEnvironment(name,value);
@@ -63,7 +63,7 @@ public class VirtualProcessEnvironment extends AbstractProcessEnvironment {
 
     @Override
     protected void setNativeProcessDir(File processDir) {
-        VirtualProcessSystem
+        VirtualProcessService
                 .currentProcess()
                 .getProcessEnvironment()
                 .setCurrentWorkDir(processDir.getAbsolutePath());

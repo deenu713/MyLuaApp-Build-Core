@@ -29,7 +29,7 @@ class GradleSupport(processChannel: VirtualProcessEnvironment) : VirtualExecutab
                 it.isBuildCacheEnabled = true
                 it.isBuildCacheDebugLogging = true
                 it.projectDir = projectPath
-                it.currentDir = File(mProcessEnvironment.currentWorkDir)
+                it.currentDir = projectPath
                 it.gradleUserHomeDir = projectPath.resolve(".gradle_home")
                 it.projectCacheDir = projectPath.resolve(".gradle")
                 it.isRefreshDependencies = true

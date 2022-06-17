@@ -1,0 +1,2 @@
+echo:com.dingyi.terminal.virtualprocess.lib.EchoSupport
+shell:com.dingyi.terminal.virtualprocess.lib.ShellSupport

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dingyi.terminal.virtualprocess.stream;
+package com.dingyi.terminal.virtualprocess;
 
 
 import java.io.IOException;
@@ -24,44 +24,21 @@ import java.io.PipedOutputStream;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
- * Simple alternative to JDK {@link PipedInputStream}; queue input stream provides what's written in queue
- * output stream.
- *
- * <p>
- * Example usage:
- * </p>
- * <pre>
- * QueueInputStream inputStream = new QueueInputStream();
- * QueueOutputStream outputStream = inputStream.newQueueOutputStream();
- *
- * outputStream.write("hello world".getBytes(UTF_8));
- * inputStream.read();
- * </pre>
- * <p>
- * Unlike JDK {@link PipedInputStream} and {@link PipedOutputStream}, queue input/output streams may be used safely in a
- * single thread or multiple threads. Also, unlike JDK classes, no special meaning is attached to initial or current
- * thread. Instances can be used longer after initial threads exited.
- * </p>
- * <p>
- * Closing a {@code QueueInputStream} has no effect. The methods in this class can be called after the stream has been
- * closed without generating an {@code IOException}.
- * </p>
- *
- * @see QueueOutputStream
+ * Simple alternative to JDK {@link PipedInputStream};
+ * @see ByteQueueOutputStream
  * @since 2.9.0
  */
-public class QueueInputStream extends InputStream {
+public class ByteQueueInputStream extends InputStream {
 
-    private final BlockingQueue<Integer> blockingQueue;
+     final ByteQueue blockingQueue;
 
     /**
      * Constructs a new instance with no limit to its internal buffer size.
      */
-    public QueueInputStream() {
-        this(new LinkedBlockingQueue<>());
+    public ByteQueueInputStream() {
+        this(new ByteQueue(1024));
     }
 
     /**
@@ -69,7 +46,7 @@ public class QueueInputStream extends InputStream {
      *
      * @param blockingQueue backing queue for the stream
      */
-    public QueueInputStream(final BlockingQueue<Integer> blockingQueue) {
+    public ByteQueueInputStream(final ByteQueue blockingQueue) {
         this.blockingQueue = Objects.requireNonNull(blockingQueue, "blockingQueue");
     }
 
@@ -79,12 +56,13 @@ public class QueueInputStream extends InputStream {
      *
      * @return QueueOutputStream connected to this stream
      */
-    public QueueOutputStream newQueueOutputStream() {
-        return new QueueOutputStream(blockingQueue);
+    public ByteQueueOutputStream newQueueOutputStream() {
+        return new ByteQueueOutputStream(blockingQueue);
     }
 
     private static final int EOF = -1;
 
+    private final byte[] readBuffer = new byte[1];
 
     /**
      * Reads and returns a single byte.
@@ -93,22 +71,22 @@ public class QueueInputStream extends InputStream {
      */
     @Override
     public int read() throws IOException {
+        return read(readBuffer);
+    }
+
+
+    @Override
+    public int read(byte[] b) throws IOException {
+        return read(b, 0, b.length);
+    }
+
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
         if (isClose) {
             throw new IOException("Stream is closed");
         }
-        int value;
-        try {
-            //read a byte
-            Integer integerValue = blockingQueue.take();
-            if (integerValue == null) {
-                return EOF;
-            }
-            value = integerValue & 0xFF;
-        } catch (InterruptedException e) {
-            throw new IOException("Stream is closed", e);
-        }
-
-        return value;
+        return blockingQueue.read(b,off,true);
     }
 
     private boolean isClose = false;

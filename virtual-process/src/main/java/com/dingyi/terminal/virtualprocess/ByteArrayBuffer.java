@@ -29,7 +29,7 @@
  *
  */
 
-package com.dingyi.terminal.virtualprocess.util;
+package com.dingyi.terminal.virtualprocess;
 
 /**
  * A resizable byte array.

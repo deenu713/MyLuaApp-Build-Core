@@ -9,5 +9,4 @@ java {
 
 dependencies {
     compileOnly(project(":android-stubs"))
-    implementation("commons-io:commons-io:2.11.0")
 }

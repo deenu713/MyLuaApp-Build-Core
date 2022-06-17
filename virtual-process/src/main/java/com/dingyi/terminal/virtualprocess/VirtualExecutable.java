@@ -12,8 +12,6 @@ public abstract class VirtualExecutable {
 
     }
 
-
-
     protected abstract int start(String[] args) throws Exception;
 
 }

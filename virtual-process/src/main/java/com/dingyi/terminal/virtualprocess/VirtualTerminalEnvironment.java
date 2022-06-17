@@ -1,56 +1,44 @@
 package com.dingyi.terminal.virtualprocess;
 
-import android.graphics.BlendModeColorFilter;
-import android.icu.util.Output;
-
-import com.dingyi.terminal.virtualprocess.VirtualProcessEnvironment;
-import com.dingyi.terminal.virtualprocess.stream.QueueInputStream;
-import com.dingyi.terminal.virtualprocess.stream.QueueOutputStream;
-
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.DelayQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 
 public class VirtualTerminalEnvironment {
 
-    final QueueInputStream terminalInputStream;
-    final QueueOutputStream terminalOutputStream;
-    final QueueInputStream terminalErrorStream;
+    final ByteQueueInputStream terminalInputStream;
+    OutputStream terminalOutputStream;
+    final ByteQueueInputStream terminalErrorStream;
 
-    final BlockingQueue<Integer> processInputQueue;
-    final BlockingQueue<Integer> terminalInputQueue;
-    final BlockingQueue<Integer> terminalErrorQueue;
+    final ByteQueue processInputQueue;
+    final ByteQueue terminalInputQueue;
+    final ByteQueue terminalErrorQueue;
     VirtualProcessEnvironment processChannel;
 
     public VirtualTerminalEnvironment() throws IOException {
 
-        processInputQueue = new LinkedBlockingQueue<>();
-        terminalInputQueue = new LinkedBlockingQueue<>();
-        terminalErrorQueue = new LinkedBlockingQueue<>();
+        processInputQueue = new ByteQueue(4096);
+        terminalInputQueue = new ByteQueue(4096);
+        terminalErrorQueue = new ByteQueue(4096);
 
-        terminalErrorStream = new QueueInputStream(terminalErrorQueue);
+        terminalErrorStream = new ByteQueueInputStream();
 
-        terminalInputStream = new QueueInputStream(terminalInputQueue);
+        terminalInputStream = new ByteQueueInputStream();
 
-        terminalOutputStream = new QueueOutputStream(processInputQueue);
-
-        QueueInputStream processInputStream = terminalOutputStream.newQueueInputStream();
-        QueueOutputStream processOutputStream = terminalInputStream.newQueueOutputStream();
-        QueueOutputStream processErrorStream = terminalErrorStream.newQueueOutputStream();
+        ByteQueueOutputStream _terminalOutputStream = new ByteQueueOutputStream();
+        terminalOutputStream = _terminalOutputStream;
+        ByteQueueInputStream processInputStream = _terminalOutputStream.newQueueInputStream();
+        ByteQueueOutputStream processOutputStream = terminalInputStream.newQueueOutputStream();
+        ByteQueueOutputStream processErrorStream = terminalErrorStream.newQueueOutputStream();
 
         processChannel = new VirtualProcessEnvironment(processInputStream, processOutputStream, processErrorStream);
 
         SimpleTermiosSupport termiosSupport = new SimpleTermiosSupport(this, processChannel);
 
-        //termiosSupport.doWrapper();
+        termiosSupport.doWrapper();
 
         processChannel.termiosSupport = termiosSupport;
 

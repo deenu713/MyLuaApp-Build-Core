@@ -15,18 +15,10 @@ public class EchoSupport extends VirtualExecutable {
     protected int start(String[] args) throws IOException {
         for (String a : args) {
             mProcessEnvironment
-                    .getOutputStream()
-                    .write(a.getBytes(StandardCharsets.UTF_8));
-
-            mProcessEnvironment
-                    .getOutputStream()
-                    .write(" ".getBytes(StandardCharsets.UTF_8));
-            mProcessEnvironment
-                    .getOutputStream()
-                    .flush();
+                    .print(a + " ");
         }
         mProcessEnvironment
-                .write("\n".getBytes(StandardCharsets.UTF_8));
+                .print("\n");
         return 0;
     }
 }

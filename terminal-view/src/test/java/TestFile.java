@@ -1,9 +1,9 @@
 import com.dingyi.terminal.virtualprocess.VirtualExecutable;
 import com.dingyi.terminal.virtualprocess.VirtualExecutableExecutorPool;
-import com.dingyi.terminal.virtualprocess.VirtualExecutableSystem;
+import com.dingyi.terminal.virtualprocess.VirtualExecutableService;
 import com.dingyi.terminal.virtualprocess.VirtualProcess;
 import com.dingyi.terminal.virtualprocess.VirtualProcessEnvironment;
-import com.dingyi.terminal.virtualprocess.VirtualProcessSystem;
+import com.dingyi.terminal.virtualprocess.VirtualProcessService;
 
 import org.junit.Test;
 
@@ -14,10 +14,10 @@ public class TestFile {
 
     @Test
     public void test() {
-        VirtualExecutableSystem.getInstance()
-                .registerBinary("echo", echo.class);
+        VirtualExecutableService.getInstance()
+                .registerExecutable("echo", echo.class);
 
-        VirtualProcess process= VirtualProcessSystem
+        VirtualProcess process= VirtualProcessService
                 .createProcess("echo", "Hello", "VirtualProcess");
 
         process.start();

@@ -4,6 +4,8 @@ package com.dingyi.terminal.virtualprocess;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,6 +14,7 @@ public class VirtualProcessEnvironment {
 
     InputStream processInputStream;
     OutputStream processOutputStream;
+
     OutputStream processErrorStream;
 
 
@@ -26,6 +29,8 @@ public class VirtualProcessEnvironment {
     private ReentrantLock envLock = new ReentrantLock();
 
     Integer exitValue = null;
+
+    private ByteArrayBuffer readBuffer = new ByteArrayBuffer(1024);
 
     public VirtualProcessEnvironment(InputStream processInputStream, OutputStream processOutputStream, OutputStream processErrorStream) {
         this.processInputStream = processInputStream;
@@ -124,6 +129,7 @@ public class VirtualProcessEnvironment {
         processInputStream.close();
         processOutputStream.close();
         processErrorStream.close();
+
     }
 
     public InputStream getInputStream() {
@@ -139,23 +145,39 @@ public class VirtualProcessEnvironment {
     }
 
 
-    public void write(byte[] b) throws IOException {
-        processOutputStream.write(b);
-        processOutputStream.flush();
+    public void print(String s) throws IOException {
+        processOutputStream.write(s.getBytes(StandardCharsets.UTF_8));
+        flush();
     }
 
-    void writeError(byte[] b) throws IOException {
-        processErrorStream.write(b);
+    public void println(String s) throws IOException {
+        processOutputStream.write(s.getBytes(StandardCharsets.UTF_8));
+        processOutputStream.write('\n');
+        flush();
     }
+
+    public String readLine() throws IOException {
+
+        while (true) {
+            int b = processInputStream.read();
+            if (b == -1) {
+                return null;
+            }
+            if (b == '\n') {
+                break;
+            }
+            readBuffer.append((byte) b);
+        }
+        String line = new String(readBuffer.toByteArray());
+        readBuffer.clear();
+        return line;
+    }
+
 
     public void flush() throws IOException {
         processOutputStream.flush();
+        processErrorStream.flush();
     }
-
-    void read(byte[] b) throws IOException {
-        processInputStream.read(b);
-    }
-
 
     /**
      * This method only set the exit value of the process.

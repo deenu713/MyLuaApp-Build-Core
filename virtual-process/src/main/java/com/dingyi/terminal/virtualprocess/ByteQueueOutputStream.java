@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dingyi.terminal.virtualprocess.stream;
+package com.dingyi.terminal.virtualprocess;
 
 
 import java.io.IOException;
@@ -27,40 +27,20 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Simple alternative to JDK {@link PipedOutputStream}; queue input stream provides what's written in queue
- * output stream.
- * <p>
- * Example usage:
- * </p>
- *
- * <pre>
- * QueueOutputStream outputStream = new QueueOutputStream();
- * QueueInputStream inputStream = outputStream.newPipeInputStream();
- *
- * outputStream.write("hello world".getBytes(UTF_8));
- * inputStream.read();
- * </pre>
- * <p>
- * Unlike JDK {@link PipedInputStream} and {@link PipedOutputStream}, queue input/output streams may be used safely in a
- * single thread or multiple threads. Also, unlike JDK classes, no special meaning is attached to initial or current
- * thread. Instances can be used longer after initial threads exited.
- * <p>
- * Closing a {@code QueueOutputStream} has no effect. The methods in this class can be called after the stream has been
- * closed without generating an {@code IOException}.
- * </p>
- *
- * @see QueueInputStream
+ * Simple alternative to JDK {@link PipedOutputStream};
+ * @see ByteQueueInputStream
  * @since 2.9.0
  */
-public class QueueOutputStream extends OutputStream {
+public class ByteQueueOutputStream extends OutputStream {
 
-    private final BlockingQueue<Integer> blockingQueue;
+     final ByteQueue blockingQueue;
+
 
     /**
      * Constructs a new instance with no limit to internal buffer size.
      */
-    public QueueOutputStream() {
-        this(new LinkedBlockingQueue<>());
+    public ByteQueueOutputStream() {
+        this(new ByteQueue(1024));
     }
 
     /**
@@ -68,7 +48,7 @@ public class QueueOutputStream extends OutputStream {
      *
      * @param blockingQueue backing queue for the stream
      */
-    public QueueOutputStream(final BlockingQueue<Integer> blockingQueue) {
+    public ByteQueueOutputStream(final ByteQueue blockingQueue) {
         this.blockingQueue = Objects.requireNonNull(blockingQueue, "blockingQueue");
     }
 
@@ -78,12 +58,14 @@ public class QueueOutputStream extends OutputStream {
      *
      * @return QueueInputStream connected to this stream
      */
-    public QueueInputStream newQueueInputStream() {
-        return new QueueInputStream(blockingQueue);
+    public ByteQueueInputStream newQueueInputStream() {
+        return new ByteQueueInputStream(blockingQueue);
     }
 
     private boolean isClose = false;
 
+
+    private final byte[] writeBuffer = new byte[1];
 
     /**
      * Writes a single byte.
@@ -92,17 +74,28 @@ public class QueueOutputStream extends OutputStream {
      */
     @Override
     public void write(final int b) throws IOException {
+        writeBuffer[0] = (byte) (b);
+        write(writeBuffer);
+    }
+
+    @Override
+    public void write(byte[] b) throws IOException {
+        write(b, 0, b.length);
+    }
+
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
         if (isClose) {
             throw new IOException("Stream is closed");
         }
-        try {
-            blockingQueue.put(0xFF & b);
-        } catch (final InterruptedException e) {
-            Thread.currentThread().interrupt();
-            final InterruptedIOException interruptedIoException = new InterruptedIOException();
-            interruptedIoException.initCause(e);
-            throw interruptedIoException;
+
+        if (off < 0 || len < 0 || len > b.length - off) {
+            throw new IndexOutOfBoundsException("off: " + off + ", len: " + len + ", b.length: " + b.length);
         }
+
+        blockingQueue.write(b, off, len);
+
     }
 
     @Override

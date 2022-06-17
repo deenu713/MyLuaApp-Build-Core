@@ -5,17 +5,17 @@ import android.util.SparseArray;
 
 import java.io.IOException;
 
-public class VirtualProcessSystem {
+public class VirtualProcessService {
 
-    private static VirtualProcessSystem INSTANCE;
+    private static VirtualProcessService INSTANCE;
 
-    private VirtualProcessSystem() {
+    private VirtualProcessService() {
     }
 
-    public static VirtualProcessSystem getInstance() {
-        synchronized (VirtualProcessSystem.class) {
+    public static VirtualProcessService getInstance() {
+        synchronized (VirtualProcessService.class) {
             if (INSTANCE == null) {
-                INSTANCE = new VirtualProcessSystem();
+                INSTANCE = new VirtualProcessService();
             }
         }
         return INSTANCE;
@@ -129,14 +129,14 @@ public class VirtualProcessSystem {
         }
     }
 
-    public static boolean killProcess(int processId) {
+    public static boolean killProcess(int processId) throws Exception {
         return getInstance().killProcessFor(processId);
     }
 
-    public boolean killProcessFor(int processId) {
+    public boolean killProcessFor(int processId) throws Exception {
         VirtualProcess process = mProcesses.get(processId);
         try {
-            process.destroy();
+            process.killProcess();
         } catch (IOException e) {
             return false;
         }
