@@ -8,6 +8,7 @@ import org.gradle.api.logging.configuration.ShowStacktrace
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.launcher.TestGradleLauncher
 import java.io.File
+import java.io.PipedInputStream
 
 class GradleSupport(processChannel: VirtualProcessEnvironment) : VirtualExecutable(processChannel) {
     override fun start(args: Array<out String>): Int {

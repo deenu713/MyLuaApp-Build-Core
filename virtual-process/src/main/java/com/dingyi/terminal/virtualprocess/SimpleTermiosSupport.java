@@ -13,9 +13,8 @@ import java.util.Arrays;
 public class SimpleTermiosSupport {
 
 
-    private OutputStream processOutputStream;
-    private InputStream processInputStream;
-
+    private final VirtualTerminalEnvironment terminalEnvironment;
+    private final VirtualProcessEnvironment processEnvironment;
     //The column and row are only used for the terminal.
     private int column;
 
@@ -24,18 +23,21 @@ public class SimpleTermiosSupport {
     public final TermiosStruct termiosStruct;
 
     public SimpleTermiosSupport(
-            OutputStream processOutputStream,
-            InputStream processInputStream
-    ) {
-        this.processOutputStream = processOutputStream;
-        this.processInputStream = processInputStream;
+            VirtualTerminalEnvironment terminalEnvironment,
+            VirtualProcessEnvironment processEnvironment) {
+        this.terminalEnvironment = terminalEnvironment;
+        this.processEnvironment = processEnvironment;
         this.termiosStruct = TermiosStruct.DEFAULT.copy();
 
     }
 
     void doWrapper() {
-        processOutputStream = new TermiosOutputStream(processOutputStream);
-        processInputStream = new TermiosInputStream(processInputStream);
+
+        processEnvironment
+                .processOutputStream = new TermiosOutputStream(processEnvironment.processOutputStream);
+        processEnvironment
+                .processInputStream = new TermiosInputStream(processEnvironment.processInputStream);
+
     }
 
 
@@ -66,13 +68,6 @@ public class SimpleTermiosSupport {
         return row;
     }
 
-    public OutputStream getProcessOutputStream() {
-        return processOutputStream;
-    }
-
-    public InputStream getProcessInputStream() {
-        return processInputStream;
-    }
 
     public class TermiosOutputStream extends FilterOutputStream {
 
@@ -86,12 +81,6 @@ public class SimpleTermiosSupport {
         private boolean check_OPOST() {
             return TermiosStruct.isSet(termiosStruct.c_oflag, TermiosStruct.OPOST);
         }
-
-        @Override
-        public void write(byte[] b) throws IOException {
-
-        }
-
 
 
         private void checkAndAppendByte(int b) throws IOException {

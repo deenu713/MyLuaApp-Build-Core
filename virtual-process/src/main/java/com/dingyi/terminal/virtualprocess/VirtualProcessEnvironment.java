@@ -32,7 +32,6 @@ public class VirtualProcessEnvironment {
         this.processOutputStream = processOutputStream;
         this.processErrorStream = processErrorStream;
 
-
     }
 
     void setArguments(String[] args) {

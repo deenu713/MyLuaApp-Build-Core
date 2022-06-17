@@ -5,8 +5,8 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.dingyi.myluaapp.build.api.R
-import com.dingyi.terminal.support.TerminalSession
-import com.dingyi.terminal.support.TerminalSessionClient
+import com.dingyi.terminal.emulator.TerminalSession
+import com.dingyi.terminal.emulator.TerminalSessionClient
 import com.dingyi.terminal.view.TerminalView
 import com.dingyi.terminal.view.TerminalViewClient
 import java.io.File

@@ -92,7 +92,7 @@ public class VirtualProcess {
     }
 
     public void waitFor() throws InterruptedException {
-        while (binaryExecutor == null) {
+        while (binaryExecutor == null && !isStart) {
             Thread.sleep(1000);
         }
         binaryExecutor.latch.await();

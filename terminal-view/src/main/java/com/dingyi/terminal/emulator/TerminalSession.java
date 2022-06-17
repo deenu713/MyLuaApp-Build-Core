@@ -1,4 +1,4 @@
-package com.dingyi.terminal.support;
+package com.dingyi.terminal.emulator;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;

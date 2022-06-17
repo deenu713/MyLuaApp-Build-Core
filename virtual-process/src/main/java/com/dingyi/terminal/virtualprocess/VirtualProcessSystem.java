@@ -53,7 +53,7 @@ public class VirtualProcessSystem {
         new Thread("VirtualProcess-Listener") {
             @Override
             public void run() {
-                while (true) {
+              /*  while (true) {
                     if (!process.isStart) {
                         try {
                             Thread.sleep(1000);
@@ -62,7 +62,7 @@ public class VirtualProcessSystem {
                         }
                     }
                     break;
-                }
+                }*/
                 try {
                     process.waitFor();
                 } catch (InterruptedException e) {
