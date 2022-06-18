@@ -25,7 +25,7 @@ dependencies {
     implementation("org.ow2.asm:asm:9.3")
 
 
-    compileOnly(  "io.github.dingyi222666:groovy-android:1.0.5-20220614.114938-5")
+    compileOnly(  "io.github.dingyi222666:groovy-android:1.0.7-beta1")
     compileOnly("com.android.tools:r8:3.3.28") {
         because("transform class to dex")
     }

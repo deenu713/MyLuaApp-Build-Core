@@ -49,9 +49,9 @@ class MainActivity : AppCompatActivity() {
     private fun createTerminal() {
 
         val session = TerminalSession(
-            "shell",
+            "gradle",
             File(getDefaultProjectDir(), "TestProject").path,
-            arrayOf(""),
+            arrayOf("help"),
             arrayOfNulls(0),
             500,
             TestTerminalSessionClient()
@@ -150,7 +150,6 @@ class MainActivity : AppCompatActivity() {
 
 
         private fun changeFontSize(increase: Boolean) {
-            System.out.println()
             terminalFontSize.changeFontSize(increase)
             viewBinding.terminalView.setTextSize(terminalFontSize.getFontSize())
         }
