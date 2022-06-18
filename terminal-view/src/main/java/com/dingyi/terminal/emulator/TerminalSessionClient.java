@@ -1,4 +1,4 @@
-package com.dingyi.terminal.support;
+package com.dingyi.terminal.emulator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

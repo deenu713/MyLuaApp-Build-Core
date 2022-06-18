@@ -274,7 +274,7 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
         }
         //dingyi modify: add VirtualProcessEnvironment support
         try {
-            Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessSystem", false, getClass().getClassLoader());
+            Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessService", false, getClass().getClassLoader());
             return new VirtualProcessEnvironment();
         } catch (ClassNotFoundException e) {
             //ignore
@@ -314,7 +314,7 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
         }
 
         try {
-            Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessSystem", false, getClass().getClassLoader());
+            Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessService", false, getClass().getClassLoader());
             return new VirtualProcessConsoleDetector();
         } catch (ClassNotFoundException e) {
             //ignore

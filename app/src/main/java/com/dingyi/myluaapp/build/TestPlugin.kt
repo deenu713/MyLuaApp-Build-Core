@@ -7,11 +7,13 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskAction
+import java.io.PipedInputStream
 
 class TestPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.logger.info("test plugin")
         target.task("sync") { task ->
+
 
             task.doLast {
                 target

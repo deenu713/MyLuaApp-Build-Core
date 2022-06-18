@@ -1,16 +1,17 @@
 package com.dingyi.myluaapp.build
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
-import com.dingyi.myluaapp.build.api.R
-import com.dingyi.terminal.support.TerminalSession
-import com.dingyi.terminal.support.TerminalSessionClient
-import com.dingyi.terminal.view.TerminalView
-import com.dingyi.terminal.view.TerminalViewClient
+import com.dingyi.myluaapp.build.api.databinding.MainBinding
+import com.dingyi.terminal.emulator.KeyHandler
+import com.dingyi.terminal.emulator.TerminalSession
+import com.dingyi.terminal.emulator.TextStyle
+import com.dingyi.terminal.shared.TerminalSessionClientBase
+import com.dingyi.terminal.shared.TerminalViewClientBase
 import java.io.File
-import java.lang.Exception
 import java.util.zip.ZipFile
 import kotlin.concurrent.thread
 
@@ -18,16 +19,22 @@ import kotlin.concurrent.thread
 class MainActivity : AppCompatActivity() {
 
 
-    private lateinit var terminalView: TerminalView
+    private lateinit var viewBinding: MainBinding
+
+
+    private lateinit var terminalFontSize: FontSize
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
 
-        setContentView(R.layout.main)
+        viewBinding = MainBinding.inflate(layoutInflater)
+        setContentView(viewBinding.root)
 
-        terminalView = findViewById(R.id.terminalView)
-        terminalView.setBackgroundColor(0xff000000.toInt())
+        terminalFontSize = FontSize(this.getDefaultFontSizes())
+
+        viewBinding.terminalView.setBackgroundColor(0xff000000.toInt())
 
 
         thread {
@@ -42,206 +49,20 @@ class MainActivity : AppCompatActivity() {
     private fun createTerminal() {
 
         val session = TerminalSession(
-            "gradle",
+            "shell",
             File(getDefaultProjectDir(), "TestProject").path,
-            arrayOf("help"),
+            arrayOf(""),
             arrayOfNulls(0),
             500,
-            object :
-                TerminalSessionClient {
-                override fun onTextChanged(changedSession: TerminalSession) {
-                    terminalView
-                        .onScreenUpdated()
-                }
-
-                override fun onTitleChanged(changedSession: TerminalSession) {
-                    terminalView
-                        .onScreenUpdated()
-                }
-
-                override fun onSessionFinished(finishedSession: TerminalSession) {
-
-                }
-
-                override fun onCopyTextToClipboard(
-                    session: TerminalSession,
-                    text: String?
-                ) {
-
-                }
-
-                override fun onPasteTextFromClipboard(session: TerminalSession?) {
-
-                }
-
-                override fun onBell(session: TerminalSession) {
-                    terminalView
-                        .onScreenUpdated()
-                }
-
-                override fun onColorsChanged(session: TerminalSession) {
-                    terminalView
-                        .onScreenUpdated()
-                }
-
-                override fun onTerminalCursorStateChange(state: Boolean) {
-                    terminalView
-                        .onScreenUpdated()
-                }
-
-                override fun setTerminalShellPid(
-                    session: TerminalSession,
-                    pid: Int
-                ) {
-
-                }
-
-                override fun getTerminalCursorStyle(): Int {
-                    return 0
-                }
-
-                override fun logError(tag: String?, message: String?) {
-
-                }
-
-                override fun logWarn(tag: String?, message: String?) {
-
-                }
-
-                override fun logInfo(tag: String?, message: String?) {
-
-                }
-
-                override fun logDebug(tag: String?, message: String?) {
-
-                }
-
-                override fun logVerbose(tag: String?, message: String?) {
-
-                }
-
-                override fun logStackTraceWithMessage(
-                    tag: String?,
-                    message: String?,
-                    e: Exception?
-                ) {
-
-                }
-
-                override fun logStackTrace(tag: String?, e: Exception?) {
-
-                }
-
-            }
+            TestTerminalSessionClient()
         )
 
 
+        viewBinding.terminalView.setTextSize(terminalFontSize.getFontSize())
 
-        terminalView.setTextSize(30)
-        terminalView.setTerminalViewClient(object :
-            TerminalViewClient {
-            override fun onScale(scale: Float): Float {
-                terminalView.updateSize()
-                return 0f
-            }
+        viewBinding.terminalView.setTerminalViewClient(TestTerminalViewClient())
 
-            override fun onSingleTapUp(e: MotionEvent) {
-               
-            }
-
-            override fun shouldBackButtonBeMappedToEscape(): Boolean {
-               return false
-            }
-
-            override fun shouldEnforceCharBasedInput(): Boolean {
-               return false
-            }
-
-            override fun shouldUseCtrlSpaceWorkaround(): Boolean {
-               return false
-            }
-
-            override fun isTerminalViewSelected(): Boolean {
-                return false
-            }
-
-            override fun copyModeChanged(copyMode: Boolean) {
-               
-            }
-
-            override fun onKeyDown(keyCode: Int, e: KeyEvent?, session: TerminalSession?): Boolean {
-                return false
-            }
-
-            override fun onKeyUp(keyCode: Int, e: KeyEvent?): Boolean {
-                return false
-            }
-
-            override fun onLongPress(event: MotionEvent?): Boolean {
-                return false
-            }
-
-            override fun readControlKey(): Boolean {
-                return false
-            }
-
-            override fun readAltKey(): Boolean {
-                return false
-            }
-
-            override fun readShiftKey(): Boolean {
-                return false
-            }
-
-            override fun readFnKey(): Boolean {
-                return false
-            }
-
-            override fun onCodePoint(
-                codePoint: Int,
-                ctrlDown: Boolean,
-                session: TerminalSession?
-            ): Boolean {
-                return false
-            }
-
-            override fun onEmulatorSet() {
-                
-            }
-
-            override fun logError(tag: String?, message: String?) {
-               
-            }
-
-            override fun logWarn(tag: String?, message: String?) {
-               
-            }
-
-            override fun logInfo(tag: String?, message: String?) {
-               
-            }
-
-            override fun logDebug(tag: String?, message: String?) {
-               
-            }
-
-            override fun logVerbose(tag: String?, message: String?) {
-               
-            }
-
-            override fun logStackTraceWithMessage(tag: String?, message: String?, e: Exception?) {
-               
-            }
-
-            override fun logStackTrace(tag: String?, e: Exception?) {
-               
-            }
-
-        })
-
-
-        terminalView.attachSession(session)
-        terminalView.updateSize()
+        viewBinding.terminalView.attachSession(session)
 
 
         /*  terminalView
@@ -280,5 +101,108 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    inner class TestTerminalViewClient : TerminalViewClientBase() {
+
+        private val LOG_TAG = "TestTerminalViewClient"
+
+        private var mTerminalCursorBlinkerStateAlreadySet = false
+
+        override fun onEmulatorSet() {
+            if (!mTerminalCursorBlinkerStateAlreadySet) {
+                // Start terminal cursor blinking if enabled
+                // We need to wait for the first session to be attached that's set in
+                // TermuxActivity.onServiceConnected() and then the multiple calls to TerminalView.updateSize()
+                // where the final one eventually sets the mEmulator when width/height is not 0. Otherwise
+                // blinker will not start again if TermuxActivity is started again after exiting it with
+                // double back press. Check TerminalView.setTerminalCursorBlinkerState().
+                setTerminalCursorBlinkerState(true);
+                mTerminalCursorBlinkerStateAlreadySet = true;
+            }
+        }
+
+        private fun setTerminalCursorBlinkerState(start: Boolean) {
+            if (start) {
+                // If set/update the cursor blinking rate is successful, then enable cursor blinker
+                if (viewBinding.terminalView.setTerminalCursorBlinkerRate(500)) {
+                    viewBinding.terminalView
+                        .setTerminalCursorBlinkerState(true, true)
+                } else {
+                    logError(LOG_TAG, "Failed to start cursor blinker")
+                }
+            } else {
+                // Disable cursor blinker
+                viewBinding.terminalView.setTerminalCursorBlinkerState(false, true)
+            }
+        }
+
+        override fun onScale(scale: Float): Float {
+            if (scale < 0.9f || scale > 1.1f) {
+                val increase = scale > 1f
+                changeFontSize(increase)
+                return 1.0f
+            }
+            return scale
+        }
+
+        override fun onSingleTapUp(e: MotionEvent?) {
+
+        }
+
+
+        private fun changeFontSize(increase: Boolean) {
+            System.out.println()
+            terminalFontSize.changeFontSize(increase)
+            viewBinding.terminalView.setTextSize(terminalFontSize.getFontSize())
+        }
+
+    }
+
+    inner class TestTerminalSessionClient : TerminalSessionClientBase() {
+        override fun onTextChanged(changedSession: TerminalSession) {
+            viewBinding.terminalView.onScreenUpdated()
+        }
+
+        override fun onCopyTextToClipboard(session: TerminalSession, text: String?) {
+
+            val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            clipboardManager.setPrimaryClip(ClipData.newPlainText("text", text))
+        }
+
+        override fun onPasteTextFromClipboard(session: TerminalSession?) {
+            val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val text = clipboardManager.primaryClip
+                ?.getItemAt(0)
+                ?.coerceToText(this@MainActivity)
+                .toString()
+
+            session?.write(text)
+
+        }
+
+
+        override fun onSessionFinished(finishedSession: TerminalSession) {
+            viewBinding.terminalView.setTerminalCursorBlinkerState(false, true)
+        }
+
+        override fun onColorsChanged(session: TerminalSession) {
+            /* val colors = session.emulator.mColors
+             viewBinding
+                 .terminalView
+                 .setBackgroundColor(colors.mCurrentColors[TextStyle.COLOR_INDEX_BACKGROUND])
+       */
+        }
+
+
+        override fun onTerminalCursorStateChange(state: Boolean) {
+            viewBinding
+                .terminalView
+                .setTerminalCursorBlinkerState(state, false)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewBinding.terminalView.setTerminalCursorBlinkerState(false, true)
+    }
 
 }

@@ -1,11 +1,11 @@
-package com.dingyi.terminal.support;
+package com.dingyi.terminal.emulator;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 
 import com.dingyi.terminal.virtualprocess.VirtualProcess;
-import com.dingyi.terminal.virtualprocess.VirtualProcessSystem;
+import com.dingyi.terminal.virtualprocess.VirtualProcessService;
 import com.dingyi.terminal.virtualprocess.VirtualTerminalEnvironment;
 
 import java.io.IOException;
@@ -137,8 +137,9 @@ public final class TerminalSession extends TerminalOutput {
         //dingyi modify: use virtual process
 
 
-        mProcess = VirtualProcessSystem
+        mProcess = VirtualProcessService
                 .createProcess(mShellPath, mCwd, mArgs, mEnv);
+
         mShellPid = mProcess.getProcessId();
         mClient.setTerminalShellPid(this, mShellPid);
 
@@ -148,11 +149,15 @@ public final class TerminalSession extends TerminalOutput {
             e.printStackTrace();
             return;
         }
+
         mProcess.setProcessEnvironment(terminalChannel.getProcessEnvironment());
+
         mProcess.getProcessEnvironment()
                 .getTermiosSupport()
                 .setSize(columns, rows);
-        mProcess.start();
+
+
+
         new Thread("TermSessionInputReader[pid=" + mShellPid + "]") {
             @Override
             public void run() {
@@ -200,6 +205,7 @@ public final class TerminalSession extends TerminalOutput {
         }.start();
 
 
+        mProcess.start();
     }
 
     /** Write data to the shell process. */
@@ -263,10 +269,10 @@ public final class TerminalSession extends TerminalOutput {
     /** Finish this terminal session by sending SIGKILL to the shell. */
     public void finishIfRunning() {
         if (isRunning()) {
-            VirtualProcessSystem.killProcess(mShellPid);
             try {
+                VirtualProcessService.killProcess(mShellPid);
                 terminalChannel.destroy();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             /*Os.kill(mShellPid, OsConstants.SIGKILL);*/
@@ -345,7 +351,8 @@ public final class TerminalSession extends TerminalOutput {
                 return outputPath;
             }*/
             //dingyi modify: replace to use virtual process
-            return VirtualProcessSystem.getProcess(mShellPid).getProcessEnvironment()
+            return VirtualProcessService.getProcess(mShellPid)
+                    .getProcessEnvironment()
                     .getCurrentWorkDir();
         } catch (SecurityException e) {
             Logger.logStackTraceWithMessage(mClient, LOG_TAG, "Error getting current directory", e);

@@ -8,6 +8,7 @@ import org.gradle.api.logging.configuration.ShowStacktrace
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.launcher.TestGradleLauncher
 import java.io.File
+import java.io.PipedInputStream
 
 class GradleSupport(processChannel: VirtualProcessEnvironment) : VirtualExecutable(processChannel) {
     override fun start(args: Array<out String>): Int {
@@ -28,7 +29,7 @@ class GradleSupport(processChannel: VirtualProcessEnvironment) : VirtualExecutab
                 it.isBuildCacheEnabled = true
                 it.isBuildCacheDebugLogging = true
                 it.projectDir = projectPath
-                it.currentDir = File(mProcessEnvironment.currentWorkDir)
+                it.currentDir = projectPath
                 it.gradleUserHomeDir = projectPath.resolve(".gradle_home")
                 it.projectCacheDir = projectPath.resolve(".gradle")
                 it.isRefreshDependencies = true

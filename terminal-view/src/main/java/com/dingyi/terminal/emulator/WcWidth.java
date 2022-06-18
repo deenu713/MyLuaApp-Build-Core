@@ -1,4 +1,4 @@
-package com.dingyi.terminal.support;
+package com.dingyi.terminal.emulator;
 
 /**
  * Implementation of wcwidth(3) for Unicode 9.

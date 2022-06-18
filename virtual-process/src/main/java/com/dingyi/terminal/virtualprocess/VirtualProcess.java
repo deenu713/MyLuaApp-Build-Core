@@ -92,7 +92,7 @@ public class VirtualProcess {
     }
 
     public void waitFor() throws InterruptedException {
-        while (binaryExecutor == null) {
+        while (binaryExecutor == null && !isStart) {
             Thread.sleep(1000);
         }
         binaryExecutor.latch.await();
@@ -104,12 +104,10 @@ public class VirtualProcess {
         }
     }
 
-    public void killProcess() {
-        try {
-            destroy();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void killProcess() throws Exception {
+
+        destroy();
+
     }
 
     public void setProcessEnvironment(VirtualProcessEnvironment processChannel) {
@@ -131,9 +129,9 @@ public class VirtualProcess {
                 .setCurrentWorkDir(cwd);
         processChannel.putEnvironments(env);
         processChannel.setArguments(args);
-        VirtualExecutable binary = VirtualExecutableSystem.getInstance().createBinary(cmd, processChannel);
+        VirtualExecutable binary = VirtualExecutableService.getInstance().createExecutable(cmd, processChannel);
         if (binary == null) {
-            throw new RuntimeException("Can't find binary");
+            throw new RuntimeException("Can't find Executable for " + cmd);
         }
         binaryExecutor = new VirtualExecutableExecutor(
                 binary, this

@@ -9,9 +9,8 @@ public abstract class VirtualExecutable {
 
     public VirtualExecutable(VirtualProcessEnvironment processChannel) {
         mProcessEnvironment = processChannel;
+
     }
-
-
 
     protected abstract int start(String[] args) throws Exception;
 

@@ -5,7 +5,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import com.dingyi.terminal.support.TerminalSession;
+import com.dingyi.terminal.emulator.TerminalSession;
 
 
 /**

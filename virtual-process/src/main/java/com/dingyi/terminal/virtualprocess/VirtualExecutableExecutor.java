@@ -20,7 +20,7 @@ class VirtualExecutableExecutor implements Runnable {
     public void run() {
         int ret;
 
-        VirtualProcessSystem
+        VirtualProcessService
                 .getInstance()
                 .putProcessWithThread(Thread.currentThread(), mProcess.getProcessId());
 
@@ -47,7 +47,7 @@ class VirtualExecutableExecutor implements Runnable {
             e.printStackTrace();
         }
 
-        VirtualProcessSystem
+        VirtualProcessService
                 .getInstance()
                 .deleteProcessWithThread(Thread.currentThread());
 

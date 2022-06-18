@@ -57,12 +57,13 @@ android {
     }
     packagingOptions {
         resources.excludes.addAll(arrayOf("xsd/*", "license/*","**.dylib","**.dll"))
-        resources.pickFirsts.addAll(arrayOf("kotlin/**","META-INF/**"))
+       // resources.pickFirsts.addAll(arrayOf("kotlin/**","META-INF/**"))
         if (isBuildForAndroid()) {
             resources
                 .excludes
                 .addAll(arrayOf("org/fusesource/**"))
         }
+        resources.merges.add("META-INF/**")
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

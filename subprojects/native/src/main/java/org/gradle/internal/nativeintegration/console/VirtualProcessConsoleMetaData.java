@@ -1,14 +1,14 @@
 package org.gradle.internal.nativeintegration.console;
 
 import com.dingyi.terminal.virtualprocess.VirtualProcess;
-import com.dingyi.terminal.virtualprocess.VirtualProcessSystem;
+import com.dingyi.terminal.virtualprocess.VirtualProcessService;
 
 public class VirtualProcessConsoleMetaData implements  ConsoleMetaData {
 
     private final VirtualProcess virtualProcess;
 
     public VirtualProcessConsoleMetaData() {
-        this.virtualProcess = VirtualProcessSystem.currentProcess();
+        this.virtualProcess = VirtualProcessService.currentProcess();
     }
 
     @Override
