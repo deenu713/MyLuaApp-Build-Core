@@ -34,9 +34,7 @@ public class SimpleTermiosSupport {
 
         processEnvironment
                 .processOutputStream = new ProcessTermiosOutputStream(processEnvironment.processOutputStream);
-        terminalEnvironment
-                .terminalOutputStream = new TerminalTermiosOutputStream(terminalEnvironment.terminalOutputStream, terminalEnvironment
-                .terminalInputStream.blockingQueue);
+
     }
 
 
@@ -68,76 +66,11 @@ public class SimpleTermiosSupport {
     }
 
 
-    //TODO:Termios Support
-    static class TerminalTermiosOutputStream extends FilterOutputStream {
-
-        private final ByteQueue writeQueue;
-        private final BlockingQueue<Integer> blockingQueue;
-
-        private final SafeQueueWriteThread queueReadThread;
-        private final byte[] writeBuffer = new byte[1];
-
-        public TerminalTermiosOutputStream(OutputStream out, ByteQueue queue) {
-            super(out);
-            this.writeQueue = queue;
-            this.blockingQueue = new LinkedBlockingQueue<>(1024);
-            queueReadThread = new SafeQueueWriteThread(blockingQueue, writeQueue);
-            queueReadThread.start();
-        }
-
-        @Override
-        public void write(int b) throws IOException {
-            writeBuffer[0] = (byte) (b);
-            write(writeBuffer);
-        }
-
-        @Override
-        public void write(byte[] b, int off, int len) throws IOException {
-            for (int i = off; i < off + len; i++) {
-                blockingQueue.offer(b[i] & 0xFF);
-            }
-            out.write(b, off, len);
-        }
-
-
-
-        @Override
-        public void close() throws IOException {
-            super.close();
-            queueReadThread.interrupt();
-        }
-
-        static class SafeQueueWriteThread extends Thread {
-
-            private final ByteQueue writerQueue;
-            private final BlockingQueue<Integer> readQueue;
-
-            SafeQueueWriteThread(BlockingQueue<Integer> queue, ByteQueue readQueue) {
-                this.readQueue = queue;
-                this.writerQueue = readQueue;
-            }
-
-            @Override
-            public void run() {
-                byte[] buffer = new byte[1];
-                while (isAlive() || !isInterrupted()) {
-                    try {
-                        int data = readQueue.take();
-                        buffer[0] = (byte) (data & 0xFF);
-                        writerQueue.write(buffer, 0, 1);
-                    } catch (Exception e) {
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
     class ProcessTermiosOutputStream extends FilterOutputStream {
 
         public ProcessTermiosOutputStream(OutputStream out) {
             super(out);
-            buffer = new ByteArrayBuffer(8);
+            buffer = new ByteArrayBuffer(1024);
         }
 
         private ByteArrayBuffer buffer;
@@ -240,7 +173,7 @@ public class SimpleTermiosSupport {
         public static final int VDISCARD = 13;
         public static final int VWERASE = 14;
         public static final int VLNEXT = 15;
-        public static final int VEOL2 = 16;*/
+        -public static final int VEOL2 = 16;*//*
 
 
         /* c_iflag bits */

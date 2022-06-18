@@ -62,13 +62,3 @@ class FontSize(defaultSizes: IntArray) {
 
 }
 
-fun Activity.areDisableSoftKeyboardFlagsSet(): Boolean {
-    return if (window == null) false else
-        window.attributes.flags and WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM !== 0
-}
-
-fun Activity.showSoftKeyboard(view: View) {
-    view.requestFocus()
-    val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    inputMethodManager.showSoftInput(view, 0)
-}

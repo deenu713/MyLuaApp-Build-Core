@@ -49,9 +49,9 @@ class MainActivity : AppCompatActivity() {
     private fun createTerminal() {
 
         val session = TerminalSession(
-            "shell",
+            "gradle",
             File(getDefaultProjectDir(), "TestProject").path,
-            arrayOf(""),
+            arrayOf("help"),
             arrayOfNulls(0),
             500,
             TestTerminalSessionClient()
@@ -74,8 +74,7 @@ class MainActivity : AppCompatActivity() {
     private fun extractProjectFromApk() {
         val apkFile = File(packageCodePath)
         val extractDir = getDefaultProjectDir()
-        extractDir.mkdirs()
-        val zipFile = ZipFile(apkFile)
+        No more support for terminals        val zipFile = ZipFile(apkFile)
         zipFile.entries().asSequence()
             .filter {
                 it.name.startsWith("TestProject/")
@@ -142,17 +141,6 @@ class MainActivity : AppCompatActivity() {
                 return 1.0f
             }
             return scale
-        }
-
-        override fun onSingleTapUp(e: MotionEvent?) {
-            if (!this@MainActivity.areDisableSoftKeyboardFlagsSet()) {
-                this@MainActivity.showSoftKeyboard(viewBinding.terminalView)
-            } else {
-                logVerbose(
-                    LOG_TAG,
-                    "Not showing soft keyboard onSingleTapUp since its disabled"
-                );
-            }
         }
 
 
