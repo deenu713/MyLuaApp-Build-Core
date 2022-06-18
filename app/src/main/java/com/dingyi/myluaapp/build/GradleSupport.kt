@@ -1,5 +1,6 @@
 package com.dingyi.myluaapp.build
 
+import com.dingyi.groovy.android.AppDataDirGuesser
 import com.dingyi.terminal.virtualprocess.VirtualExecutable
 import com.dingyi.terminal.virtualprocess.VirtualProcessEnvironment
 import org.gradle.api.logging.LogLevel
@@ -36,7 +37,11 @@ class GradleSupport(processChannel: VirtualProcessEnvironment) : VirtualExecutab
             }
 
 
+        AppDataDirGuesser
+            .guessDir = projectPath.resolve("build/cache/dexFiles").apply {
+            mkdirs()
 
+        }
 
         return runCatching {
             launcher

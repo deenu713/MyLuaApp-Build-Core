@@ -16,25 +16,19 @@
 
 package org.gradle.internal.classloader;
 
-import com.android.dx.AppDataDirGuesser;
-import com.android.tools.r8.CompilationFailedException;
-import com.android.tools.r8.D8;
-import com.android.tools.r8.D8Command;
-import com.android.tools.r8.OutputMode;
-import com.android.tools.r8.origin.Origin;
-import com.dingyi.groovy.android.DexClassLoader;
+
+import com.dingyi.groovy.android.compiler.DexCompiler;
 
 import org.gradle.internal.Cast;
 import org.gradle.internal.Factory;
 import org.gradle.internal.classpath.ClassPath;
 import org.gradle.internal.os.OperatingSystem;
-import org.jetbrains.annotations.Nullable;
+
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import javax.annotation.Nullable;
+
 
 //dingyi modify: support load class file in android
 public class VisitableURLClassLoader extends URLClassLoader implements ClassLoaderHierarchy {
@@ -99,27 +96,13 @@ public class VisitableURLClassLoader extends URLClassLoader implements ClassLoad
 
 
     ClassLoader loadDexFromFile(ClassLoader classLoader, URL[] urls) {
-        String randomDexFileName = "Generated_" + UUID.randomUUID() + ".jar";
-
-
-        File outputFile = new File(new AppDataDirGuesser().guess(), randomDexFileName);
-
-        D8Command.Builder builder = D8Command.builder()
-                .setOutput(outputFile.toPath(), OutputMode.DexIndexed);
-
+        List<File> classFiles = new ArrayList<>();
         for (URL url : urls) {
-            builder.addProgramFiles(new File(url.getPath()).toPath());
+            classFiles.add(new File(url.getFile()));
         }
 
-        try {
-            D8.run(builder.build());
-        } catch (CompilationFailedException e) {
-            throw new RuntimeException(e);
-        }
-
-        return new DexClassLoader(
-                outputFile.getAbsolutePath(), null, null, classLoader);
-
+        return DexCompiler.INSTANCE
+                .compileAndLoadClassFiles(classFiles, classLoader);
     }
 
     private void loadDexForClassPath(URL[] classPath) {

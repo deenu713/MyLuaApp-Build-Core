@@ -10,7 +10,7 @@ java {
 dependencies {
     implementation(project(":base-services"))
 
-    api("io.github.dingyi222666:groovy-android:1.0.5-20220614.114938-5")
+    api("io.github.dingyi222666:groovy-android:1.0.7-beta1")
     implementation("com.android.tools:r8:3.3.28")
     api("org.codehaus.groovy:groovy:3.0.7:grooid")
     implementation("com.google.guava:guava:30.1.1-jre")

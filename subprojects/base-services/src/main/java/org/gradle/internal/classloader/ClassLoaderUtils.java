@@ -16,13 +16,8 @@
 package org.gradle.internal.classloader;
 
 
-import com.android.dx.AppDataDirGuesser;
-import com.android.tools.r8.CompilationFailedException;
-import com.android.tools.r8.D8;
-import com.android.tools.r8.D8Command;
-import com.android.tools.r8.OutputMode;
-import com.android.tools.r8.origin.Origin;
-import com.dingyi.groovy.android.DexClassLoader;
+;
+import com.dingyi.groovy.android.compiler.DexCompiler;
 
 import org.codehaus.groovy.reflection.GroovyClassValue;
 import org.gradle.api.JavaVersion;
@@ -42,6 +37,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collections;
 import java.util.UUID;
 
 
@@ -215,25 +211,9 @@ public abstract class ClassLoaderUtils {
         }
 
 
-         ClassLoader loadDexInFile(ClassLoader classLoader, byte[] classBytes) throws CompilationFailedException {
-            String randomDexFileName = "Generated_" + UUID.randomUUID() + ".jar";
-
-
-            File outputFile = new File(new AppDataDirGuesser().guess(), randomDexFileName);
-
-            D8Command builder = D8Command.builder()
-                    .setOutput(outputFile.toPath(), OutputMode.DexIndexed)
-                    .addClassProgramData(classBytes, Origin.unknown())
-                    .build();
-
-            D8.run(builder);
-
-
-
-
-            return new DexClassLoader(
-                    outputFile.getAbsolutePath(), null, null, classLoader);
-
+        ClassLoader loadDex(ClassLoader classLoader, byte[] classBytes) {
+            return DexCompiler
+                    .INSTANCE.compileAndLoadClassByteCode(Collections.singletonList(classBytes), classLoader);
         }
 
         @Override
@@ -242,7 +222,7 @@ public abstract class ClassLoaderUtils {
             ClassLoader dexClassLoader;
 
             try {
-                dexClassLoader = loadDexInFile(new MultiParentClassLoader(
+                dexClassLoader = loadDex(new MultiParentClassLoader(
                         classLoader,
                         cachingClassLoader
                 ), classBytes);

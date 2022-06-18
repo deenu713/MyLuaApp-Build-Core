@@ -16,7 +16,8 @@
 
 package org.gradle.groovy.scripts.internal;
 
-import groovy.lang.DynamicGrooidDexClassLoader;
+
+import groovy.lang.DynamicGrooidClassLoader;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyCodeSource;
 import groovy.lang.GroovyResourceLoader;
@@ -123,7 +124,7 @@ public class DefaultScriptCompilationHandler implements ScriptCompilationHandler
 
         //dingyi modify: use dynamic classloader
         if (OperatingSystem.current().isAndroid()) {
-            groovyClassLoader = new DynamicGrooidDexClassLoader(getClass().getClassLoader(), configuration, false) {
+            groovyClassLoader = new DynamicGrooidClassLoader(getClass().getClassLoader(), configuration, false) {
                 @Override
                 protected CompilationUnit createCompilationUnit(CompilerConfiguration compilerConfiguration,
                                                                 CodeSource codeSource) {
