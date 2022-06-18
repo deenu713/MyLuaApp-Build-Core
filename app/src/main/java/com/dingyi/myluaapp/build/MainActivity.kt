@@ -49,9 +49,9 @@ class MainActivity : AppCompatActivity() {
     private fun createTerminal() {
 
         val session = TerminalSession(
-            "gradle",
+            "shell",
             File(getDefaultProjectDir(), "TestProject").path,
-            arrayOf("help"),
+            arrayOf(""),
             arrayOfNulls(0),
             500,
             TestTerminalSessionClient()
@@ -74,7 +74,8 @@ class MainActivity : AppCompatActivity() {
     private fun extractProjectFromApk() {
         val apkFile = File(packageCodePath)
         val extractDir = getDefaultProjectDir()
-        No more support for terminals        val zipFile = ZipFile(apkFile)
+        extractDir.mkdirs()
+        val zipFile = ZipFile(apkFile)
         zipFile.entries().asSequence()
             .filter {
                 it.name.startsWith("TestProject/")
@@ -143,8 +144,13 @@ class MainActivity : AppCompatActivity() {
             return scale
         }
 
+        override fun onSingleTapUp(e: MotionEvent?) {
+
+        }
+
 
         private fun changeFontSize(increase: Boolean) {
+            System.out.println()
             terminalFontSize.changeFontSize(increase)
             viewBinding.terminalView.setTextSize(terminalFontSize.getFontSize())
         }
