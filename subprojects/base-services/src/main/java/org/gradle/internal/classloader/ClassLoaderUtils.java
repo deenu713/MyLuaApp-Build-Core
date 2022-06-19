@@ -204,38 +204,17 @@ public abstract class ClassLoaderUtils {
     private static class DexClassDefiner implements ClassDefiner {
 
 
-        private CachingClassLoader cachingClassLoader;
+        private CachingDexClassLoader dexClassLoader;
 
         DexClassDefiner() {
-            cachingClassLoader = new CachingClassLoader(ClassLoader.getSystemClassLoader());
+            dexClassLoader = new CachingDexClassLoader();
         }
 
-
-        ClassLoader loadDex(ClassLoader classLoader, byte[] classBytes) {
-            return DexCompiler
-                    .INSTANCE.compileAndLoadClassByteCode(Collections.singletonList(classBytes), classLoader);
-        }
 
         @Override
         public <T> Class<T> defineClass(ClassLoader classLoader, String className, byte[] classBytes) {
-
-            ClassLoader dexClassLoader;
-
             try {
-                dexClassLoader = loadDex(new MultiParentClassLoader(
-                        classLoader,
-                        cachingClassLoader
-                ), classBytes);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            //wrapper dexclassloder
-            dexClassLoader = new CachingClassLoader(dexClassLoader);
-
-            try {
-                Class<T> targetClass = Cast.uncheckedCast(dexClassLoader.loadClass(className));
-                cachingClassLoader.addCacheClass(className, targetClass);
+                Class<T> targetClass = Cast.uncheckedCast(dexClassLoader.defineClass(className, classBytes, classLoader));
                 return Cast.uncheckedCast(targetClass);
             } catch (ClassNotFoundException e) {
                 throw UncheckedException.throwAsUncheckedException(e);

@@ -272,14 +272,17 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
                 LOGGER.debug("Native-platform process integration is not available. Continuing with fallback.");
             }
         }
-        //dingyi modify: add VirtualProcessEnvironment support
-        try {
-            Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessService", false, getClass().getClassLoader());
-            return new VirtualProcessEnvironment();
-        } catch (ClassNotFoundException e) {
-            //ignore
-        }
+
+
         if (operatingSystem.isAndroid()) {
+            //dingyi modify: add VirtualProcessEnvironment support
+
+            try {
+                Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessService", false, getClass().getClassLoader());
+                return new VirtualProcessEnvironment();
+            } catch (ClassNotFoundException e) {
+                //ignore
+            }
             return new AndroidProcessEnvironment();
         }
 
@@ -311,14 +314,15 @@ public class NativeServices extends DefaultServiceRegistry implements ServiceReg
                 // Thrown when jna cannot initialize the native stuff
                 LOGGER.debug("Unable to load native library. Continuing with fallback. Failure: {}", format(e));
             }
+
+            try {
+                Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessService", false, getClass().getClassLoader());
+                return new VirtualProcessConsoleDetector();
+            } catch (ClassNotFoundException e) {
+                //ignore
+            }
         }
 
-        try {
-            Class.forName("com.dingyi.terminal.virtualprocess.VirtualProcessService", false, getClass().getClassLoader());
-            return new VirtualProcessConsoleDetector();
-        } catch (ClassNotFoundException e) {
-            //ignore
-        }
 
         return new FallbackConsoleDetector();
     }

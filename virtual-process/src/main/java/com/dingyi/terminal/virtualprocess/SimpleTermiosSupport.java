@@ -32,9 +32,21 @@ public class SimpleTermiosSupport {
 
     void doWrapper() {
 
-        processEnvironment
-                .processOutputStream = new ProcessTermiosOutputStream(processEnvironment.processOutputStream);
+        if (processEnvironment.processErrorStream == processEnvironment.processOutputStream || processEnvironment.processErrorStream == System.err) {
 
+
+            processEnvironment
+                    .processErrorStream =new ProcessTermiosOutputStream(processEnvironment.processOutputStream);
+
+            processEnvironment
+                    .processOutputStream =  processEnvironment.processErrorStream;
+
+
+            return;
+        }
+
+        processEnvironment
+                .processErrorStream = new ProcessTermiosOutputStream(processEnvironment.processErrorStream);
     }
 
 
@@ -98,8 +110,10 @@ public class SimpleTermiosSupport {
                 } else {
                     buffer.append(b);
                 }
+                needFlush = true;
             } else {
                 buffer.append(b);
+                needFlush = true;
             }
 
             if (needFlush || buffer.isFull()) {

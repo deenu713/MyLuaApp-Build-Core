@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         val session = TerminalSession(
             "gradle",
             File(getDefaultProjectDir(), "TestProject").path,
-            arrayOf("help"),
+            arrayOf(":app:assemble"),
             arrayOfNulls(0),
             500,
             TestTerminalSessionClient()

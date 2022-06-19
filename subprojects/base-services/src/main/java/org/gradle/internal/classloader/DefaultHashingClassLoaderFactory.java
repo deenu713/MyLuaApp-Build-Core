@@ -16,15 +16,21 @@
 package org.gradle.internal.classloader;
 
 import org.gradle.internal.classpath.ClassPath;
+import org.gradle.internal.classpath.DefaultClassPath;
 import org.gradle.internal.hash.HashCode;
 import org.gradle.internal.hash.Hasher;
 import org.gradle.internal.hash.Hashing;
 
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+
+import dalvik.system.BaseDexClassLoader;
+import dalvik.system.DexClassLoader;
 
 public class DefaultHashingClassLoaderFactory extends DefaultClassLoaderFactory implements HashingClassLoaderFactory {
     private final ClasspathHasher classpathHasher;
@@ -63,6 +69,46 @@ public class DefaultHashingClassLoaderFactory extends DefaultClassLoaderFactory 
         if (classLoader instanceof ImplementationHashAware) {
             ImplementationHashAware loader = (ImplementationHashAware) classLoader;
             return loader.getImplementationHash();
+        }
+        if (classLoader instanceof DexClassLoader) {
+            try {
+                Field pathListField = BaseDexClassLoader.class.getDeclaredField("pathList");
+                pathListField.setAccessible(true);
+
+                Object pathList = pathListField.get(classLoader);
+
+                Field dexElementsField = pathList.getClass().getDeclaredField("dexElements");
+                dexElementsField.setAccessible(true);
+
+                Object[] dexElements = (Object[]) dexElementsField.get(pathList);
+
+                String[] dexPaths = new String[dexElements.length];
+
+                for (int i = 0; i < dexElements.length; i++) {
+
+                    Field dexFilesFiled = dexElements[i].getClass().getDeclaredField("dexFile");
+                    dexFilesFiled.setAccessible(true);
+
+                    Object dexFile = dexFilesFiled.get(dexElements[i]);
+
+                    Field dexPathField = dexFile.getClass().getDeclaredField("mFileName");
+                    dexPathField.setAccessible(true);
+
+                    dexPaths[i] = (String) dexPathField.get(dexFile);
+                }
+
+                return classpathHasher.hash(
+                        DefaultClassPath.of(
+                                Arrays.stream(dexPaths)
+                                        .map(File::new)
+                                        .toArray(File[]::new)
+                        )
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
         return hashCodes.get(classLoader);
     }

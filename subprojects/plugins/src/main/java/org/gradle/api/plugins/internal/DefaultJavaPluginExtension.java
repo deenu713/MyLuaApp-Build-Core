@@ -35,6 +35,7 @@ import org.gradle.api.plugins.FeatureSpec;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.JavaResolutionConsistency;
 import org.gradle.api.plugins.jvm.internal.JvmPluginServices;
+import org.gradle.api.reporting.ReportingExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskContainer;
@@ -44,7 +45,6 @@ import org.gradle.internal.jvm.DefaultModularitySpec;
 import org.gradle.jvm.toolchain.JavaToolchainSpec;
 import org.gradle.jvm.toolchain.internal.DefaultToolchainSpec;
 import org.gradle.jvm.toolchain.internal.ToolchainSpecInternal;
-
 
 import javax.inject.Inject;
 import java.util.regex.Pattern;
@@ -93,7 +93,6 @@ public class DefaultJavaPluginExtension implements JavaPluginExtension {
 
     private void configureDefaults() {
         docsDir.convention(project.getLayout().getBuildDirectory().dir("docs"));
-        testResultsDir.convention(project.getLayout().getBuildDirectory().dir("test-results"));
         }
 
     @Override

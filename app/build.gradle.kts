@@ -56,12 +56,12 @@ android {
         jvmTarget = "11"
     }
     packagingOptions {
-        resources.excludes.addAll(arrayOf("xsd/*", "license/*","**.dylib","**.dll"))
+        resources.excludes.addAll(arrayOf("xsd/*", "license/*"))
        // resources.pickFirsts.addAll(arrayOf("kotlin/**","META-INF/**"))
         if (isBuildForAndroid()) {
             resources
                 .excludes
-                .addAll(arrayOf("org/fusesource/**"))
+                .addAll(arrayOf("org/fusesource/**", "**.dylib", "**.dll"))
         }
         resources.merges.add("META-INF/**")
     }
@@ -103,7 +103,7 @@ dependencies {
     implementation(project(":base-services"))
 
     implementation(project(":terminal-view"))
-    implementation ("net.rubygrapefruit:file-events-linux-aarch64:0.22-milestone-23")
+    runtimeOnly ("net.rubygrapefruit:file-events-linux-aarch64:0.22-milestone-23")
 
 /*implementation("io.github.dingyi222666:groovy-android:1.0.4")*/
 
