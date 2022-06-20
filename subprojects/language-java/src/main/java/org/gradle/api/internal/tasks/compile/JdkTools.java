@@ -27,6 +27,7 @@ import org.gradle.internal.classloader.VisitableURLClassLoader;
 import org.gradle.internal.classpath.ClassPath;
 import org.gradle.internal.classpath.DefaultClassPath;
 import org.gradle.internal.jvm.Jvm;
+import org.gradle.internal.os.OperatingSystem;
 import org.gradle.internal.reflect.DirectInstantiator;
 
 import javax.lang.model.SourceVersion;
@@ -91,8 +92,8 @@ public class JdkTools {
         FilteringClassLoader.Spec filterSpec = new FilteringClassLoader.Spec();
         filterSpec.allowPackage("com.sun.tools");
         filterSpec.allowPackage("com.sun.source");
-
-        return classLoaderFactory.createFilteringClassLoader(getSystemClassLoader(), filterSpec);
+        //dingyi modify: Do not use the system's class loader when running on android
+        return classLoaderFactory.createFilteringClassLoader(OperatingSystem.current().isAndroid() ? getClass().getClassLoader() : getSystemClassLoader(), filterSpec);
     }
 
     public JavaCompiler getSystemJavaCompiler() {

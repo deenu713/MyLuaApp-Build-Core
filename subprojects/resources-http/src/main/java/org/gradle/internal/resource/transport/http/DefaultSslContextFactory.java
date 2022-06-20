@@ -22,6 +22,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import org.gradle.internal.Factory;
 import org.gradle.internal.SystemProperties;
+import org.gradle.internal.os.OperatingSystem;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -148,6 +149,12 @@ public class DefaultSslContextFactory implements SslContextFactory {
                         trustStore.load(instream, trustStorePassword);
                     }
                     tmFactory.init(trustStore);
+                } else if (OperatingSystem.current().isAndroid()) {
+
+                    tmFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+
+                    tmFactory.init((KeyStore) null);
+
                 } else {
                     trustStoreFile = trustStoreFile(props);
                     tmFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
