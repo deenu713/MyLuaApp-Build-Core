@@ -16,15 +16,25 @@
 
 package org.gradle.internal.resource.transport.http;
 
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolException;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.protocol.HttpContext;
 
 import java.net.URI;
+
+import cz.msebera.android.httpclient.HttpEntityEnclosingRequest;
+import cz.msebera.android.httpclient.HttpRequest;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.ProtocolException;
+import cz.msebera.android.httpclient.client.methods.HttpDelete;
+import cz.msebera.android.httpclient.client.methods.HttpEntityEnclosingRequestBase;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.client.methods.HttpHead;
+import cz.msebera.android.httpclient.client.methods.HttpOptions;
+import cz.msebera.android.httpclient.client.methods.HttpPatch;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.client.methods.HttpPut;
+import cz.msebera.android.httpclient.client.methods.HttpTrace;
+import cz.msebera.android.httpclient.client.methods.HttpUriRequest;
+import cz.msebera.android.httpclient.impl.client.DefaultRedirectStrategy;
+import cz.msebera.android.httpclient.protocol.HttpContext;
 
 /**
  * A class which makes httpclient follow redirects for all http methods.

@@ -21,9 +21,11 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
+import java.lang.Thread.sleep
 import java.net.JarURLConnection
 import java.net.URL
 import java.net.URLClassLoader
+import kotlin.concurrent.thread
 
 
 class GradleTest {
@@ -59,7 +61,7 @@ class GradleTest {
 
         path.copyRecursively(File(localResourcePath.toURI()), true)
         File("").canonicalFile.resolve("src/main/assets")
-            .copyRecursively(File(localResourcePath.toURI()), true)
+            .copyRecursively(File("").canonicalFile.resolve("src/main/resources"), true)
     }
 
     @Test
@@ -82,19 +84,35 @@ class GradleTest {
                 it.isBuildCacheDebugLogging = true
                 it.projectDir = projectPath
                 it.gradleUserHomeDir = projectPath.resolve(".gradle_home")
-                it.projectCacheDir =  projectPath.resolve(".gradle")
+                it.projectCacheDir = projectPath.resolve(".gradle")
                 it.isRefreshDependencies = true
             }
 
 
-        launcher
-            /*.apply {
+        runCatching {
+
+            launcher
+                /*.apply {
                 onCreateGradle { gradle ->
                     println("get gradle")
                     println("gradle: $gradle")
                 }
             }*/
-            .execute(":app:assemble")
+                .execute(":app:assemble")
+            cleanProject()
+        }.onFailure {
+            cleanProject()
+            throw it
+        }
+
+    }
+
+    private fun cleanProject() {
+        thread {
+            sleep(1000*10)
+            File("").canonicalFile.resolve("src/main/resources/TestProject")
+                .deleteRecursively()
+        }.join()
     }
 
 

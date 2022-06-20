@@ -17,45 +17,7 @@ package org.gradle.internal.resource.transport.http;
 
 import com.google.common.collect.Lists;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.auth.AuthScheme;
-import org.apache.http.auth.AuthSchemeProvider;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.AuthState;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.RedirectStrategy;
-import org.apache.http.client.config.AuthSchemes;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.client.utils.DateUtils;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.config.SocketConfig;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.util.PublicSuffixMatcher;
-import org.apache.http.conn.util.PublicSuffixMatcherLoader;
-import org.apache.http.cookie.CookieSpecProvider;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.auth.BasicSchemeFactory;
-import org.apache.http.impl.auth.DigestSchemeFactory;
-import org.apache.http.impl.auth.KerberosSchemeFactory;
-import org.apache.http.impl.auth.SPNegoSchemeFactory;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
-import org.apache.http.impl.cookie.DefaultCookieSpecProvider;
-import org.apache.http.impl.cookie.IgnoreSpecProvider;
-import org.apache.http.impl.cookie.NetscapeDraftSpecProvider;
-import org.apache.http.impl.cookie.RFC6265CookieSpecProvider;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpCoreContext;
+
 import org.gradle.api.JavaVersion;
 import org.gradle.api.credentials.HttpHeaderCredentials;
 import org.gradle.api.credentials.PasswordCredentials;
@@ -81,6 +43,44 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+
+import cz.msebera.android.httpclient.HttpException;
+import cz.msebera.android.httpclient.HttpHost;
+import cz.msebera.android.httpclient.HttpRequest;
+import cz.msebera.android.httpclient.HttpRequestInterceptor;
+import cz.msebera.android.httpclient.auth.AuthScheme;
+import cz.msebera.android.httpclient.auth.AuthSchemeProvider;
+import cz.msebera.android.httpclient.auth.AuthScope;
+import cz.msebera.android.httpclient.auth.AuthState;
+import cz.msebera.android.httpclient.auth.Credentials;
+import cz.msebera.android.httpclient.auth.UsernamePasswordCredentials;
+import cz.msebera.android.httpclient.client.CredentialsProvider;
+import cz.msebera.android.httpclient.client.RedirectStrategy;
+import cz.msebera.android.httpclient.client.config.AuthSchemes;
+import cz.msebera.android.httpclient.client.config.CookieSpecs;
+import cz.msebera.android.httpclient.client.config.RequestConfig;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.client.methods.HttpPut;
+import cz.msebera.android.httpclient.client.protocol.HttpClientContext;
+import cz.msebera.android.httpclient.client.utils.DateUtils;
+import cz.msebera.android.httpclient.config.RegistryBuilder;
+import cz.msebera.android.httpclient.config.SocketConfig;
+import cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory;
+import cz.msebera.android.httpclient.conn.util.PublicSuffixMatcher;
+import cz.msebera.android.httpclient.conn.util.PublicSuffixMatcherLoader;
+import cz.msebera.android.httpclient.cookie.CookieSpecProvider;
+import cz.msebera.android.httpclient.impl.auth.BasicScheme;
+import cz.msebera.android.httpclient.impl.auth.BasicSchemeFactory;
+import cz.msebera.android.httpclient.impl.auth.DigestSchemeFactory;
+import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
+import cz.msebera.android.httpclient.impl.client.SystemDefaultCredentialsProvider;
+import cz.msebera.android.httpclient.impl.conn.SystemDefaultRoutePlanner;
+import cz.msebera.android.httpclient.impl.cookie.DefaultCookieSpecProvider;
+import cz.msebera.android.httpclient.impl.cookie.IgnoreSpecProvider;
+import cz.msebera.android.httpclient.impl.cookie.NetscapeDraftSpecProvider;
+import cz.msebera.android.httpclient.impl.cookie.RFC6265CookieSpecProvider;
+import cz.msebera.android.httpclient.protocol.HttpContext;
+import cz.msebera.android.httpclient.protocol.HttpCoreContext;
 
 public class HttpClientConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientConfigurer.class);
@@ -157,8 +157,9 @@ public class HttpClientConfigurer {
         builder.setDefaultAuthSchemeRegistry(RegistryBuilder.<AuthSchemeProvider>create()
                 .register(AuthSchemes.BASIC, new BasicSchemeFactory())
                 .register(AuthSchemes.DIGEST, new DigestSchemeFactory())
-                .register(AuthSchemes.SPNEGO, new SPNegoSchemeFactory())
-                .register(AuthSchemes.KERBEROS, new KerberosSchemeFactory())
+                //dingyi modify: maybe we don't need to support its...
+                /*.register(AuthSchemes.SPNEGO, new SPNegoSchemeFactory())
+                .register(AuthSchemes.KERBEROS, new KerberosSchemeFactory())*/
                 .register(HttpHeaderAuthScheme.AUTH_SCHEME_NAME, new HttpHeaderSchemeFactory())
                 .build()
         );

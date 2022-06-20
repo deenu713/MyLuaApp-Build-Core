@@ -15,8 +15,7 @@
  */
 package org.gradle.internal.resource.transport.http;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.utils.DateUtils;
+
 import org.gradle.internal.hash.HashCode;
 import org.gradle.internal.resource.metadata.DefaultExternalResourceMetaData;
 import org.gradle.internal.resource.metadata.ExternalResourceMetaData;
@@ -27,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+
+import cz.msebera.android.httpclient.HttpHeaders;
+import cz.msebera.android.httpclient.client.utils.DateUtils;
 
 public class HttpResponseResource implements ExternalResourceReadResponse {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpResponseResource.class);

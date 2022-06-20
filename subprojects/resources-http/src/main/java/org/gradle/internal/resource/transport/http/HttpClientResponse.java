@@ -16,16 +16,17 @@
 
 package org.gradle.internal.resource.transport.http;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.utils.HttpClientUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.StatusLine;
+import cz.msebera.android.httpclient.client.methods.CloseableHttpResponse;
+import cz.msebera.android.httpclient.client.utils.HttpClientUtils;
 
 public class HttpClientResponse implements Closeable {
 

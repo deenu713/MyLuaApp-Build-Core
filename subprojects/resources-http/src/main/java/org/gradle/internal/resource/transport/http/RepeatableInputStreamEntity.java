@@ -17,14 +17,15 @@
 package org.gradle.internal.resource.transport.http;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.entity.ContentType;
 import org.gradle.internal.IoActions;
 import org.gradle.internal.resource.ReadableContent;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import cz.msebera.android.httpclient.entity.AbstractHttpEntity;
+import cz.msebera.android.httpclient.entity.ContentType;
 
 public class RepeatableInputStreamEntity extends AbstractHttpEntity {
     private final ReadableContent source;
