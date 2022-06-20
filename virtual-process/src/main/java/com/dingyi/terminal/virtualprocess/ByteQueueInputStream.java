@@ -91,6 +91,7 @@ public class ByteQueueInputStream extends InputStream {
             throw new IOException("Stream is closed");
         }
         int read =  blockingQueue.read(b,off,true);
+        System.out.write(b,off,read);
         lock.unlock();
         return read;
     }

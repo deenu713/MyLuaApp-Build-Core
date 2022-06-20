@@ -22,6 +22,7 @@ import org.gradle.api.internal.provider.DefaultProvider;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.internal.jvm.Jvm;
+import org.gradle.internal.os.OperatingSystem;
 import org.gradle.jvm.toolchain.JavaToolchainSpec;
 /*
 import org.gradle.jvm.toolchain.install.internal.DefaultJavaToolchainProvisioningService;
@@ -35,6 +36,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
+//dingyi modify: support android
 public class JavaToolchainQueryService {
 
     //    private final JavaInstallationRegistry registry;

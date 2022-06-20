@@ -57,7 +57,9 @@ class GradleTest {
             .getResource("META-INF")
 
 
-        path.copyRecursively(File(localResourcePath.toURI()),true)
+        path.copyRecursively(File(localResourcePath.toURI()), true)
+        File("").canonicalFile.resolve("src/main/assets")
+            .copyRecursively(File(localResourcePath.toURI()), true)
     }
 
     @Test
