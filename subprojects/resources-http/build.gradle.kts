@@ -28,9 +28,9 @@ dependencies {
     implementation("net.sourceforge.nekohtml:nekohtml:1.9.22")
 
 
-    implementation("org.apache.httpcomponents:httpclient:4.5.13")
-
-
+    //implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    //dingyi modify: use android httpclient, and let it run on android
+    implementation("cz.msebera.android:httpclient:4.5.8")
 
     /*  implementation(libs.jcifs)*/
     implementation("xerces:xercesImpl:2.12.2")

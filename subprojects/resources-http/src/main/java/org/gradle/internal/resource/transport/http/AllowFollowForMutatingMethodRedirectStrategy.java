@@ -16,7 +16,8 @@
 
 package org.gradle.internal.resource.transport.http;
 
-import org.apache.http.impl.client.DefaultRedirectStrategy;
+
+import cz.msebera.android.httpclient.impl.client.DefaultRedirectStrategy;
 
 public class AllowFollowForMutatingMethodRedirectStrategy extends DefaultRedirectStrategy {
 

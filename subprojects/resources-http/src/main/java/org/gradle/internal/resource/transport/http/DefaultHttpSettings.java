@@ -19,7 +19,6 @@ package org.gradle.internal.resource.transport.http;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.gradle.authentication.Authentication;
 import org.gradle.internal.UncheckedException;
 import org.gradle.internal.verifier.HttpRedirectVerifier;
@@ -32,6 +31,8 @@ import javax.net.ssl.X509TrustManager;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+
+import cz.msebera.android.httpclient.conn.ssl.DefaultHostnameVerifier;
 
 public class DefaultHttpSettings implements HttpSettings {
     private final Collection<Authentication> authenticationSettings;

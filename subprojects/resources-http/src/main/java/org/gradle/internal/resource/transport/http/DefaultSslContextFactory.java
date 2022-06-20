@@ -20,7 +20,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
-import org.apache.http.ssl.SSLInitializationException;
 import org.gradle.internal.Factory;
 import org.gradle.internal.SystemProperties;
 
@@ -39,6 +38,8 @@ import java.security.cert.CertificateException;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import cz.msebera.android.httpclient.ssl.SSLInitializationException;
 
 public class DefaultSslContextFactory implements SslContextFactory {
     private static final char[] EMPTY_PASSWORD = "".toCharArray();
