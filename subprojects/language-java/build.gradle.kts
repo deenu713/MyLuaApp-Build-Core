@@ -8,6 +8,7 @@ java {
 }
 
 dependencies {
+
     implementation(project(":base-services"))
     implementation(project(":base-services-groovy"))
     implementation(project(":messaging"))
@@ -43,5 +44,7 @@ dependencies {
 
     implementation("org.apache.commons:commons-compress:1.21")
     implementation("it.unimi.dsi:fastutil:8.5.8")
+
+    compileOnly(project(":android-stubs"))
 
 }

@@ -30,6 +30,8 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
+
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Iterator;
@@ -67,7 +69,8 @@ public class JdkJavaCompiler implements Compiler<JavaCompileSpec>, Serializable 
         Iterable<? extends JavaFileObject> compilationUnits = standardFileManager.getJavaFileObjectsFromFiles(spec.getSourceFiles());
         boolean hasEmptySourcepaths = JavaVersion.current().isJava9Compatible() && emptySourcepathIn(options);
         JavaFileManager fileManager = GradleStandardJavaFileManager.wrap(standardFileManager, DefaultClassPath.of(spec.getAnnotationProcessorPath()), hasEmptySourcepaths);
-        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, options, spec.getClasses(), compilationUnits);
+        //dingyi modify: only used for test
+        JavaCompiler.CompilationTask task = compiler.getTask(new PrintWriter(System.out), fileManager, null, options, spec.getClasses(), compilationUnits);
         if (compiler instanceof IncrementalCompilationAwareJavaCompiler) {
             task = ((IncrementalCompilationAwareJavaCompiler) compiler).makeIncremental(task, result.getSourceClassesMapping(), result.getConstantsAnalysisResult(), new CompilationSourceDirs(spec));
         }

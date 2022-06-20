@@ -16,18 +16,26 @@
 
 package org.gradle.api.internal.tasks.compile.reflect;
 
+import static org.gradle.api.internal.tasks.compile.filter.AnnotationProcessorFilter.getFilteredClassLoader;
+
+import android.app.Application;
+
+import org.gradle.api.logging.Logging;
 import org.gradle.internal.classpath.ClassPath;
+import org.gradle.internal.os.OperatingSystem;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URLClassLoader;
+import java.util.List;
+import java.util.Set;
 
 import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
-import java.io.IOException;
-import java.net.URLClassLoader;
-import java.util.Set;
-
-import static org.gradle.api.internal.tasks.compile.filter.AnnotationProcessorFilter.getFilteredClassLoader;
 
 public class GradleStandardJavaFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
     private final ClassPath annotationProcessorPath;
@@ -37,6 +45,37 @@ public class GradleStandardJavaFileManager extends ForwardingJavaFileManager<Sta
         super(fileManager);
         this.annotationProcessorPath = annotationProcessorPath;
         this.hasEmptySourcePaths = hasEmptySourcePaths;
+
+        if (OperatingSystem.current().isAndroid()) {
+            //dingyi modify: In Android, need to set platform_class_path to compile.
+            File assetsDir = getFilesDir();
+            try {
+                fileManager.setLocation(StandardLocation.PLATFORM_CLASS_PATH, List.of(
+                        assetsDir.toPath().resolve("android-rt/rt.jar").toFile(),
+                        assetsDir.toPath().resolve("android-rt/core.lambda.stubs.jar").toFile()
+                ));
+            } catch (IOException e) {
+                Logging.getLogger(GradleStandardJavaFileManager.class).error("Failed to set PLATFORM_CLASS_PATH", e);
+            }
+        }
+
+    }
+
+    private Application tryGetAndroidApplicationWithReflection() {
+        try {
+            Method getApplication = Class.forName("android.app.ActivityThread").getMethod("currentApplication");
+            return (Application) getApplication.invoke(null);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private File getFilesDir() {
+        Application application = tryGetAndroidApplicationWithReflection();
+        if (application != null) {
+            return application.getExternalFilesDir(null);
+        }
+        throw new IllegalStateException("Failed to get external files dir");
     }
 
     /**

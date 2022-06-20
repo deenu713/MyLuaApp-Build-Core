@@ -34,7 +34,8 @@ public class VirtualTerminalEnvironment {
         ByteQueueOutputStream processOutputStream = terminalInputStream.newQueueOutputStream();
         ByteQueueOutputStream processErrorStream = terminalErrorStream.newQueueOutputStream();
 
-        processChannel = new VirtualProcessEnvironment(processInputStream, processOutputStream, System.err);
+        /*processChannel = new VirtualProcessEnvironment(processInputStream, processOutputStream, System.err);*/
+        processChannel = new VirtualProcessEnvironment(processInputStream, processOutputStream, processErrorStream);
 
         SimpleTermiosSupport termiosSupport = new SimpleTermiosSupport(this, processChannel);
 

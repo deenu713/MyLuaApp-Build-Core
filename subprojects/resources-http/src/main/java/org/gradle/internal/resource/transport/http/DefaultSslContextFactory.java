@@ -150,11 +150,10 @@ public class DefaultSslContextFactory implements SslContextFactory {
                     }
                     tmFactory.init(trustStore);
                 } else if (OperatingSystem.current().isAndroid()) {
-
+                    //dingyi modify: don't use trustStoreFile in android
                     tmFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 
                     tmFactory.init((KeyStore) null);
-
                 } else {
                     trustStoreFile = trustStoreFile(props);
                     tmFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
