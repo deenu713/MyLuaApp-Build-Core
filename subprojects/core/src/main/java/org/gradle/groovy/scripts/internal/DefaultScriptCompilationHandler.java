@@ -17,12 +17,6 @@
 package org.gradle.groovy.scripts.internal;
 
 
-import groovy.lang.DynamicGrooidClassLoader;
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyCodeSource;
-import groovy.lang.GroovyResourceLoader;
-import groovy.lang.Script;
-
 import org.apache.groovy.util.SystemUtil;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.stmt.Statement;
@@ -33,7 +27,6 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.control.messages.SyntaxErrorMessage;
-import org.codehaus.groovy.reflection.GroovyClassValue;
 import org.codehaus.groovy.syntax.SyntaxException;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
@@ -69,6 +62,12 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.util.List;
 import java.util.Map;
+
+import groovy.lang.GrooidClassLoader;
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyCodeSource;
+import groovy.lang.GroovyResourceLoader;
+import groovy.lang.Script;
 
 @SuppressWarnings("deprecation")
 public class DefaultScriptCompilationHandler implements ScriptCompilationHandler {
@@ -124,7 +123,7 @@ public class DefaultScriptCompilationHandler implements ScriptCompilationHandler
 
         //dingyi modify: use dynamic classloader
         if (OperatingSystem.current().isAndroid()) {
-            groovyClassLoader = new DynamicGrooidClassLoader(getClass().getClassLoader(), configuration, false) {
+            groovyClassLoader = new GrooidClassLoader(getClass().getClassLoader(), configuration, false) {
                 @Override
                 protected CompilationUnit createCompilationUnit(CompilerConfiguration compilerConfiguration,
                                                                 CodeSource codeSource) {
@@ -370,7 +369,12 @@ public class DefaultScriptCompilationHandler implements ScriptCompilationHandler
 
         private ClassLoaderScope prepareClassLoaderScope() {
             String scopeName = "groovy-dsl:" + source.getFileName() + ":" + scriptBaseClass.getSimpleName();
-            return targetScope.createLockedChild(scopeName, scriptClassPath, sourceHashCode, parent -> new ScriptClassLoader(source, parent, scriptClassPath, sourceHashCode));
+            return targetScope.createLockedChild(scopeName, scriptClassPath, sourceHashCode, parent -> {
+                if (OperatingSystem.current().isAndroid()) {
+                    return new AndroidClassLoader(source, parent, scriptClassPath, sourceHashCode);
+                }
+                return new ScriptClassLoader(source, parent, scriptClassPath, sourceHashCode);
+            });
         }
     }
 
@@ -385,6 +389,43 @@ public class DefaultScriptCompilationHandler implements ScriptCompilationHandler
             super("groovy-script-" + scriptSource.getFileName() + "-loader", parent, classPath);
             this.scriptSource = scriptSource;
             this.implementationHash = implementationHash;
+        }
+
+        @Override
+        public HashCode getImplementationHash() {
+            return implementationHash;
+        }
+
+        @Override
+        protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+            // Generated script class name must be unique - take advantage of this to avoid delegation
+            if (name.startsWith(scriptSource.getClassName())) {
+                // Synchronized to avoid multiple threads attempting to define the same class on a lookup miss
+                synchronized (this) {
+                    Class<?> cl = findLoadedClass(name);
+                    if (cl == null) {
+                        cl = findClass(name);
+                    }
+                    if (resolve) {
+                        resolveClass(cl);
+                    }
+                    return cl;
+                }
+            }
+            return super.loadClass(name, resolve);
+        }
+    }
+
+    private static class AndroidClassLoader extends VisitableURLClassLoader implements ImplementationHashAware {
+        private final ScriptSource scriptSource;
+        private final HashCode implementationHash;
+
+        AndroidClassLoader(ScriptSource scriptSource, ClassLoader parent, ClassPath classPath, HashCode implementationHash) {
+            super("groovy-script-" + scriptSource.getFileName() + "-loader", parent, ClassPath.EMPTY);
+            this.scriptSource = scriptSource;
+            this.implementationHash = implementationHash;
+            //try load class when scriptSource is not null
+            super.addDex(classPath.getAsURLArray());
         }
 
         @Override

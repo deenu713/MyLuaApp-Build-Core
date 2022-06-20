@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.dingyi.myluaapp.build.api.databinding.MainBinding
-import com.dingyi.terminal.emulator.KeyHandler
 import com.dingyi.terminal.emulator.TerminalSession
-import com.dingyi.terminal.emulator.TextStyle
 import com.dingyi.terminal.shared.TerminalSessionClientBase
 import com.dingyi.terminal.shared.TerminalViewClientBase
 import java.io.File
@@ -51,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         val session = TerminalSession(
             "gradle",
             File(getDefaultProjectDir(), "TestProject").path,
-            arrayOf("help"),
+            arrayOf(":app:assemble"),
             arrayOfNulls(0),
             500,
             TestTerminalSessionClient()
@@ -78,9 +76,9 @@ class MainActivity : AppCompatActivity() {
         val zipFile = ZipFile(apkFile)
         zipFile.entries().asSequence()
             .filter {
-                it.name.startsWith("TestProject/")
+                it.name.startsWith("assets/")
             }.forEach {
-                val file = File(extractDir, it.name)
+                val file = File(extractDir, it.name.replace("assets/",""))
                 println(file)
                 file.parentFile?.mkdirs()
                 file.createNewFile()

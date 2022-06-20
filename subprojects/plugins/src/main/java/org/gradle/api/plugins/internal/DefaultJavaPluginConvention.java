@@ -26,6 +26,7 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.reflect.HasPublicType;
 import org.gradle.api.reflect.TypeOf;
+import org.gradle.api.reporting.ReportingExtension;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.util.internal.RelativePathUtil;
 
@@ -133,6 +134,15 @@ public class DefaultJavaPluginConvention extends JavaPluginConvention implements
         extension.getTestResultsDir().set(project.getLayout().getBuildDirectory().dir(testResultsDirName));
     }
 
+    @Override
+    public String getTestReportDirName() {
+        return relativePath(project.getExtensions().getByType(ReportingExtension.class).getBaseDirectory(), extension.getTestReportDir());
+    }
+
+    @Override
+    public void setTestReportDirName(String testReportDirName) {
+        extension.getTestReportDir().set(project.getExtensions().getByType(ReportingExtension.class).getBaseDirectory().dir(testReportDirName));
+    }
 
     @Override
     public SourceSetContainer getSourceSets() {
@@ -154,6 +164,12 @@ public class DefaultJavaPluginConvention extends JavaPluginConvention implements
         return extension.getAutoTargetJvmDisabled();
     }
 
+    private File getReportsDir() {
+        // This became public API by accident as Groovy has access to private methods and we show an example in our docs
+        // see subprojects/docs/src/snippets/java/customDirs/groovy/build.gradle
+        // and https://docs.gradle.org/current/userguide/java_testing.html#test_reporting
+        return project.getExtensions().getByType(ReportingExtension.class).getBaseDir();
+    }
 
     private static String relativePath(DirectoryProperty from, DirectoryProperty to) {
         return RelativePathUtil.relativePath(from.get().getAsFile(), to.get().getAsFile());

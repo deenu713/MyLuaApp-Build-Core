@@ -17,16 +17,23 @@
 package org.gradle.internal.classloader;
 
 
+import com.dingyi.groovy.android.AppDataDirGuesser;
 import com.dingyi.groovy.android.compiler.DexCompiler;
 
 import org.gradle.internal.Cast;
 import org.gradle.internal.Factory;
 import org.gradle.internal.classpath.ClassPath;
+import org.gradle.internal.hash.DefaultFileHasher;
+import org.gradle.internal.hash.DefaultStreamHasher;
+import org.gradle.internal.hash.FileHasher;
+import org.gradle.internal.hash.HashCode;
 import org.gradle.internal.os.OperatingSystem;
 
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -40,8 +47,13 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import dalvik.system.BaseDexClassLoader;
+import dalvik.system.DexClassLoader;
+import dalvik.system.DexFile;
+import dalvik.system.PathClassLoader;
 
-//dingyi modify: support load class file in android
+
+//dingyi modify: support in android
 public class VisitableURLClassLoader extends URLClassLoader implements ClassLoaderHierarchy {
     static {
         try {
@@ -51,9 +63,13 @@ public class VisitableURLClassLoader extends URLClassLoader implements ClassLoad
         }
     }
 
-    private List<ClassLoader> allDexLoader;
 
-    private final Map<Object, Object> userData = new HashMap<Object, Object>();
+    private DexClassLoader dexClassLoader;
+
+    private FileHasher hasher;
+
+
+    private final Map<Object, Object> userData = new HashMap<>();
 
     /**
      * This method can be used to store user data that should live among with this classloader
@@ -88,169 +104,128 @@ public class VisitableURLClassLoader extends URLClassLoader implements ClassLoad
         this.name = name;
 
         if (OperatingSystem.current().isAndroid()) {
-            allDexLoader = new ArrayList<>();
-            loadDexForClassPath(classpath);
+            hasher = new DefaultFileHasher(new DefaultStreamHasher());
+            addDex(classpath);
         }
 
     }
 
 
-    ClassLoader loadDexFromFile(ClassLoader classLoader, URL[] urls) {
-        List<File> classFiles = new ArrayList<>();
-        for (URL url : urls) {
-            classFiles.add(new File(url.getFile()));
+    public void addDex(URL[] classpath) {
+        for (URL url : classpath) {
+            addDex(url);
         }
-
-        return DexCompiler.INSTANCE
-                .compileAndLoadClassFiles(classFiles, classLoader);
     }
 
-    private void loadDexForClassPath(URL[] classPath) {
+    public void addDex(URL url) {
+        try {
+            tryLoadDexFile(new File(url.toURI()), this);
+        } catch (Exception e) {
+            compileAndLoadDex(url);
+        }
+    }
 
-        if (classPath.length == 0) {
+
+    private void tryLoadDexFile(File url, ClassLoader parent) {
+        //try load dex file
+        try {
+            //check if dex file is valid
+            new DexFile(url);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        if (dexClassLoader == null) {
+            dexClassLoader = new DexClassLoader(url.getAbsolutePath(), null, null, parent);
+        } else {
+            Method addDexPathMethod = null;
+            try {
+                addDexPathMethod = BaseDexClassLoader.class.getDeclaredMethod("addDexPath", String.class);
+                addDexPathMethod.setAccessible(true);
+
+                addDexPathMethod.invoke(dexClassLoader, url.getAbsolutePath());
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void compileAndLoadDex(URL url) {
+        File compileDir = new File(new AppDataDirGuesser().guess(), "dexCache");
+        if (!compileDir.exists()) {
+            compileDir.mkdirs();
+        }
+        File compileFile = new File(url.getFile());
+        HashCode hashCode = hasher.hash(new File(url.getFile()));
+        File dexFile = new File(compileDir, "Generated_" + hashCode + ".jar");
+        if (dexFile.exists()) {
+            tryLoadDexFile(dexFile, getParent());
             return;
         }
-
-        ClassLoader dexClassLoader = loadDexFromFile(getParent(), classPath);
-
-        allDexLoader.add(dexClassLoader);
-
-
+        DexCompiler.INSTANCE.compileClassFile(List.of(compileFile), dexFile);
+        tryLoadDexFile(dexFile, getParent());
     }
 
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        if (OperatingSystem.current().isAndroid()) {
-            for (ClassLoader classLoader : allDexLoader) {
-                try {
-                    Class<?> classInDex =  classLoader.loadClass(name);
-                    if (classInDex != null) {
-                        return classInDex;
-                    }
-                } catch (ClassNotFoundException e) {
-                    // ignore
+        if (dexClassLoader != null) {
+            try {
+                Method findClassMethod = ClassLoader.class.getDeclaredMethod("findClass", String.class);
+                findClassMethod.setAccessible(true);
+                Class<?> clazz = (Class<?>) findClassMethod.invoke(dexClassLoader, name);
+                if (clazz != null) {
+                    return clazz;
                 }
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
             }
         }
         return super.findClass(name);
     }
 
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
-        if (OperatingSystem.current().isAndroid()) {
-            for (ClassLoader classLoader : allDexLoader) {
-                try {
-                    Class<?> classInDex =  classLoader.loadClass(name);
-                    if (classInDex != null) {
-                        return classInDex;
-                    }
-                } catch (ClassNotFoundException e) {
-                    // ignore
-                }
-            }
-        }
-        return super.loadClass(name);
-    }
-
-    @Override
-    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        if (OperatingSystem.current().isAndroid()) {
-            for (ClassLoader classLoader : allDexLoader) {
-                try {
-                    Class<?> classInDex =  classLoader.loadClass(name);
-                    if (classInDex != null) {
-                        return classInDex;
-                    }
-                } catch (ClassNotFoundException e) {
-                    // ignore
-                }
-            }
-        }
-        return super.loadClass(name, resolve);
-    }
-
-    @Override
     protected Class<?> findClass(String moduleName, String name) {
-        if (OperatingSystem.current().isAndroid()) {
-            for (ClassLoader classLoader : allDexLoader) {
-                try {
-                    Class<?> classInDex =  classLoader.loadClass(name);
-                    if (classInDex != null) {
-                        return classInDex;
-                    }
-                } catch (ClassNotFoundException e) {
-                    // ignore
-                }
-            }
-        }
         return super.findClass(moduleName, name);
     }
 
     @Override
     protected URL findResource(String moduleName, String name) throws IOException {
-        if (OperatingSystem.current().isAndroid()) {
-            for (ClassLoader classLoader : allDexLoader) {
-                URL url = classLoader.getResource(name);
-                if (url != null) {
-                    return url;
-                }
-            }
-        }
         return super.findResource(moduleName, name);
     }
 
     @Override
-    public Enumeration<URL> findResources(String name) throws IOException {
-        if (OperatingSystem.current().isAndroid()) {
-            for (ClassLoader classLoader : allDexLoader) {
-                Enumeration<URL> urls = classLoader.getResources(name);
-                if (urls.hasMoreElements()) {
-                    return urls;
-                }
-            }
-        }
-        return super.findResources(name);
-    }
-
-    @Override
     public URL findResource(String name) {
-        if (OperatingSystem.current().isAndroid()) {
-            for (ClassLoader classLoader : allDexLoader) {
-                URL url = classLoader.getResource(name);
+        if (dexClassLoader != null) {
+            try {
+                Method findResourceMethod = ClassLoader.class.getDeclaredMethod("findResource", String.class);
+                findResourceMethod.setAccessible(true);
+                URL url = (URL) findResourceMethod.invoke(dexClassLoader, name);
                 if (url != null) {
                     return url;
                 }
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
             }
         }
         return super.findResource(name);
     }
 
     @Override
-    public Enumeration<URL> getResources(String name) throws IOException {
-        if (OperatingSystem.current().isAndroid()) {
-            for (ClassLoader classLoader : allDexLoader) {
-                Enumeration<URL> urls = classLoader.getResources(name);
-                if (urls.hasMoreElements()) {
+    public Enumeration<URL> findResources(String name) throws IOException {
+        if (dexClassLoader != null) {
+            try {
+                Method findResourcesMethod = ClassLoader.class.getDeclaredMethod("findResources", String.class);
+                findResourcesMethod.setAccessible(true);
+                Enumeration<URL> urls = (Enumeration<URL>) findResourcesMethod.invoke(dexClassLoader, name);
+                if (urls != null) {
                     return urls;
                 }
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
             }
         }
-        return super.getResources(name);
-    }
-
-    @Nullable
-    @Override
-    public URL getResource(String name) {
-        if (OperatingSystem.current().isAndroid()) {
-            for (ClassLoader classLoader : allDexLoader) {
-                URL url = classLoader.getResource(name);
-                if (url != null) {
-                    return url;
-                }
-            }
-        }
-        return super.getResource(name);
+        return super.findResources(name);
     }
 
     public String getName() {
@@ -260,8 +235,11 @@ public class VisitableURLClassLoader extends URLClassLoader implements ClassLoad
     @Override
     public void addURL(URL url) {
         super.addURL(url);
-        loadDexForClassPath(new URL[]{url});
+        if (OperatingSystem.current().isAndroid()) {
+            addDex(url);
+        }
     }
+
 
     @Override
     public String toString() {

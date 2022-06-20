@@ -38,6 +38,8 @@ import org.gradle.api.plugins.internal.JvmPluginsHelper;
 import org.gradle.api.plugins.jvm.internal.JvmEcosystemUtilities;
 import org.gradle.api.plugins.jvm.internal.JvmPluginServices;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.reporting.DirectoryReport;
+import org.gradle.api.reporting.ReportingExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskProvider;
@@ -111,6 +113,7 @@ public class JavaBasePlugin implements Plugin<Project> {
 
         project.getPluginManager().apply(BasePlugin.class);
         project.getPluginManager().apply(JvmEcosystemPlugin.class);
+        project.getPluginManager().apply(ReportingBasePlugin.class);
 
         DefaultJavaPluginExtension javaPluginExtension = addExtensions(projectInternal);
 
@@ -118,7 +121,6 @@ public class JavaBasePlugin implements Plugin<Project> {
         configureCompileDefaults(project, javaPluginExtension);
 
         configureJavaDoc(project, javaPluginExtension);
-
         configureBuildNeeded(project);
         configureBuildDependents(project);
     }
@@ -300,7 +302,8 @@ public class JavaBasePlugin implements Plugin<Project> {
     private void configureJavaDoc(final Project project, final JavaPluginExtension javaPluginExtension) {
         project.getTasks().withType(Javadoc.class).configureEach(javadoc -> {
             javadoc.getConventionMapping().map("destinationDir", () -> new File(javaPluginExtension.getDocsDir().get().getAsFile(), "javadoc"));
-              javadoc.getJavadocTool().convention(getToolchainTool(project, JavaToolchainService::javadocToolFor));
+            javadoc.getConventionMapping().map("title", () -> project.getExtensions().getByType(ReportingExtension.class).getApiDocTitle());
+            javadoc.getJavadocTool().convention(getToolchainTool(project, JavaToolchainService::javadocToolFor));
         });
     }
 
@@ -319,7 +322,6 @@ public class JavaBasePlugin implements Plugin<Project> {
             buildTask.dependsOn(BUILD_TASK_NAME);
         });
     }
-
 
 
     private <T> Provider<T> getToolchainTool(Project project, BiFunction<JavaToolchainService, JavaToolchainSpec, Provider<T>> toolMapper) {

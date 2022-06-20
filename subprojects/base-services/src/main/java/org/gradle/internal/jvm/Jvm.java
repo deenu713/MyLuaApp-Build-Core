@@ -69,6 +69,9 @@ public class Jvm implements JavaInfo {
         if (vendor.toLowerCase().startsWith("ibm corporation")) {
             return new IbmJvm(OperatingSystem.current());
         }
+        if (OperatingSystem.current().isAndroid()) {
+            return new DalvikJvm(OperatingSystem.current());
+        }
         return new JvmImplementation(OperatingSystem.current());
     }
 
@@ -258,6 +261,12 @@ public class Jvm implements JavaInfo {
     }
 
     private File findJavaHome(File javaBase) {
+
+        //dingyi modify: add fake java home
+        if (OperatingSystem.current().isAndroid()) {
+            return new File("");
+        }
+
         File toolsJar = findToolsJar(javaBase);
         if (toolsJar != null) {
             return toolsJar.getParentFile().getParentFile();
@@ -362,6 +371,12 @@ public class Jvm implements JavaInfo {
         return false;
     }
 
+
+    public boolean isDalvikJvm() {
+        return false;
+    }
+
+
     /**
      * Details about a known JVM implementation.
      */
@@ -380,6 +395,50 @@ public class Jvm implements JavaInfo {
         public boolean isIbmJvm() {
             return true;
         }
+    }
+
+    //dingyi modify:add dalvik jvm
+    static class DalvikJvm extends JvmImplementation {
+        DalvikJvm(OperatingSystem os) {
+            super(os);
+        }
+
+
+        @Override
+        public boolean isDalvikJvm() {
+            return true;
+        }
+
+        @Override
+        public File getToolsJar() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public File getEmbeddedJre() {
+            return null;
+        }
+
+
+        @Nullable
+        @Override
+        public File getStandaloneJre() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public File getJre() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public JavaVersion getJavaVersion() {
+            return JavaVersion.VERSION_1_8;
+        }
+
     }
 
     /**

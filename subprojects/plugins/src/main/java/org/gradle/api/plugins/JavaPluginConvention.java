@@ -149,6 +149,12 @@ public abstract class JavaPluginConvention {
 
     public abstract void setTestResultsDirName(String testResultsDirName);
 
+    /**
+     * The name of the test reports directory. Can be a name or a path relative to {@link org.gradle.api.reporting.ReportingExtension#getBaseDir}.
+     */
+    public abstract String getTestReportDirName();
+
+    public abstract void setTestReportDirName(String testReportDirName);
 
     /**
      * The source sets container.

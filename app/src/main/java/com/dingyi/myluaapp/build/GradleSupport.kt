@@ -38,7 +38,7 @@ class GradleSupport(processChannel: VirtualProcessEnvironment) : VirtualExecutab
 
 
         AppDataDirGuesser
-            .guessDir = projectPath.resolve("build/cache/dexFiles").apply {
+            .guessDir = projectPath.resolve("build/cache").apply {
             mkdirs()
 
         }

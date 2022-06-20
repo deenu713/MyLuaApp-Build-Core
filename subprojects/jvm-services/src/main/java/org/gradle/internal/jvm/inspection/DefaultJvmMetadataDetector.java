@@ -49,6 +49,10 @@ public class DefaultJvmMetadataDetector implements JvmMetadataDetector {
 
     @Override
     public JvmInstallationMetadata getMetadata(File javaHome) {
+        //dingyi modify: add fake javaHome for android
+        if (OperatingSystem.current().isAndroid()) {
+            return getMetadataForAndroid();
+        }
         if (javaHome == null || !javaHome.exists()) {
             return failure(javaHome, "No such directory: " + javaHome);
         }
@@ -57,6 +61,11 @@ public class DefaultJvmMetadataDetector implements JvmMetadataDetector {
             return getMetadataFromCurrentJvm(javaHome);
         }
         return getMetadataFromInstallation(javaHome);
+    }
+
+    private JvmInstallationMetadata getMetadataForAndroid() {
+        return JvmInstallationMetadata.from(
+                new File(""), "11.0", "8.0", "8.0", "", "dalvik");
     }
 
     private JvmInstallationMetadata getMetadataFromCurrentJvm(File javaHome) {

@@ -34,6 +34,11 @@ public class VirtualProcessEnvironment {
 
     public VirtualProcessEnvironment(InputStream processInputStream, OutputStream processOutputStream, OutputStream processErrorStream) {
         this.processInputStream = processInputStream;
+
+        if (processErrorStream == null) {
+            processErrorStream = System.err;
+        }
+
         this.processOutputStream = processOutputStream;
         this.processErrorStream = processErrorStream;
 

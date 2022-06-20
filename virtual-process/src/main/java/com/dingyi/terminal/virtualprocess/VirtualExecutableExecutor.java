@@ -36,8 +36,17 @@ class VirtualExecutableExecutor implements Runnable {
             } catch (IOException ex) {
                 // ignore
             }
+            exit(ret);
+            return;
         }
 
+
+        exit(ret);
+
+
+    }
+
+    public void exit(int ret) {
         mProcess.getProcessEnvironment()
                 .exit(ret);
         try {
@@ -52,10 +61,7 @@ class VirtualExecutableExecutor implements Runnable {
                 .deleteProcessWithThread(Thread.currentThread());
 
         latch.countDown();
-
-
     }
-
 
 
     private byte[] dumpException(Exception e) {

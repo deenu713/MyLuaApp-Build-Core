@@ -24,6 +24,7 @@ import java.io.PipedOutputStream;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Simple alternative to JDK {@link PipedInputStream};
@@ -33,6 +34,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ByteQueueInputStream extends InputStream {
 
      final ByteQueue blockingQueue;
+
+    final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Constructs a new instance with no limit to its internal buffer size.
@@ -83,10 +86,14 @@ public class ByteQueueInputStream extends InputStream {
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
+        lock.lock();
         if (isClose) {
             throw new IOException("Stream is closed");
         }
-        return blockingQueue.read(b,off,true);
+        int read =  blockingQueue.read(b,off,true);
+        System.out.write(b,off,read);
+        lock.unlock();
+        return read;
     }
 
     private boolean isClose = false;
