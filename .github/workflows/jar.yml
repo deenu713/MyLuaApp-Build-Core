@@ -1,25 +1,25 @@
-name: Upload Jar
+name: Upload Jar-Libraries
 on: workflow_dispatch
 jobs:
   build:
-    name: Build Release Apk 
+    name: assemble Libraries
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: set up JDK 11
+    - name: set up JDK 17
       uses: actions/setup-java@v2
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'adopt'
         cache: gradle
     
     - name: Running gradle assembleRelease
       run: gradle assembleDebug
 
-    - name: Uploading Apk and Files
+    - name: Uploading Jar Libraries
       uses: actions/upload-artifact@v2
       with:
-        name: Apk-jar
+        name: Jar-Libraries
         path: |
            subprojects
            terminal-view
