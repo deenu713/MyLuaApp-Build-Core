@@ -156,6 +156,9 @@ public class VisitableURLClassLoader extends URLClassLoader implements ClassLoad
             compileDir.mkdirs();
         }
         File compileFile = new File(url.getFile());
+        if (!compileFile.exists()) {
+            return;
+        }
         HashCode hashCode = hasher.hash(new File(url.getFile()));
         File dexFile = new File(compileDir, "Generated_" + hashCode + ".jar");
         if (dexFile.exists()) {

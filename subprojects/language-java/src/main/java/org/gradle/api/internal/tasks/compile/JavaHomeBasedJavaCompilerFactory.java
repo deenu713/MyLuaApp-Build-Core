@@ -18,6 +18,7 @@ package org.gradle.api.internal.tasks.compile;
 
 import org.gradle.internal.Factory;
 import org.gradle.internal.jvm.Jvm;
+import org.gradle.internal.os.OperatingSystem;
 
 import javax.tools.JavaCompiler;
 import java.io.File;

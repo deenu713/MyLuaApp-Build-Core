@@ -20,6 +20,7 @@ import org.gradle.internal.classloader.ClassLoaderFactory;
 import org.gradle.internal.classloader.ClasspathUtil;
 import org.gradle.internal.classpath.DefaultClassPath;
 import org.gradle.internal.jvm.Jvm;
+import org.gradle.internal.os.OperatingSystem;
 
 import java.io.File;
 import java.net.URLClassLoader;
@@ -36,7 +37,8 @@ public class DefaultJdkToolsInitializer implements JdkToolsInitializer {
     public void initializeJdkTools() {
         // Add in tools.jar to the systemClassloader parent
         File toolsJar = Jvm.current().getToolsJar();
-        if (toolsJar != null) {
+        //dingyi modify: Only supports running in non-android environments
+        if (toolsJar != null && !OperatingSystem.current().isAndroid()) {
             final ClassLoader systemClassLoaderParent = classLoaderFactory.getIsolatedSystemClassLoader();
             ClasspathUtil.addUrl((URLClassLoader) systemClassLoaderParent, DefaultClassPath.of(toolsJar).getAsURLs());
         }

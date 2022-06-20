@@ -16,7 +16,10 @@
 
 package org.gradle.internal.jvm;
 
+import android.app.Application;
+
 import com.google.common.annotations.VisibleForTesting;
+
 import org.gradle.api.JavaVersion;
 import org.gradle.internal.FileUtils;
 import org.gradle.internal.SystemProperties;
@@ -25,7 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -260,11 +265,29 @@ public class Jvm implements JavaInfo {
         return javaHome;
     }
 
+    private Application tryGetAndroidApplicationWithReflection() {
+        try {
+            Method getApplication = Class.forName("android.app.ActivityThread").getMethod("currentApplication");
+            return (Application) getApplication.invoke(null);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private File getPackageResources() {
+        Application application = tryGetAndroidApplicationWithReflection();
+        if (application != null) {
+            return new File(application.getExternalFilesDir("").getParentFile(), "javaHome");
+        }
+        return null;
+    }
+
     private File findJavaHome(File javaBase) {
 
         //dingyi modify: add fake java home
         if (OperatingSystem.current().isAndroid()) {
-            return new File("");
+            javaBase = getPackageResources();
+            javaBase.mkdirs();
         }
 
         File toolsJar = findToolsJar(javaBase);
@@ -338,7 +361,8 @@ public class Jvm implements JavaInfo {
 
     private File findToolsJar(File javaHome) {
         File toolsJar = new File(javaHome, "lib/tools.jar");
-        if (toolsJar.exists()) {
+        //dingyi modify: if running android, always no found tools.jar,so we return fake tools.jar
+        if (toolsJar.exists() || OperatingSystem.current().isAndroid()) {
             return toolsJar;
         }
         if (javaHome.getName().equalsIgnoreCase("jre")) {
@@ -403,34 +427,9 @@ public class Jvm implements JavaInfo {
             super(os);
         }
 
-
         @Override
         public boolean isDalvikJvm() {
             return true;
-        }
-
-        @Override
-        public File getToolsJar() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public File getEmbeddedJre() {
-            return null;
-        }
-
-
-        @Nullable
-        @Override
-        public File getStandaloneJre() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public File getJre() {
-            return null;
         }
 
         @Nullable
